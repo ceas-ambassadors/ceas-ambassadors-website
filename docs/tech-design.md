@@ -20,6 +20,7 @@ developed in NodeJS but our website does not make sense for a non-relational dat
 * hours completed
 * meetings attended
 * Not needed - for when a member shows up but is not needed at an event
+* Picture?
 ### Event
 Should events be seperate from meetings? I think probably. But meeting could just
 be a flag on the event.
@@ -31,8 +32,10 @@ be a flag on the event.
 * Summary
 * Signed up members
 * confirmed attended members
+* public/private - does it appear in list view?
 ### Meetings?
-Not that different from events... revist this 
+Not that different from events... revist this.
+Only logged in users can let people sign into meetings.
 ### User
 A user is someone who actually has an account on the website, which they can use
 to add/edit events, etc
@@ -63,6 +66,14 @@ Need to use `dotenv` to manage environment variables/secrets
 #### [I] Reset website
 The current website has functionality to reset the website for a new semester.
 This clears out current hours, events, and meetings.
+#### [I] Apply page
+There should be a page that has a link to apply for ambassadors. I can just iframe
+a google doc here. 
+#### [I] Favicon
+Will need an icon for the site
+#### [I] Home page
+Need a home page that lists upcoming events, meetings, and maybe a randomly chosen
+featured member?
 
 ### Members
 #### [I] Add new members
@@ -73,16 +84,19 @@ wrong.
 #### [I] Delete members
 Members need to be deletable, for leaving the org or graduating
 #### [I] Detail view of member
-Should show all details on member, including attended events and meetings, contact info, total hours, etc.
+Should show all details on member, including attended events and meetings, contact info, total hours, etc. Only users should have this ability.
 #### [I] Add custom event
-Members complete custom events, need to be able to add a single event
+Members complete custom events, need to be able to add a single event. I think
+this should create a real event, and then mark it as private. Only users should have this ability.
 #### [I] List view of members
-Currently, this has a "highlight by service hour requirement" for logged in users. This would be a good idea. Requires frontend javascript code.
+Currently, this has a "highlight by service hour requirement" for logged in users. This would be a good idea. Requires frontend javascript code. Only logged in users should see how many hours a member has.
 #### [I] Check hours
-A member should be able to look up their own 
+A member should be able to look up their own hours
 
 ### Events
 #### [I] Add new events
+Should verify that the event is valid - that is, it should not let the end time
+be before the start time.
 #### [I] Delete events
 Need to define behavior for if a member has attended an event that gets deleted
 #### [I] Edit events
@@ -91,7 +105,8 @@ Need to define behavior for if a member has attended an event that gets edited
 Should include signed up members, and confirmed attended members
 #### [I] List View
 #### [I] Sign up
-Members need to be able to sign up for events
+Members need to be able to sign up for events. Should send a message confirming
+sign up.
 #### [I] Confirm attendance
 Users need the ability to confirm that a member attended the event
 #### [I] Deny attendance
@@ -99,6 +114,12 @@ Need the ability to deny attendance - for when a user signed up and that did not
 attend
 #### [I] Not needed attendance
 Need the ability to denote that a member showed up, but was not needed.
+#### [I] ?Repeating events
+Repeating events would be super cool - but also very hard to implement
+#### [I] ?Sign up reminders
+It would be cool if the event sent a reminder at midnight the day of a tour to 
+remind everyone who is signed up, that they are signed up. Could get annoying - 
+would need a way to disable or mark they would prefer not to receive such an email. 
 
 ### Users
 #### [I] Create users
