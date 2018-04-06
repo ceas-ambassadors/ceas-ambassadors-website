@@ -9,6 +9,15 @@ Therefore, it would probably have a MVC architecture. Will likely use Pug for th
 template renderer, and mysql for the database. Mysql is up for debate - its not well
 developed in NodeJS but our website does not make sense for a non-relational database.
 
+# Outstanding Questions
+### Do we want to go to a login only system?
+This would entail every member of ambassadors having their own login. Would mean you would
+need to login to sign up for tours. Would make it easy to have a public/private side to the
+website, and could move us off MNumbers. The big problem, is having everyone have a login, which
+kind of makes ita nnoying to sign in to sign up for tours. This would merge a lot of requirements
+for users/members into a single model. Would create requirements for designating certain users
+'super' users for moderation of hours and etc.
+
 # Models
 ## Member
 * Name
@@ -19,7 +28,12 @@ developed in NodeJS but our website does not make sense for a non-relational dat
 * hours completed
 * meetings attended
 * Not needed - for when a member shows up but is not needed at an event
-* Picture?
+* Picture
+* Clubs involved in
+* Research
+* ACCEND, Minors
+* hometown
+* coop experience
 ## Event
 Should events be seperate from meetings? I think probably. But meeting could just
 be a flag on the event.
@@ -73,6 +87,13 @@ Will need an icon for the site
 ### [I] Home page
 Need a home page that lists upcoming events, meetings, and maybe a randomly chosen
 featured member?
+### [I] FAQ
+A place for us to add frequently asked tour questions, and their answers. Can be useful if there are
+prospective students looking at the site, or for training material for ambassadors.
+### [I] Contact form
+A form wehre you can provide name, email, and notes - could be used by potential ambassadors,
+potential students, or for submitting website feedback. Would need to feed into our email
+to be checked.
 
 ## Members
 ### [I] Add new members
