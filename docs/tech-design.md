@@ -4,15 +4,17 @@ of this project, this document might become outdated. I'll try to at least
 add a note that this has happened if I don't intend to update the design doc.
 
 # Architecture
-Would build a backend using NodeJS, and probably [ExpressJS](https://expressjs.com).
-Therefore, it would probably have a MVC architecture. Will likely use Pug for the
-template renderer, and mysql for the database. Mysql is up for debate - its not well
-developed in NodeJS but our website does not make sense for a non-relational database.
+Will build a backend using NodeJS, and  [ExpressJS](https://expressjs.com).
+It will have a MVC architecture. Will use Pug for the
+template renderer, and mysql for the database. While MySql isn't well developed for NodeJS like
+something MongoDB is, our database really only makes sense to be done as a relational database.
+I'm going to use Sequelize for the the MySql ORM. [Link to database document here](sample.com).
 
 # Outstanding Questions
 #### Need to define database schema better
 
 # Models
+
 ## Member
 This is now the user/member - because we're moving to a login only system.
 * Name
@@ -59,15 +61,15 @@ have been written.
 ### [I] Testing framework
 Need a way to make writing tests easy - probably `mocha` and `chai`.
 ### [I] Alert system
-Need an easy way to notify users that something has happened - using a notification system like the one on the old website works well. It would be an argument that could be passed to any render, because the base render page would render messages (including error, success, and info).
+Need an easy way to notify users that something has happened - using a notification system like the one on the old website works well. It would be an argument that could be passed to any render, because the base render page would render messages (including error, success, and info). Sometimes this is referred to as a flash
 ### [I] Footer
-Written by, copyright, github link, etc
+Written by, copyright, github link, license.
 ### [I] Header
 Links to all pages
 ### [I] Virtual Tour
 Virtual tour is just an iframe. Just need a page for it.
 ### [I] Production mode
-The express generator does some stuff to denote when a website is running in production mode. Need to make sure this is set up correctly
+The express generator does some stuff to denote when a website is running in production mode. Need to make sure this is set up correctly, probably a test mode as well.
 ### [I] Environment variable management
 Need to use `dotenv` to manage environment variables/secrets
 ### [I] Reset website
@@ -85,18 +87,18 @@ featured member?
 A place for us to add frequently asked tour questions, and their answers. Can be useful if there are
 prospective students looking at the site, or for training material for ambassadors.
 ### [I] Contact form
-A form wehre you can provide name, email, and notes - could be used by potential ambassadors,
+A form where you can provide name, email, and notes - could be used by potential ambassadors,
 potential students, or for submitting website feedback. Would need to feed into our email
 to be checked.
 
 ## Members
 ### [I] Delete members
-Members need to be deletable, for leaving the org or graduating
+Members need to be deletable, for leaving the org or graduating. Should only be an allowable action for super users. Should ask for confirmation before deleting.
 ### [I] Detail view of member
 Should show all details on member, including attended events and meetings, contact info, total hours, etc. Super users should be able to view this for any given member, and a member should be able to view their own.
 ### [I] Add custom event
-Members complete custom events, need to be able to add a single event. I think
-this should create a real event, and then mark it as private. Only super users should have this ability.
+Members complete custom events, need to be able to add a single event.
+This should create a real event, and then mark it as private. Only super users should have this ability.
 ### [I] List view of members
 Currently, this has a "highlight by service hour requirement" for logged in users. This would be a good idea. Requires frontend javascript code. Only logged in super users should see how many hours a member has.
 
@@ -109,18 +111,19 @@ Hours should be linked - so deleting an event should cause a member's hours to d
 ### [I] Edit events
 Hours should be linked - editing an event should cause a member's hours to change. Super user only.
 ### [I] Detail view
-Should include signed up members, and confirmed attended members
+Should include signed up members, and confirmed attended members. Confirmed members should be super user only.
 ### [I] List View
-### [I] Sign up
-Members need to be able to sign up for events. Should send a message confirming
+All members should be able to see all public tours
+### [I] Sign up for tours
+Members need to be able to sign up for events. Should send a flash message confirming
 sign up.
 ### [I] Confirm attendance
 Super Users need the ability to confirm that a member attended the event
 ### [I] Deny attendance
 Need the ability to deny attendance - for when a member signed up and that did not
-attend
+attend. Super user only
 ### [I] Not needed attendance
-Need the ability to denote that a member showed up, but was not needed.
+Need the ability to denote that a member showed up, but was not needed. Super user only
 ### [I] ?Repeating events
 Repeating events would be super cool - but also very hard to implement
 ### [I] ?Sign up reminders
@@ -128,10 +131,10 @@ It would be cool if the event sent a reminder at midnight the day of a tour to
 remind everyone who is signed up, that they are signed up. Could get annoying - 
 would need a way to disable or mark they would prefer not to receive such an email. 
 
-## Accounts
-### [I] Delete accounts
-Not everyone needs to keep an account forever - does this require a super user,
-or should this be a database action?
+## Accounts - part of members, but these are for the specific account related action
+### [I] Send invite
+Super users should be able to insert a UC email to send an invite to a member. That email will contain
+instructions for creating their account. Via this email should be the only way a member can be created. 
 ### [I] Reset password
 Need to loop into an email service to send password reset tokens
 ### [I] sign in
@@ -141,4 +144,5 @@ Need to loop into an email service to send password reset tokens
 # Maintenance
 Its imperative that the website is easy to maintain. That means there need to be
 test(s) for every requirement. There needs to be github integrations to track
-updates to node modules. There needs to be backup functionality. 
+updates to node modules. There needs to be backup functionality. I'll need to write a manual
+testing document for elements that can't be automatically tested.

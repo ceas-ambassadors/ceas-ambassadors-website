@@ -2,7 +2,7 @@ This document is intended to be home to developer documentation for this project
 
 ## Getting Started
 ### Things to Install
-You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which is installed with Nodejs. If you're working with the databse, or need to run a databse locally, you'll need to install [mysql](https://www.mysql.com/0).
+You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which is installed with Nodejs. If you're working with the databse, or need to run a database locally, you'll need to install [mysql](https://www.mysql.com/0).
 ### Working with the code
 To get started, first clone the repository using [git](#Version-Control).
 
@@ -19,7 +19,7 @@ This will be home to details on the different .env values.
 There will be a comprehensive test suite for this codebase. To run tests, first configure the website using the above instructions - tests won't work until you've gotten the website to run yourself. Then, just run `npm test`.
 
 ## Style Guide
-I'll be setting up a style linter to ensure consistent code quality. More details will be here once found.
+I'll be setting up a style linter to ensure consistent code quality. We'll follow the [Airbnb stle guide](https://github.com/airbnb/javascript). I chose this because it was the most popular javascript style guide at the time of writing. It will be enforced by a linter and commit/push hook.
 
 ## Version Control
 This project's version control is managed using git. If you're unfamiliar with git, check out try.github.io. The main branch is the master branch. For the most part, this will use a feature-branch workflow, meaning that major features should be worked on in branches, then merged into master when complete. This is useful for making quick fixes without being impacted by in progress work. The intent is that major releases will be tagged using [semantic versioning](https://semver.org/). More information on the release process can be found below.
