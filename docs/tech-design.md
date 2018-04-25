@@ -8,13 +8,13 @@ Will build a backend using NodeJS, and  [ExpressJS](https://expressjs.com).
 It will have a MVC architecture. Will use Pug for the
 template renderer, and mysql for the database. While MySql isn't well developed for NodeJS like
 something MongoDB is, our database really only makes sense to be done as a relational database.
-I'm going to use Sequelize for the the MySql ORM. [Link to database document here](sample.com).
+I'm going to use Sequelize for the the MySql ORM. [Link to database document here](database.md).
 
 # Outstanding Questions
 #### Need to define database schema better
 
 # Models
-
+These models define the different data attributes that entities should have - they do not describe the actual structure of the database. See the database document for those details
 ## Member
 This is now the user/member - because we're moving to a login only system.
 * Name
