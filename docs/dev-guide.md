@@ -19,7 +19,11 @@ This will be home to details on the different .env values.
 There will be a comprehensive test suite for this codebase. To run tests, first configure the website using the above instructions - tests won't work until you've gotten the website to run yourself. Then, just run `npm test`.
 
 ## Style Guide
-I'll be setting up a style linter to ensure consistent code quality. We'll follow the [Airbnb stle guide](https://github.com/airbnb/javascript). I chose this because it was the most popular javascript style guide at the time of writing. It will be enforced by a linter and commit/push hook.
+We'll follow the [Airbnb stle guide](https://github.com/airbnb/javascript). I chose this because it was the most popular javascript style guide at the time of writing. It is enforced by a linter run on the Travis CI build. You can run it locally by running `npm run lint` after running `npm install`.
+
+## Build Tool
+This project automatically triggers a run of tests and the linter on every push to Github. This is configured through our `.travis.yml` file. The build history can be accessed [here](https://travis-ci.org/kurtlewis/ceas-ambassadors-website).
+
 
 ## Version Control
 This project's version control is managed using git. If you're unfamiliar with git, check out try.github.io. The main branch is the master branch. For the most part, this will use a feature-branch workflow, meaning that major features should be worked on in branches, then merged into master when complete. This is useful for making quick fixes without being impacted by in progress work. The intent is that major releases will be tagged using [semantic versioning](https://semver.org/). More information on the release process can be found below.
