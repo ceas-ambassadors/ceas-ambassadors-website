@@ -7,6 +7,12 @@
     "test": "./node_modules/.bin/mocha --exit",
     "lint": "./node_modules/.bin/eslint ."
   },
+  "eslintConfig": {
+      "extends": "airbnb-base",
+      "env": {
+          "node": true
+      }
+  },
   "dependencies": {
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
