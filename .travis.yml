@@ -1,12 +1,12 @@
 language: node_js
 node_js:
   - "8.11"
-
+env:
+  - TEST_DB_URL='mysql://travis:@localhost/amb_site_test'
 services:
   - mysql
 before_install:
   - mysql -e 'CREATE DATABASE amb_site_test'
-  - set TEST_DB_URL='mysql://travis:@localhost/amb_site_test'
 install:
   - npm install
 script:
