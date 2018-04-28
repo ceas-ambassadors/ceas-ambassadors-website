@@ -3,7 +3,6 @@
  * eslint, so disable no-undef rule to allow for undefined functions
  */
 /* eslint-disable no-undef */
-process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const app = require('../app.js');
 
@@ -31,6 +30,6 @@ describe('Ambassador Site Tests', () => {
       request.agent(app)
         .get('/404') // As long as the page 404 doesn't exist, this will give a 404
         .expect(404, done);
-    })
+    });
   });
 });

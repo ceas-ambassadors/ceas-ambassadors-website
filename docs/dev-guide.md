@@ -14,6 +14,14 @@ To run the website, type `npm start`. Visit the website at localhost:3000. You'r
 
 ## .env
 This will be home to details on the different .env values.
+### Database URLs
+All of the database URLs take the following format: `mysql://<user>:<password>@<host>/<db_name>`. You'll need to set the appropriate URLs for what you're doing. This likely means setting the dev and or test URLs. The production URL shouldn't be needed outside of the production server.
+#### DEV_DB_URL
+The development database URL - this database holds data with some consistency, in that there is probably test values in it usually.
+#### TEST_DB_URL
+This database is wiped entirely clean at the start and end of every test - so don't use the same URL as your DEV_DB_URL unless you want that.
+#### PROD_DB_URL
+This should hold production data.
 
 ## Tests
 There will be a comprehensive test suite for this codebase. To run tests, first configure the website using the above instructions - tests won't work until you've gotten the website to run yourself. Then, just run `npm test`.

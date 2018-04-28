@@ -1,8 +1,14 @@
+// Configure any dotenv defined variables
+require('dotenv').config();
+
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+
+// Load models directory (which loads ./models/index)
+const models = require('./models');
 
 const indexRouter = require('./routes/index');
 
@@ -34,6 +40,22 @@ app.use((err, req, res/* , next */) => {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+/**
+ * Database configuration
+ * The actual connecting to the database happend in `./models/index.js`,
+ * this file just syncs the models and verifies the connection is valid
+ */
+// Sync models - very important step
+models.sequelize.sync();
+// Check connection
+models.sequelize.authenticate().then(() => {
+  console.log('Connection to database established.');
+}).catch((err) => {
+  console.error('Unable to connect to the database:', err);
+  // Kill the process because there's no connection to the database
+  process.exit();
 });
 
 module.exports = app;
