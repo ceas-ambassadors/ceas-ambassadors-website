@@ -3,7 +3,6 @@ This document is home to the actual design for our database, instructions for wo
 # Database Design
 This is the actual structue of the tables and their relationships. 
 ### Member
-* id
 * creation_date
 * email - primary key
 * first_name
@@ -12,7 +11,7 @@ This is the actual structue of the tables and their relationships.
 * grad_year
 * minutes **summation**
 * meetings **summation**
-* minutes_sent_home **summation**
+* minutes_not_needed **summation**
 * path_to_picture
 * clubs
 * minors
@@ -22,10 +21,11 @@ This is the actual structue of the tables and their relationships.
 * password
 * super_user
 * private_user
+* created_at
+* updated_at
 
 ### Event
 * id - primary key
-* creation_date
 * title
 * start_time
 * end_time
@@ -33,13 +33,16 @@ This is the actual structue of the tables and their relationships.
 * location
 * summary
 * public
+* created_at
+* updated_at
 
-### Attenddee - Join table of Member and Event
-* id - primary key
-* creation_date
-* email - foreign key to member
+
+### Attendance - Join table of Member and Event
+* member_email - foreign key to member
 * event_id -  foreing key to event
 * status - unconfirmed, confirmed, not-needed
+* created_at
+* updated_at
 
 ## On summation columns
 There are a few ways I can approach summation columns (minutes, meetings, etc) on member. There needs to be a way to stop those values from becoming stale - if an event is updated, when a member is confirmed for attending, etc.
@@ -50,7 +53,7 @@ There are a few ways I can approach summation columns (minutes, meetings, etc) o
 I currently favor option 2 - but I'll need to play around with them some. I'll update this document to indicate the choice I made once I've made it.
 
 # Working with Sequelize
-This project will utilize [Sequelize](sequeilzejs.com) for our database ORM. I'll make notes here on using it, including it's auto generated migrations and etc.
+This project will utilize [Sequelize](sequelizejs.com) for our database ORM. I'll make notes here on using it, including it's auto generated migrations and etc.
 
 # Common Database Queries
 This is where I'll document the database queries that need to be run on a semi-regular basis for maintainence purposes.

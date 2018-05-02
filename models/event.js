@@ -3,17 +3,41 @@
 
 module.exports = (sequelize, DataTypes) => {
   const Event = sequelize.define('Event', {
-    title: DataTypes.STRING,
-    start_time: DataTypes.DATE,
-    end_time: DataTypes.DATE,
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    start_time: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    end_time: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
     description: DataTypes.TEXT,
-    location: DataTypes.STRING,
-    public: DataTypes.BOOLEAN,
-    meeting: DataTypes.BOOLEAN,
-  }, {});
+    location: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    public: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
+    meeting: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
+  }, {
+    // set so that all autocreated table names are underscored instead of camel cased
+    underscored: true,
+  });
   Event.associate = (models) => {
     // associations can be defined here
-    models.Event.belongsToMany(models.Member, { through: models.Attendance });
+    models.Event.belongsToMany(models.Member, {
+      as: 'event_id',
+      through: models.Attendance,
+    });
   };
   return Event;
 };

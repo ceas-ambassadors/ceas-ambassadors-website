@@ -3,20 +3,33 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Attendances', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
+      event_id: {
+        type: Sequelize.INT,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        allowNull: false,
+        references: {
+          model: 'Events',
+          key: 'id',
+        },
+      },
+      member_email: {
+        type: Sequelize.STRING,
+        primaryKey: true,
+        allowNull: false,
+        references: {
+          model: 'Members',
+          key: 'email',
+        },
       },
       status: {
-        type: Sequelize.ENUM('unconfirmed', 'confirmed', 'not_needed', 'meeting')
+        type: Sequelize.ENUM('unconfirmed', 'confirmed', 'not_needed', 'meeting'),
+        allowNull: false
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }
