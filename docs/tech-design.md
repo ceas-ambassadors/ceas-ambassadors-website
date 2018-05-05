@@ -58,7 +58,7 @@ with a `[I]` for incomplete, a `[C]` for complete, and a `[N]`for no intention t
 have been written.
 
 ## General Website
-### [I] Testing framework
+### [C] Testing framework
 Need a way to make writing tests easy - probably `mocha` and `chai`.
 ### [I] Alert system
 Need an easy way to notify users that something has happened - using a notification system like the one on the old website works well. It would be an argument that could be passed to any render, because the base render page would render messages (including error, success, and info). Sometimes this is referred to as a flash
@@ -70,7 +70,7 @@ Links to all pages
 Virtual tour is just an iframe. Just need a page for it.
 ### [I] Production mode
 The express generator does some stuff to denote when a website is running in production mode. Need to make sure this is set up correctly, probably a test mode as well.
-### [I] Environment variable management
+### [C] Environment variable management
 Need to use `dotenv` to manage environment variables/secrets
 ### [I] Reset website
 The current website has functionality to reset the website for a new semester.
