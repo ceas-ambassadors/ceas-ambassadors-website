@@ -10,6 +10,8 @@ before_install:
   ### the below commands are for greenkeeper-lockfile - needed for greenkeeper
   ### greenkeeper is a service used to keep dependencies up to date - the greenkeeper-lockfile
   ### code makes sure that package-lock.json gets updated at the same time as the package.json
+  ### Requires GH_TOKEN set in CI settings to a write-access github token
+  ### https://github.com/greenkeeperio/greenkeeper-lockfile
   - '[[ $(node -v) =~ ^v9.*$ ]] || npm install -g npm@latest' # skipped when using node 9
   - npm install -g greenkeeper-lockfile@1
 install:
