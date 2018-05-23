@@ -12,6 +12,15 @@ Then, install npm modules as specified in our `package.json`, using `npm install
 
 To run the website, type `npm start`. Visit the website at localhost:3000. You're in business!
 
+## Frontend / Writing webpages
+We use a template rendering engine for creating webpages called [pug](https://pugjs.org/api/getting-started.html). If you need to write frontend webpages - the first thing you should do is skim through the language reference at that link for an initial understanding of what pug is and how to use it. In a nutshell, pug is a rendering engine that allows us to write shorthand html/css (or full html if you so choose), which is then transformed into html upon request. This lets us do some cool things like [insert arbitrary amounts of data into structured html](https://pugjs.org/language/iteration.html). 
+
+All of the pug files are located in the `views` folder. All files that extend `layout.pug` will inherit it's base definitions - things like the ability to flash message, the nav bar, and a stylized container for content. Because of the multiple files that can define arguments for webpages, it can be difficult to keep track of possible (or necessary) arguments need to be passed to the render function. In the worst case, you can check every `extends` and `includes` directive in the files, but I hope to document in each file what arguments it takes.
+
+CSS styles can be found in `public/stylesheets` directory. I intend to use only one css file unless it gets too long and unwieldy - I hope to keep it organized by grouping styles logically and commenting their purpose. 
+
+Similar to CSS, javascript and image files are also held in the `public` directory. These files are where you would write frontend javascript (if we need it), which can then be included on pug files with the [`script` directive](https://pugjs.org/language/includes.html).
+
 ## .env
 This will be home to details on the different .env values.
 ### Database URLs
