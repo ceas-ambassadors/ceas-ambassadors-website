@@ -1,7 +1,12 @@
+//- this document is the base of all html outputs
 doctype html
 html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block content
+    //- navigation bar
+    include partials/navigation
+    //- the actual content - the page that was requested
+    #content
+      block content

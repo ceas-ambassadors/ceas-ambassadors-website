@@ -1,8 +1,37 @@
+/* The base of everything */
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 0px;
+  font: 14px "Lato", Helvetica, Arial, sans-serif;
+  background-color: #fcfdff;
 }
 
+/* Link */
 a {
   color: #00B7FF;
+}
+
+/*********************
+*  Nav bar styles    *
+*********************/
+#nav-bar {
+  background-color: #f4f7fc;
+  padding: 2%;
+  border-style: none none solid none;
+  border-color: #c0c1c4;
+  font: 18px "Lato";
+  line-height: 0.1;
+}
+
+/* Default colored links would look dumb */
+.nav-bar-link {
+  color: #000000;
+  text-decoration: none; /* Turn off underlining */
+}
+
+/*********************
+* Content Container  *
+*********************/
+/* Everything content wise appears within this container */
+#content {
+  margin: 5% 10% 5% 10%;
 }
