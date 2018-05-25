@@ -1,5 +1,11 @@
 //- These are the alerts that appear at the top of the page
 //- they can signify errors, successes, or info
+//- Argument structure:
+//-   {'alert': {
+//-     'errorMessages': [],
+//-     'infoMessages': [],
+//-     'successMessages': [],}
+//-   }
 #pug
   if alert
     if alert.errorMessages

@@ -21,6 +21,20 @@ CSS styles can be found in `public/stylesheets` directory. I intend to use only 
 
 Similar to CSS, javascript and image files are also held in the `public` directory. These files are where you would write frontend javascript (if we need it), which can then be included on pug files with the [`script` directive](https://pugjs.org/language/includes.html).
 
+### Common variables that can be passed to view renderer
+These variables can be used on every render command that uses the view `views/layout.pug`.
+```
+{
+    'title': 'Title for tab goes here',
+    'alert': {
+        /* Optional - alert the user to an event's outcome. The alert object is optional, and so are each of it's arrays. All three can be included or only one. Only one message is required in the array, an unlimited number can be sent */
+        'successMessages': ['Success Message 1', 'Success Message 2'],
+        'infoMessages': ['Info Message 1', 'Info Message 2'],
+        'errorMessages': ['Error Message 1, 'Error Message 2'],
+    },
+}
+```
+
 ## .env
 This will be home to details on the different .env values.
 ### Database URLs
