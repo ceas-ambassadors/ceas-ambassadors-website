@@ -2,7 +2,7 @@ This document is intended to be home to developer documentation for this project
 
 ## Getting Started
 ### Things to Install
-You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which is installed with Nodejs. If you're working with the databse, or need to run a database locally, you'll need to install [mysql](https://www.mysql.com/0).
+You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which is installed with Nodejs. If you're working with the databse, or need to run a database locally, you'll need to install [mysql](https://www.mysql.com/).
 ### Working with the code
 To get started, first clone the repository using [git](#Version-Control).
 
@@ -13,7 +13,7 @@ Then, install npm modules as specified in our `package.json`, using `npm install
 To run the website, type `npm start`. Visit the website at localhost:3000. You're in business!
 
 ## .env
-This will be home to details on the different .env values.
+This will be home to details on the different .env values. .env refers to the `.env` file used for development. Because we use docker to deploy the website and we use git to track version control, it's insecure to store production credentials in the git repo. We manage these on the server through the use of environment variables. But, on a development machine, you don't want to be changing environment variables all the time. So, we use the `dotenv` package for NPM to emulate environment variables - they're loaded from the file `.env` and treated as if they were environment variables. As mentioned elsewhere, copy `.env.example` and rename it `.env` to get started.
 ### Database URLs
 All of the database URLs take the following format: `mysql://<user>:<password>@<host>/<db_name>`. You'll need to set the appropriate URLs for what you're doing. This likely means setting the dev and or test URLs. The production URL shouldn't be needed outside of the production server.
 #### DEV_DB_URL
@@ -27,7 +27,7 @@ This should hold production data.
 There will be a comprehensive test suite for this codebase. To run tests, first configure the website using the above instructions - tests won't work until you've gotten the website to run yourself. Then, just run `npm test`.
 
 ## Style Guide
-We'll follow the [Airbnb stle guide](https://github.com/airbnb/javascript). I chose this because it was the most popular javascript style guide at the time of writing. It is enforced by a linter run on the Travis CI build. You can run it locally by running `npm run lint` after running `npm install`.
+We'll follow the [Airbnb style guide](https://github.com/airbnb/javascript). I chose this because it was the most popular javascript style guide at the time of writing. It is enforced by a linter run on the Travis CI build. You can run it locally by running `npm run lint` after running `npm install`.
 
 ## Build Tool
 This project automatically triggers a run of tests and the linter on every push to Github. This is configured through our `.travis.yml` file. The build history can be accessed [here](https://travis-ci.org/kurtlewis/ceas-ambassadors-website).

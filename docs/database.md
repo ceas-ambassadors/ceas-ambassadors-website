@@ -6,46 +6,79 @@ Models names should be nouns - `Member`, `Event`, `Attendance`, etc. Sequelize a
 # Database Design
 This is the actual structue of the tables and their relationships. 
 ### Member
-* creation_date
 * email - primary key
+  * the user's email. Treated as the primary key because it is unique
 * first_name
 * last_name
 * major
 * grad_year
 * minutes **summation**
+  * This field is a summation of the minutes of events a user has attended.
+  * See below for notes on how we'll handle the summation columns
 * meetings **summation**
+  * This field is a summation of the minutes of meetings a user has attended.
+  * See below for notes on how we'll handle the summation columns
 * minutes_not_needed **summation**
+  * This field is a summation of the minutes of events a user has been sent home from because they were unneeded.
+  * See below for notes on how we'll handle the summation columns
 * path_to_picture
+  * hopefully we will implement bio pictures - this field is there to hold the path to their bio picture
 * clubs
+  * This is a text column containing a list of clubs the user has attended
 * minors
+  * This is a string field indicating if the user is in any minors
 * accend
+  * This is a boolean field indicating if the user is in ACCEND
 * hometown
+  * This is a string field for the user's hometown
 * coops
+  * This is a text field for listing a user's coops
 * password
+  * This is an encrypted string representing the user's password
 * super_user
+  * This boolean field indicates that a user has super user powers 
+  * Super user powers include but are not limited to - creating events, confirming attendance, etc
 * private_user
+  * This is a user that shouldn't show up in the member listing. Office workers, shared accounts, etc
 * created_at
+  * Date record was created - automatically handled by sequelize
 * updated_at
+  * Date record was last updated - automatically handled by sequelize
 
 ### Event
 * id - primary key
+  * randomly generated id key used to identify an event
 * title
+  * string representing the name of the event
 * start_time
+  * date representing the start time of the event
 * end_time
+  * date representing the end of the event
 * description
+  * text field describing the event
 * location
-* summary
+  * string field describing the location of the event
 * public
+  * boolean field indicating if an event is public
+  * for instance, a one on one or lunch would not be public, because only one ambassador attended it
+* meeting
+  * boolean field representing if an event is a meeting
 * created_at
+  * Date record was created - automatically handled by sequelize
 * updated_at
+  * date record was last updated - automatically handled by sequelize
 
 
 ### Attendance - Join table of Member and Event
 * member_email - foreign key to member
 * event_id -  foreign key to event
-* status - unconfirmed, confirmed, not-needed
+* status - unconfirmed, confirmed, not-needed, meeting
+  * Enum field representing the status of the attendance
+  * a no-show attendance can just delete the record
 * created_at
+  * Date record was created - automatically handled by sequelize
 * updated_at
+  * date record was last updated - automatically handled by sequelize
 
 ## On summation columns
 There are a few ways I can approach summation columns (minutes, meetings, etc) on member. There needs to be a way to stop those values from becoming stale - if an event is updated, when a member is confirmed for attending, etc.
