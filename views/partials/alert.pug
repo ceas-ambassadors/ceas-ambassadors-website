@@ -1,0 +1,16 @@
+//- These are the alerts that appear at the top of the page
+//- they can signify errors, successes, or info
+#pug
+  if alert
+    if alert.errorMessages
+      #alert.alert-error
+        for errorMessage in alert.errorMessages
+          div= errorMessage
+    if alert.infoMessages
+      #alert.alert-info
+        for infoMessage in alert.infoMessages
+          div= infoMessage
+    if alert.successMessages
+      #alert.alert-success
+        for successMessage in alert.successMessages
+          div= successMessage

@@ -28,6 +28,38 @@ a {
   text-decoration: none; /* Turn off underlining */
 }
 
+
+/*********************
+*   Alert Styles     *
+*********************/
+#alert {
+  padding: 1% 10%;
+  margin: 1% 10%;
+  color: #000000;
+  font-size: 20px;
+  padding: 20px;
+  line-height: 180%;
+  border-radius: 0;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.10);
+}
+
+.alert-error {
+  background-color: #d63131;
+  border-color: #c92a2a;
+}
+
+.alert-info {
+  background-color: #e8da1e;
+  border-color: #f7f094;
+}
+
+.alert-success {
+  
+  background-color: #36c164;
+  border-color: #29bc5a;
+  
+}
+
 /*********************
 * Content Container  *
 *********************/
