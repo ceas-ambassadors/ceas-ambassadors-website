@@ -9,14 +9,11 @@
 #pug
   if alert
     if alert.errorMessages
-      #alert.alert-error
-        for errorMessage in alert.errorMessages
-          div= errorMessage
+      for errorMessage in alert.errorMessages
+        #alert.alert-error= errorMessage
     if alert.infoMessages
-      #alert.alert-info
-        for infoMessage in alert.infoMessages
-          div= infoMessage
-    if alert.successMessages
-      #alert.alert-success
-        for successMessage in alert.successMessages
-          div= successMessage
+      for infoMessage in alert.infoMessages
+        #alert.alert-info= infoMessage
+    if alert.successMessages    
+      for successMessage in alert.successMessages
+        #alert.alert-success= successMessage
