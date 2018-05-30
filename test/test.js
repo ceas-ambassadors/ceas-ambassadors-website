@@ -3,6 +3,8 @@
  * eslint, so disable no-undef rule to allow for undefined functions
  */
 /* eslint-disable no-undef */
+// Immediately set environment to test
+process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const app = require('../app.js');
 
