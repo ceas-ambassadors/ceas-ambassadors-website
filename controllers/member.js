@@ -18,3 +18,19 @@ exports.getLogin = (req, res) => {
 exports.postLogin = (req, res) => {
   res.send('Message received.');
 };
+
+/**
+ * GET for the signup page
+ */
+exports.getSignup = (req, res) => {
+  res.render('member/signup', {
+    title: 'Sign up',
+  });
+};
+
+/**
+ * POST for the signup page
+ */
+exports.postSignup = (req, res) => {
+  res.send('Message received.');
+};
