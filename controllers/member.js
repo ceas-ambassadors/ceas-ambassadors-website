@@ -7,7 +7,7 @@
  * GET for the login page
  */
 exports.getLogin = (req, res) => {
-  res.render('member/login', {
+  res.send(200).render('member/login', {
     title: 'Login',
   });
 };
@@ -23,7 +23,7 @@ exports.postLogin = (req, res) => {
  * GET for the signup page
  */
 exports.getSignup = (req, res) => {
-  res.render('member/signup', {
+  res.send(200).render('member/signup', {
     title: 'Sign up',
   });
 };
