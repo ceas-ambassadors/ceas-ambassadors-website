@@ -1,7 +1,16 @@
+//- this document is the base of all html outputs
+//- Input args for this document:
+//-   title - title of tab
 doctype html
 html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block content
+    //- navigation bar
+    include partials/navigation
+    //- alerts
+    include partials/alert
+    //- the actual content - the page that was requested
+    #content
+      block content

@@ -12,6 +12,29 @@ Then, install npm modules as specified in our `package.json`, using `npm install
 
 To run the website, type `npm start`. Visit the website at localhost:3000. You're in business!
 
+## Frontend / Writing webpages
+We use a template rendering engine for creating webpages called [pug](https://pugjs.org/api/getting-started.html). If you need to write frontend webpages - the first thing you should do is skim through the language reference at that link for an initial understanding of what pug is and how to use it. In a nutshell, pug is a rendering engine that allows us to write shorthand html/css (or full html if you so choose), which is then transformed into html upon request. This lets us do some cool things like [insert arbitrary amounts of data into structured html](https://pugjs.org/language/iteration.html). 
+
+All of the pug files are located in the `views` folder. All files that extend `layout.pug` will inherit it's base definitions - things like the ability to flash message, the nav bar, and a stylized container for content. Because of the multiple files that can define arguments for webpages, it can be difficult to keep track of possible (or necessary) arguments need to be passed to the render function. In the worst case, you can check every `extends` and `includes` directive in the files, but I hope to document in each file what arguments it takes.
+
+CSS styles can be found in `public/stylesheets` directory. I intend to use only one css file unless it gets too long and unwieldy - I hope to keep it organized by grouping styles logically and commenting their purpose. 
+
+Similar to CSS, javascript and image files are also held in the `public` directory. These files are where you would write frontend javascript (if we need it), which can then be included on pug files with the [`script` directive](https://pugjs.org/language/includes.html).
+
+### Common variables that can be passed to view renderer
+These variables can be used on every render command that uses the view `views/layout.pug`.
+```
+{
+    'title': 'Title for tab goes here',
+    'alert': {
+        /* Optional - alert the user to an event's outcome. The alert object is optional, and so are each of it's arrays. All three can be included or only one. Only one message is required in the array, an unlimited number can be sent */
+        'successMessages': ['Success Message 1', 'Success Message 2'],
+        'infoMessages': ['Info Message 1', 'Info Message 2'],
+        'errorMessages': ['Error Message 1, 'Error Message 2'],
+    },
+}
+```
+
 ## .env
 This will be home to details on the different .env values. .env refers to the `.env` file used for development. Because we use docker to deploy the website and we use git to track version control, it's insecure to store production credentials in the git repo. We manage these on the server through the use of environment variables. But, on a development machine, you don't want to be changing environment variables all the time. So, we use the `dotenv` package for NPM to emulate environment variables - they're loaded from the file `.env` and treated as if they were environment variables. As mentioned elsewhere, copy `.env.example` and rename it `.env` to get started.
 ### Database URLs
