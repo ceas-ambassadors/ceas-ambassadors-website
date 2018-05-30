@@ -34,4 +34,13 @@ describe('Ambassador Site Tests', () => {
         .expect(404, done);
     });
   });
+
+  describe('Login Tests', () => {
+    // Test GET /login/
+    it('Get login page', (done) => {
+      request.agent(app)
+        .get('/login')
+        .expect(200, done);
+    });
+  });
 });
