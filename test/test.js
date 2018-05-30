@@ -36,18 +36,36 @@ describe('Ambassador Site Tests', () => {
   });
 
   describe('Login Tests', () => {
-    // Test GET /login/
+    // GET /login/
     it('Get login page', (done) => {
       request.agent(app)
         .get('/login')
         .expect(200, done);
     });
 
-    // Test GET /signup/
+    // GET login while signed in
+
+    // POST login
+
+    // POST login while signed in
+
+    // POST login with bad email
+
+    // POST login with empty password
+
+    // GET /signup/
     it('Get signup page', (done) => {
       request.agent(app)
         .get('/signup')
         .expect(200, done);
     });
+
+    // GET signup while signed in
+
+    // POST signup
+
+    // POST signup while signed in
+
+    // POST signup with password != confirm password
   });
 });
