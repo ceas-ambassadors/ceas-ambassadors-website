@@ -6,7 +6,7 @@ const memberHandler = require('../controllers/member');
 
 /* GET home page. */
 router.get('/', (req, res/* , next */) => {
-  res.send(200).render('index', { title: 'Express' });
+  res.status(200).render('index', { title: 'Express' });
 });
 
 /* GET login page */
