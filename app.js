@@ -6,6 +6,8 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 // Load models directory (which loads ./models/index)
 const models = require('./models');
@@ -23,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
 
 app.use('/', indexRouter);
 
@@ -57,5 +60,29 @@ models.sequelize.authenticate().then(() => {
   // Kill the process because there's no connection to the database
   process.exit();
 });
+
+/**
+ * Passport configuration
+ *
+ */
+passport.use(new LocalStrategy((email, password, done) => {
+  models.Member.findOne({
+    where: {
+      email, // `email: email` shorthand
+    },
+  }).then((member) => {
+    if (!member) {
+      // No member returned
+      return done(null, false, { message: 'User not found.' });
+    }
+    // Member exists, validate password
+    if (!member.validatePassword(password)) {
+      // Password validation failed
+      return done(null, false, { message: 'Incorrect password.' });
+    }
+    // Member is found and has a valid password
+    return done(null, member);
+  });
+}));
 
 module.exports = app;
