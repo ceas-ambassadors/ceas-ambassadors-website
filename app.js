@@ -65,10 +65,10 @@ models.sequelize.authenticate().then(() => {
  * Passport configuration
  *
  */
-passport.use(new LocalStrategy((email, password, done) => {
+passport.use(new LocalStrategy((username, password, done) => {
   models.Member.findOne({
     where: {
-      email, // `email: email` shorthand
+      email: username,
     },
   }).then((member) => {
     if (!member) {
