@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
+    created_by: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
@@ -38,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       as: 'event_id',
       through: models.Attendance,
     });
+    models.Event.belongsTo(models.Member);
   };
   return Event;
 };
