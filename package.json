@@ -14,10 +14,12 @@
     },
     "rules": {
       "no-console": "off",
-      "strict": "off"
+      "strict": "off",
+      "arrow-body-style": "off"
     }
   },
   "dependencies": {
+    "bcrypt": "^2.0.1",
     "cookie-parser": "~1.4.3",
     "debug": "~3.1.0",
     "dotenv": "^5.0.1",
