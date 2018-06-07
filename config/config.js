@@ -6,6 +6,7 @@ module.exports = {
   test: {
     url: process.env.TEST_DB_URL,
     dialect: 'mysql',
+    logging: false,
   },
   production: {
     url: process.env.PROD_DB_URL,

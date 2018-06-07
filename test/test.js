@@ -1,5 +1,5 @@
 /*
- * This file is home to the test suite. It uses some functions that confues
+ * This file is home to the basic test suite. It uses some functions that confuse
  * eslint, so disable no-undef rule to allow for undefined functions
  */
 /* eslint-disable no-undef */
@@ -8,110 +8,28 @@ process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const app = require('../app.js');
 
-describe('Ambassador Site Tests', () => {
-  // any actions that need done before ALL tests
-  before((done) => {
-    done();
+describe('Basic Tests', () => {
+    // any actions that need done before all tests in this suite
+    before((done) => {
+      done();
+    });
+
+    // any actions that need done after all tests in this suite
+    after((done) => {
+      done();
+    });
+
+  // Test /
+  it('GET hompeage', (done) => {
+    request.agent(app)
+      .get('/')
+      .expect(200, done);
   });
 
-  // any actions that need done after ALL tests
-  after((done) => {
-    done();
-  });
-
-  describe('Basic Tests', () => {
-    // Test /
-    it('Get hompeage', (done) => {
-      request.agent(app)
-        .get('/')
-        .expect(200, done);
-    });
-
-    // Test 404
-    it('Get 404', (done) => {
-      request.agent(app)
-        .get('/404') // As long as the page 404 doesn't exist, this will give a 404
-        .expect(404, done);
-    });
-  });
-
-  describe('Login Tests', () => {
-    // GET /login/
-    it('Get login page', (done) => {
-      request.agent(app)
-        .get('/login')
-        .expect(200, done);
-    });
-
-    // GET login while signed in
-
-    // POST login
-
-    // POST login while signed in
-
-    // POST login with bad email
-
-    // POST login with empty password
-
-    // GET /signup/
-    it('Get signup page', (done) => {
-      request.agent(app)
-        .get('/signup')
-        .expect(200, done);
-    });
-
-    // GET signup while signed in
-
-    // POST signup
-
-    // POST signup while signed in
-    
-    // POST signup with no email
-    it('POST signup wtih no email', (done) => {
-      request.agent(app)
-        .post('/signup')
-        .send({
-          email: '',
-          password: 'test_password',
-          confirmPassword: 'test_password',
-        })
-        .expect(400, done);
-    })
-    
-    // POST signup with no password
-    it('POST signup wtih no password', (done) => {
-      request.agent(app)
-        .post('/signup')
-        .send({
-          email: 'test_email@test.com',
-          password: 'test_password',
-          confirmPassword: '',
-        })
-        .expect(400, done);
-    })
-
-    // POST signup with no confirmPassword
-    it('POST signup wtih no confirmPassword', (done) => {
-      request.agent(app)
-        .post('/signup')
-        .send({
-          email: 'test_email@test.com',
-          password: 'test_password',
-          confirmPassword: '',
-        })
-        .expect(400, done);
-    })
-
-    // POST signup with password != confirm password
-    it('POST signup wtih mismatched passwords', (done) => {
-      request.agent(app)
-        .post('/signup')
-        .send({
-          email: 'test_email@test.com',
-          password: 'test_password',
-          confirmPassword: 'test_password_bad',
-        })
-        .expect(400, done);
-    })
+  // Test 404
+  it('GET 404', (done) => {
+    request.agent(app)
+      .get('/404') // As long as the page 404 doesn't exist, this will give a 404
+      .expect(404, done);
   });
 });
