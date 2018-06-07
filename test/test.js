@@ -65,7 +65,53 @@ describe('Ambassador Site Tests', () => {
     // POST signup
 
     // POST signup while signed in
+    
+    // POST signup with no email
+    it('POST signup wtih no email', (done) => {
+      request.agent(app)
+        .post('/signup')
+        .send({
+          email: '',
+          password: 'test_password',
+          confirmPassword: 'test_password',
+        })
+        .expect(400, done);
+    })
+    
+    // POST signup with no password
+    it('POST signup wtih no password', (done) => {
+      request.agent(app)
+        .post('/signup')
+        .send({
+          email: 'test_email@test.com',
+          password: 'test_password',
+          confirmPassword: '',
+        })
+        .expect(400, done);
+    })
+
+    // POST signup with no confirmPassword
+    it('POST signup wtih no confirmPassword', (done) => {
+      request.agent(app)
+        .post('/signup')
+        .send({
+          email: 'test_email@test.com',
+          password: 'test_password',
+          confirmPassword: '',
+        })
+        .expect(400, done);
+    })
 
     // POST signup with password != confirm password
+    it('POST signup wtih mismatched passwords', (done) => {
+      request.agent(app)
+        .post('/signup')
+        .send({
+          email: 'test_email@test.com',
+          password: 'test_password',
+          confirmPassword: 'test_password_bad',
+        })
+        .expect(400, done);
+    })
   });
 });
