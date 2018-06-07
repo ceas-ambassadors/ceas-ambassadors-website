@@ -9,15 +9,15 @@ const request = require('supertest');
 const app = require('../app.js');
 
 describe('Basic Tests', () => {
-    // any actions that need done before all tests in this suite
-    before((done) => {
-      done();
-    });
+  // any actions that need done before all tests in this suite
+  before((done) => {
+    done();
+  });
 
-    // any actions that need done after all tests in this suite
-    after((done) => {
-      done();
-    });
+  // any actions that need done after all tests in this suite
+  after((done) => {
+    done();
+  });
 
   // Test /
   it('GET hompeage', (done) => {

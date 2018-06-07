@@ -37,7 +37,7 @@ describe('Account Tests', () => {
   // POST signup
 
   // POST signup while signed in
-  
+
   // POST signup with no email
   it('POST signup wtih no email', (done) => {
     request.agent(app)
@@ -48,8 +48,8 @@ describe('Account Tests', () => {
         confirmPassword: 'test_password',
       })
       .expect(400, done);
-  })
-  
+  });
+
   // POST signup with no password
   it('POST signup wtih no password', (done) => {
     request.agent(app)
@@ -60,7 +60,7 @@ describe('Account Tests', () => {
         confirmPassword: '',
       })
       .expect(400, done);
-  })
+  });
 
   // POST signup with no confirmPassword
   it('POST signup wtih no confirmPassword', (done) => {
@@ -72,7 +72,7 @@ describe('Account Tests', () => {
         confirmPassword: '',
       })
       .expect(400, done);
-  })
+  });
 
   // POST signup with password != confirm password
   it('POST signup wtih mismatched passwords', (done) => {
@@ -84,5 +84,5 @@ describe('Account Tests', () => {
         confirmPassword: 'test_password_bad',
       })
       .expect(400, done);
-  })
+  });
 });
