@@ -47,6 +47,15 @@ exports.postSignup = [
         },
       });
     }
+    if (req.body.password !== req.body.confirmPassword) {
+      // TODO - when #5 is closed this should redirect to getSignup() too
+      res.status(400).render('member/signup', {
+        title: 'Sign up',
+        alert: {
+          errorMessages: ['Passwords must match'],
+        },
+      });
+    }
 
 
     res.send(200);
