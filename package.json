@@ -15,7 +15,8 @@
     "rules": {
       "no-console": "off",
       "strict": "off",
-      "arrow-body-style": "off"
+      "arrow-body-style": "off",
+      "object-shorthand": "off"
     }
   },
   "dependencies": {
