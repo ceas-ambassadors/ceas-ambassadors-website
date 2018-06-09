@@ -53,6 +53,16 @@ describe('Account Tests', () => {
   // GET signup while signed in
 
   // POST signup
+  it('POST signup', (done) => {
+    request.agent(app)
+      .post('/signup')
+      .send({
+        email: 'test@kurtjlewis.com',
+        password: 'password',
+        confirmPassword: 'password',
+      })
+      .expect(302, done);
+  });
 
   // POST signup while signed in
 

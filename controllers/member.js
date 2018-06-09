@@ -96,8 +96,8 @@ exports.postSignup = [
             super_user: false,
             private_user: false,
           }).then(() => {
-            // This is why #4 is important - it'd be real nice to show a flash on the index page
-            res.status(201).redirect('/login');
+            // TODO - this automatically returns 302 response code - 201 would be better
+            res.redirect('/');
           }).catch(errorHandler);
         }).catch(errorHandler);
       }
