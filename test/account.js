@@ -1,13 +1,31 @@
 /**
- * This file is home to the account suite of tests
+ * This file is home to the account suite of tests - tests that hit the endpoints
+ * around signing up, logging in, and etc
  */
 /* eslint-disable no-undef */
 // Immediately set environment to test
 process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const app = require('../app.js');
+const models = require('../models');
 
 describe('Account Tests', () => {
+  // Make sure there are no records before tests start
+  before((done) => {
+    // delete all records in Member table
+    models.Member.destroy({
+      where: {},
+    }).finally(done);
+  });
+
+  // Make sure there are no records after tests finish
+  after((done) => {
+    // delete all records in Member table
+    models.Member.destroy({
+      where: {},
+    }).finally(done);
+  });
+
   // GET /login/
   it('GET login page', (done) => {
     request.agent(app)
@@ -84,5 +102,46 @@ describe('Account Tests', () => {
         confirmPassword: 'test_password_bad',
       })
       .expect(400, done);
+  });
+
+  describe('Tests which require an existing user', () => {
+    // any actions that need done before all tests in this suite
+    before((done) => {
+      // first delete all records in Member table
+      models.Member.destroy({
+        where: {},
+      })
+        // then add a new member
+        .then(models.Member.generatePasswordHash('password')
+          .then((passwordHash) => {
+            models.Member.create({
+              email: 'test@kurtjlewis.com',
+              password: passwordHash,
+              accend: false,
+              super_user: false,
+              private_user: false,
+            }).finally(done);
+          }));
+    });
+
+    // any actions that need done after all tests in this suite
+    after((done) => {
+      // delete all records in Member table
+      models.Member.destroy({
+        where: {},
+      }).finally(done);
+    });
+
+    // Try to register a user with an email that already exists
+    it('POST signup with already used email', (done) => {
+      request.agent(app)
+        .post('/signup')
+        .send({
+          email: 'test@kurtjlewis.com',
+          password: 'password',
+          confirmPassword: 'password',
+        })
+        .expect(400, done);
+    });
   });
 });
