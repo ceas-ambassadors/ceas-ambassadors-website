@@ -51,7 +51,7 @@ function createVariablesMiddleware(req, res, next) {
   if (typeof req.locals === 'undefined') {
     req.locals = {};
   }
-  
+
   // if the status property isn't a number, set it to 200 OK by default
   if (typeof req.locals.status !== 'number') {
     req.locals.status = 200;
