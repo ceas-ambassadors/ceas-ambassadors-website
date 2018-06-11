@@ -41,15 +41,22 @@ models.sequelize.authenticate().then(() => {
 });
 
 /**
- * Alerts middleware
+ * custom variable definiton middleware
  * This defines variables for alerting if they do not exist
+ * Defines status variable if it does not exist
 */
-function alertMiddleware(req, res, next) {
+function createVariablesMiddleware(req, res, next) {
   // create req.locals object if it does not exist
   // req.locals is the prefferred way of passing local variables between middleware
   if (typeof req.locals === 'undefined') {
     req.locals = {};
   }
+  
+  // if the status property isn't a number, set it to 200 OK by default
+  if (typeof req.locals.status !== 'number') {
+    req.locals.status = 200;
+  }
+
   // if the alert object doesn't exist, create it
   if (typeof req.locals.alert === 'undefined') {
     req.locals.alert = {};
@@ -67,7 +74,7 @@ function alertMiddleware(req, res, next) {
   // continue execution to next middleware handler
   next();
 }
-app.use(alertMiddleware);
+app.use(createVariablesMiddleware);
 
 /**
  * define routes
