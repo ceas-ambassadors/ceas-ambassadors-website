@@ -63,6 +63,8 @@ This is the actual structue of the tables and their relationships.
   * for instance, a one on one or lunch would not be public, because only one ambassador attended it
 * meeting
   * boolean field representing if an event is a meeting
+* created_by
+  * string - email address of user who created event. foreign key to Member
 * created_at
   * Date record was created - automatically handled by sequelize
 * updated_at

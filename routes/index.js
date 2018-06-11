@@ -6,7 +6,8 @@ const memberHandler = require('../controllers/member');
 
 /* GET home page. */
 router.get('/', (req, res/* , next */) => {
-  res.status(200).render('index', { title: 'Express' });
+  // The alert here won't do anything because this can only be called by express
+  res.render('index', { title: 'Express', alert: req.locals.alert });
 });
 
 /* GET login page */

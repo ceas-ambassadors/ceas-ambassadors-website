@@ -36,6 +36,14 @@ module.exports = {
         type: Sequelizze.BOOLEAN,
         allowNull: false,
       },
+      created_by: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        references: {
+          model: 'Members',
+          key: 'email',
+        },
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE
@@ -43,7 +51,7 @@ module.exports = {
       updated_at: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
     });
   },
   down: (queryInterface, Sequelize) => {
