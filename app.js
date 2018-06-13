@@ -127,16 +127,17 @@ passport.use(new LocalStrategy((username, password, done) => {
     },
   }).then((member) => {
     if (!member) {
-      // No member returned
-      return done(null, false, { message: 'User not found.' });
+      // Member exists, validate password
+      return models.Member.comparePassword(password, member).then((res) => {
+        if (!res) {
+          return done(null, false, { message: 'Incorrect password.' });
+        }
+        // Member is found and has a valid password
+        return done(null, member);
+      });
     }
-    // Member exists, validate password
-    if (!member.validatePassword(password)) {
-      // Password validation failed
-      return done(null, false, { message: 'Incorrect password.' });
-    }
-    // Member is found and has a valid password
-    return done(null, member);
+    // Member doesn't exist, throw an error
+    return done(null, false, { message: 'Member not found.' });
   });
 }));
 
