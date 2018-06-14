@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
 
 // Load models directory (which loads ./models/index)
 const models = require('./models');
@@ -25,7 +26,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// TODO - use a better secret before we go to prod
+// TODO - see notes on cookie.secure here https://github.com/expressjs/session#compatible-session-stores
+app.use(session({ secret: 'keyboard cat' }));
 app.use(passport.initialize());
+app.use(passport.session());
 
 /**
  * Database configuration
@@ -125,7 +130,6 @@ passport.use(new LocalStrategy(
     usernameField: 'email',
   },
   (username, password, done) => {
-    console.log('We are in passport!');
     models.Member.findOne({
       where: {
         email: username,
@@ -146,5 +150,23 @@ passport.use(new LocalStrategy(
     });
   },
 ));
+
+// takes the user(Member) and converts it to just an id for the client session cookie
+passport.serializeUser((user, done) => {
+  done(null, user.email);
+});
+
+// converts the cookie from the client into an instance of Member upon a request
+passport.deserializeUser((id, done) => {
+  models.Member.findOne({
+    where: {
+      email: id,
+    },
+  }).then((member) => {
+    return done(null, member);
+  }).catch((err) => {
+    return done(err, null);
+  });
+});
 
 module.exports = app;

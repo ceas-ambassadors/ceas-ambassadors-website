@@ -17,9 +17,10 @@ exports.getLogin = getLogin;
  * POST for the login page
  */
 const postLogin = [
-  passport.authenticate('local', { session: false }),
+  passport.authenticate('local'),
   (req, res) => {
-    res.send(`${req.user.email} logged in!`);
+    // TODO - call / handler to show login success alert!
+    res.redirect('/');
   },
 ];
 exports.postLogin = postLogin;
