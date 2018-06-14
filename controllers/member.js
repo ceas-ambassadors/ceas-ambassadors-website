@@ -26,6 +26,15 @@ const postLogin = [
 exports.postLogin = postLogin;
 
 /**
+ * GET for logout
+ */
+const getLogout = (req, res) => {
+  req.logout();
+  res.redirect('/login');
+};
+exports.getLogout = getLogout;
+
+/**
  * GET for the signup page
  */
 const getSignup = (req, res) => {
