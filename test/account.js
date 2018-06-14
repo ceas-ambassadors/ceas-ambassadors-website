@@ -11,7 +11,7 @@ const models = require('../models');
 
 describe('Account Tests', () => {
   // Make sure there are no records before tests start
-  before((done) => {
+  beforeEach((done) => {
     // delete all records in Member table
     models.Member.destroy({
       where: {},
@@ -19,7 +19,7 @@ describe('Account Tests', () => {
   });
 
   // Make sure there are no records after tests finish
-  after((done) => {
+  afterEach((done) => {
     // delete all records in Member table
     models.Member.destroy({
       where: {},
@@ -33,12 +33,6 @@ describe('Account Tests', () => {
       .expect(200, done);
   });
 
-  // GET login while signed in
-
-  // POST login
-
-  // POST login while signed in
-
   // POST login with bad email
 
   // POST login with empty password
@@ -49,8 +43,6 @@ describe('Account Tests', () => {
       .get('/signup')
       .expect(200, done);
   });
-
-  // GET signup while signed in
 
   // POST signup
   it('POST signup', (done) => {
@@ -84,8 +76,8 @@ describe('Account Tests', () => {
       .post('/signup')
       .send({
         email: 'test_email@test.com',
-        password: 'test_password',
-        confirmPassword: '',
+        password: '',
+        confirmPassword: 'test_password',
       })
       .expect(400, done);
   });
@@ -114,32 +106,21 @@ describe('Account Tests', () => {
       .expect(400, done);
   });
 
+  // GET logout without being signed in
+
   describe('Tests which require an existing user', () => {
     // any actions that need done before all tests in this suite
-    before((done) => {
-      // first delete all records in Member table
-      models.Member.destroy({
-        where: {},
-      })
-        // then add a new member
-        .then(models.Member.generatePasswordHash('password')
-          .then((passwordHash) => {
-            models.Member.create({
-              email: 'test@kurtjlewis.com',
-              password: passwordHash,
-              accend: false,
-              super_user: false,
-              private_user: false,
-            }).finally(done);
-          }));
-    });
-
-    // any actions that need done after all tests in this suite
-    after((done) => {
-      // delete all records in Member table
-      models.Member.destroy({
-        where: {},
-      }).finally(done);
+    beforeEach((done) => {
+      // create a user for the tests
+      models.Member.generatePasswordHash('password').then((passwordHash) => {
+        models.Member.create({
+          email: 'test@kurtjlewis.com',
+          password: passwordHash,
+          accend: false,
+          super_user: false,
+          private_user: false,
+        }).finally(done);
+      });
     });
 
     // Try to register a user with an email that already exists
@@ -153,5 +134,27 @@ describe('Account Tests', () => {
         })
         .expect(400, done);
     });
+
+    // Try to login - should also hit logout after verifying - need not test logout's success
+
+    describe('Tests which require being signed inj', () => {
+      beforeEach((done) => {
+        // sign the test@email.com in
+        done();
+      });
+
+      afterEach((done) => {
+        // any necessary cleanup actions
+        done();
+      });
+      // GET logout
+
+      // GET signup while signed in
+
+      // GET login while signed in
+
+      // POST login while signed in
+    })
+    
   });
 });
