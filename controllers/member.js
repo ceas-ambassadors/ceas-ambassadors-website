@@ -3,6 +3,7 @@
  */
 const { check, validationResult } = require('express-validator/check');
 const models = require('../models/');
+const passport = require('passport');
 /**
  * GET for the login page
  */
@@ -15,9 +16,12 @@ exports.getLogin = getLogin;
 /**
  * POST for the login page
  */
-const postLogin = (req, res) => {
-  res.send('Message received.');
-};
+const postLogin = [
+  passport.authenticate('local', { session: false }),
+  (req, res) => {
+    res.send(`${req.user.email} logged in!`);
+  },
+];
 exports.postLogin = postLogin;
 
 /**

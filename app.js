@@ -120,25 +120,31 @@ models.sequelize.authenticate().then(() => {
  * Passport configuration
  *
  */
-passport.use(new LocalStrategy((username, password, done) => {
-  models.Member.findOne({
-    where: {
-      email: username,
-    },
-  }).then((member) => {
-    if (!member) {
-      // Member exists, validate password
-      return models.Member.comparePassword(password, member).then((res) => {
-        if (!res) {
-          return done(null, false, { message: 'Incorrect password.' });
-        }
-        // Member is found and has a valid password
-        return done(null, member);
-      });
-    }
-    // Member doesn't exist, throw an error
-    return done(null, false, { message: 'Member not found.' });
-  });
-}));
+passport.use(new LocalStrategy(
+  {
+    usernameField: 'email',
+  },
+  (username, password, done) => {
+    console.log('We are in passport!');
+    models.Member.findOne({
+      where: {
+        email: username,
+      },
+    }).then((member) => {
+      if (typeof member !== 'undefined') {
+        // Member exists, validate password
+        return models.Member.comparePassword(password, member).then((res) => {
+          if (res === false) {
+            return done(null, false, { message: 'Incorrect password.' });
+          }
+          // Member is found and has a valid password
+          return done(null, member);
+        });
+      }
+      // Member doesn't exist, throw an error
+      return done(null, false, { message: 'Member not found.' });
+    });
+  },
+));
 
 module.exports = app;
