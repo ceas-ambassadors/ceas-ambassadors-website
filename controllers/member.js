@@ -69,9 +69,10 @@ const postSignup = [
     }
 
     // define handler for errors on this page
-    const errorHandler = () => {
+    const errorHandler = (err) => {
       // If the code gets this far, there was a problem with one of the sequelize calls
       // Try and send them back to the signup page
+      console.log(err);
       req.locals.status = 500;
       req.locals.alert.errorMessages.push('There was a problem. If it persists please contact the tech chair.');
       getSignup(req, res, next);
@@ -94,15 +95,19 @@ const postSignup = [
         getSignup(req, res, next);
       } else {
         models.Member.generatePasswordHash(req.body.password).then((hash) => {
-          models.Member.create({
+          return models.Member.create({
             email: req.body.email,
             password: hash,
             accend: false,
             super_user: false,
             private_user: false,
-          }).then(() => {
+          }).then((member) => {
             // TODO - this automatically returns 302 response code - 201 would be better
-            res.redirect('/');
+            // req.logIn requires use of callbacks, doesn't support promises
+            return req.logIn(member, (err) => {
+              if (err) return next(err);
+              return res.redirect('/');
+            });
           }).catch(errorHandler);
         }).catch(errorHandler);
       }
