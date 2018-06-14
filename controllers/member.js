@@ -59,13 +59,13 @@ const postSignup = [
       req.locals.status = 400;
       req.locals.alert.errorMessages.push(errors.array());
       // redirect to getSignup()
-      getSignup(req, res, next);
+      return getSignup(req, res, next);
     }
     if (req.body.password !== req.body.confirmPassword) {
       // Passwords don't match - send back to signup page with error
       req.locals.status = 400;
       req.locals.alert.errorMessages.push('Passwords must match');
-      getSignup(req, res, next);
+      return getSignup(req, res, next);
     }
 
     // define handler for errors on this page
@@ -75,7 +75,7 @@ const postSignup = [
       console.log(err);
       req.locals.status = 500;
       req.locals.alert.errorMessages.push('There was a problem. If it persists please contact the tech chair.');
-      getSignup(req, res, next);
+      return getSignup(req, res, next);
     };
 
     models.Member.findAll({
@@ -92,7 +92,7 @@ const postSignup = [
       if (members.length !== 0) {
         req.locals.status = 400;
         req.locals.alert.errorMessages.push('An account with that email already exists');
-        getSignup(req, res, next);
+        return getSignup(req, res, next);
       } else {
         models.Member.generatePasswordHash(req.body.password).then((hash) => {
           return models.Member.create({
