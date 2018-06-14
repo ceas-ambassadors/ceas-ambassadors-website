@@ -78,7 +78,7 @@ const postSignup = [
       return getSignup(req, res, next);
     };
 
-    models.Member.findAll({
+    return models.Member.findAll({
       where: {
         email: req.body.email,
       },
@@ -88,30 +88,29 @@ const postSignup = [
       // need to research more
       req.next = next;
       // if the query returns a member then an account is already registered with that email
-      // TODO - when #5 is closed this should redirect to getSignup() too
       if (members.length !== 0) {
         req.locals.status = 400;
         req.locals.alert.errorMessages.push('An account with that email already exists');
         return getSignup(req, res, next);
-      } else {
-        models.Member.generatePasswordHash(req.body.password).then((hash) => {
-          return models.Member.create({
-            email: req.body.email,
-            password: hash,
-            accend: false,
-            super_user: false,
-            private_user: false,
-          }).then((member) => {
-            // TODO - this automatically returns 302 response code - 201 would be better
-            // req.logIn requires use of callbacks, doesn't support promises
-            return req.logIn(member, (err) => {
-              if (err) return next(err);
-              return res.redirect('/');
-            });
-          }).catch(errorHandler);
-        }).catch(errorHandler);
       }
-    });
+      return models.Member.generatePasswordHash(req.body.password).then((hash) => {
+        return models.Member.create({
+          email: req.body.email,
+          password: hash,
+          accend: false,
+          super_user: false,
+          private_user: false,
+        }).then((member) => {
+          // TODO - this automatically returns 302 response code - 201 would be better.
+          // Can be accomplished once '/' handler is a function
+          // req.logIn requires use of callbacks, doesn't support promises
+          return req.logIn(member, (err) => {
+            if (err) return next(err);
+            return res.redirect('/');
+          });
+        }).catch(errorHandler);
+      }).catch(errorHandler);
+    }).catch(errorHandler);
   },
 ];
 exports.postSignup = postSignup;

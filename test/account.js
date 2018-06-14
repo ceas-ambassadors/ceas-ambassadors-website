@@ -154,7 +154,6 @@ describe('Account Tests', () => {
       // GET login while signed in
 
       // POST login while signed in
-    })
-    
+    });
   });
 });
