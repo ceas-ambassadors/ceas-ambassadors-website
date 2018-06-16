@@ -79,6 +79,9 @@ function createVariablesMiddleware(req, res, next) {
   if (typeof req.locals.alert.successMessages === 'undefined' || !Array.isArray(req.locals.alert.successMessages)) {
     req.locals.alert.successMessages = [];
   }
+  // set res.locals variables so that the views have access to them
+  res.locals.user = req.user;
+  res.locals.alert = req.locals.alert;
   // continue execution to next middleware handler
   next();
 }

@@ -29,13 +29,13 @@ It's important to understand what Express.js does - it is a middlware/router fra
 
 So, we have handlers setup for the appropriate functionality defined in the `controllers` directory.  A controller has a handful of parts that make it acceptable. If it's a POST request, it verifies it's inputs using [express-validator](). The controller should use promises (look up javascript promises if you don't know what that is) whenever possible, and only use callbacks when absolutely necessary. It'll help with code formatting in the log run! Once it becomes necessary to do something, the program should **return** that function, to ensure that execution of the controller stops. 
 
-All handlers, because of custom middleware, have access to special variables defined in `req.locals`. These functions are defined in custom middleware in `app.js`. When rendering a page, you should almost always reference objects, because this is how information like status and alerts are passed between controllers.
+All handlers, because of custom middleware, have access to special variables defined in `req.locals`. These functions are defined in custom middleware in `app.js`. When rendering a page, you should almost always reference some of these objects, because this is how information like status and alerts are passed between controllers. Some objects, such as req.locals.alert are automatically sent to views via our custom middleware.
 
 ### req.locals defined in our custom middleware
 #### req.locals.status
 For passing status between controllers - for instance if an object is created and you want to render a new page, but still want to return a 201 status, this is how that should be passed.
 #### req.locals.alerts
-`alert.errorMessages`, `alert.infoMessages`, `info.successMessages` - for rendering flash messages. You should `.push(<message>)` to these arrays, in case there are already existing messages in the arrays.
+`alert.errorMessages`, `alert.infoMessages`, `info.successMessages` - for rendering flash messages. You should `.push(<message>)` to these arrays, in case there are already existing messages in the arrays. It is not necessary to send req.locals.alert to a render function, as our custom middleware handles sending it to the renderer automatically!
 
 ### Common variables that can be passed to view renderer
 These variables can be used on every render command that uses the view `views/layout.pug`. In almost all cases, you can just use `req.locals.alert`, as defined above.

@@ -10,7 +10,6 @@ const passport = require('passport');
 const getLogin = (req, res) => {
   res.status(req.locals.status).render('member/login', {
     title: 'Login',
-    alert: req.locals.alert,
   });
 };
 exports.getLogin = getLogin;
@@ -53,7 +52,6 @@ exports.getLogout = getLogout;
 const getSignup = (req, res) => {
   res.status(req.locals.status).render('member/signup', {
     title: 'Sign up',
-    alert: req.locals.alert,
   });
 };
 exports.getSignup = getSignup;
