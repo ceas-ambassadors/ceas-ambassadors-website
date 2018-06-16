@@ -2,13 +2,11 @@ const express = require('express');
 
 const router = express.Router();
 
+const indexHandler = require('../controllers/index');
 const memberHandler = require('../controllers/member');
 
 /* GET home page. */
-router.get('/', (req, res/* , next */) => {
-  // The alert here won't do anything because this can only be called by express
-  res.render('index', { title: 'Express' });
-});
+router.get('/', indexHandler.getIndex);
 
 /* GET login page */
 router.get('/login', memberHandler.getLogin);

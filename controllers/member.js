@@ -4,15 +4,15 @@
 const { check, validationResult } = require('express-validator/check');
 const models = require('../models/');
 const passport = require('passport');
+const indexHandler = require('./index');
 /**
  * GET for the login page
  */
-const getLogin = (req, res) => {
+const getLogin = (req, res, next) => {
   if (req.user) {
     req.locals.status = 400;
     req.locals.alert.errorMessages.push('You are already logged in.');
-    // TODO - need to use a handler for '/'
-    return res.redirect('/');
+    return indexHandler.getIndex(req, res, next);
   }
   return res.status(req.locals.status).render('member/login', {
     title: 'Login',
@@ -26,8 +26,7 @@ const postLogin = (req, res, next) => {
   if (req.user) {
     req.locals.status = 400;
     req.locals.alert.errorMessages.push('You are already logged in.');
-    // TODO - need to use a handler for '/'
-    return res.redirect('/');
+    return indexHandler.getIndex(req, res, next);
   }
   return passport.authenticate('local', (err, member, info) => {
     if (err) {
@@ -43,7 +42,9 @@ const postLogin = (req, res, next) => {
       if (loginErr) {
         return next(loginErr);
       }
-      return res.redirect('/');
+      req.locals.status = 200;
+      req.locals.alert.successMessages.push('Signed in!');
+      return indexHandler.getIndex(req, res, next);
     });
   })(req, res, next);
 };
@@ -52,21 +53,27 @@ exports.postLogin = postLogin;
 /**
  * GET for logout
  */
-const getLogout = (req, res) => {
-  req.logout();
-  res.redirect('/login');
+const getLogout = (req, res, next) => {
+  if (req.user) {
+    req.logout();
+    req.locals.status = 200;
+    req.locals.alert.successMessages.push('You have been logged out.');
+  } else {
+    req.locals.status = 400;
+    req.locals.alert.errorMessages.push('You are not signed in.');
+  }
+  return indexHandler.getIndex(req, res, next);
 };
 exports.getLogout = getLogout;
 
 /**
  * GET for the signup page
  */
-const getSignup = (req, res) => {
+const getSignup = (req, res, next) => {
   if (req.user) {
     req.locals.status = 400;
     req.locals.alert.errorMessages.push('You are already logged in.');
-    // TODO - need to use a handler for '/'
-    return res.redirect('/');
+    return indexHandler.getIndex(req, res, next);
   }
   return res.status(req.locals.status).render('member/signup', {
     title: 'Sign up',
@@ -99,8 +106,7 @@ const postSignup = [
     if (req.user) {
       req.locals.status = 400;
       req.locals.alert.errorMessages.push('You are already logged in.');
-      // TODO - need to use a handler for '/'
-      return res.redirect('/');
+      return indexHandler.getIndex(req, res, next);
     }
 
     // define handler for errors on this page
@@ -136,12 +142,12 @@ const postSignup = [
           super_user: false,
           private_user: false,
         }).then((member) => {
-          // TODO - this automatically returns 302 response code - 201 would be better.
-          // Can be accomplished once '/' handler is a function
           // req.logIn requires use of callbacks, doesn't support promises
           return req.logIn(member, (err) => {
             if (err) return next(err);
-            return res.redirect('/');
+            req.locals.status = 201;
+            req.locals.alert.successMessages.push('Account created!');
+            return indexHandler.getIndex(req, res, next);
           });
         }).catch(errorHandler);
       }).catch(errorHandler);
