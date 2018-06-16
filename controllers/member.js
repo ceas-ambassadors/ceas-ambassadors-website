@@ -8,6 +8,12 @@ const passport = require('passport');
  * GET for the login page
  */
 const getLogin = (req, res) => {
+  if (req.user) {
+    req.locals.status = 400;
+    req.locals.alert.errorMessages.push('You are already logged in.');
+    // TODO - need to use a handler for '/'
+    return res.redirect('/');
+  }
   res.status(req.locals.status).render('member/login', {
     title: 'Login',
   });
@@ -17,6 +23,12 @@ exports.getLogin = getLogin;
  * POST for the login page
  */
 const postLogin = (req, res, next) => {
+  if (req.user) {
+    req.locals.status = 400;
+    req.locals.alert.errorMessages.push('You are already logged in.');
+    // TODO - need to use a handler for '/'
+    return res.redirect('/');
+  }
   passport.authenticate('local', (err, member, info) => {
     if (err) {
       return next(err);
@@ -50,6 +62,12 @@ exports.getLogout = getLogout;
  * GET for the signup page
  */
 const getSignup = (req, res) => {
+  if (req.user) {
+    req.locals.status = 400;
+    req.locals.alert.errorMessages.push('You are already logged in.');
+    // TODO - need to use a handler for '/'
+    return res.redirect('/');
+  }
   res.status(req.locals.status).render('member/signup', {
     title: 'Sign up',
   });
@@ -77,6 +95,12 @@ const postSignup = [
       req.locals.status = 400;
       req.locals.alert.errorMessages.push('Passwords must match');
       return getSignup(req, res, next);
+    }
+    if (req.user) {
+      req.locals.status = 400;
+      req.locals.alert.errorMessages.push('You are already logged in.');
+      // TODO - need to use a handler for '/'
+      return res.redirect('/');
     }
 
     // define handler for errors on this page
