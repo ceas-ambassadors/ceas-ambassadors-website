@@ -14,7 +14,7 @@ const getLogin = (req, res) => {
     // TODO - need to use a handler for '/'
     return res.redirect('/');
   }
-  res.status(req.locals.status).render('member/login', {
+  return res.status(req.locals.status).render('member/login', {
     title: 'Login',
   });
 };
@@ -29,7 +29,7 @@ const postLogin = (req, res, next) => {
     // TODO - need to use a handler for '/'
     return res.redirect('/');
   }
-  passport.authenticate('local', (err, member, info) => {
+  return passport.authenticate('local', (err, member, info) => {
     if (err) {
       return next(err);
     }
@@ -68,7 +68,7 @@ const getSignup = (req, res) => {
     // TODO - need to use a handler for '/'
     return res.redirect('/');
   }
-  res.status(req.locals.status).render('member/signup', {
+  return res.status(req.locals.status).render('member/signup', {
     title: 'Sign up',
   });
 };
