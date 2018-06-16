@@ -135,7 +135,7 @@ passport.use(new LocalStrategy(
         email: username,
       },
     }).then((member) => {
-      if (typeof member !== 'undefined') {
+      if (member) {
         // Member exists, validate password
         return models.Member.comparePassword(password, member).then((res) => {
           if (res === false) {

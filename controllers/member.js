@@ -10,19 +10,32 @@ const passport = require('passport');
 const getLogin = (req, res) => {
   res.status(req.locals.status).render('member/login', {
     title: 'Login',
+    alert: req.locals.alert,
   });
 };
 exports.getLogin = getLogin;
 /**
  * POST for the login page
  */
-const postLogin = [
-  passport.authenticate('local'),
-  (req, res) => {
-    // TODO - call / handler to show login success alert!
-    res.redirect('/');
-  },
-];
+const postLogin = (req, res, next) => {
+  passport.authenticate('local', (err, member, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!member) {
+      // there was not a succesful login
+      req.locals.status = 401;
+      req.locals.alert.errorMessages.push(`${info.message}`);
+      return getLogin(req, res, next);
+    }
+    return req.logIn(member, (loginErr) => {
+      if (loginErr) {
+        return next(loginErr);
+      }
+      return res.redirect('/');
+    });
+  })(req, res, next);
+};
 exports.postLogin = postLogin;
 
 /**
