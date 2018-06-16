@@ -6,6 +6,7 @@
 // Immediately set environment to test
 process.env.NODE_ENV = 'test';
 const request = require('supertest');
+const assert = require('assert');
 const app = require('../app.js');
 const models = require('../models');
 
@@ -54,12 +55,14 @@ describe('Account Tests', () => {
         confirmPassword: 'password',
       })
       .expect(302, done);
+    // check that test@kurtjlewis.com was  added to the database
+    // TODO - this fails
   });
 
   // POST signup while signed in
 
   // POST signup with no email
-  it('POST signup wtih no email', (done) => {
+  it('POST signup wtih no email', () => {
     request.agent(app)
       .post('/signup')
       .send({
@@ -67,43 +70,73 @@ describe('Account Tests', () => {
         password: 'test_password',
         confirmPassword: 'test_password',
       })
-      .expect(400, done);
+      .expect(400);
+    // check that no accounts were added to the database
+    return models.Member.findAll({
+      where: {},
+    }).then((members) => {
+      assert.equal(members.length, 0);
+    });
   });
 
   // POST signup with no password
-  it('POST signup wtih no password', (done) => {
+  it('POST signup wtih no password', () => {
     request.agent(app)
       .post('/signup')
       .send({
-        email: 'test_email@test.com',
+        email: 'bad_email@kurtjlewis.com',
         password: '',
         confirmPassword: 'test_password',
       })
-      .expect(400, done);
+      .expect(400);
+    // check that bad_email@kurtjlewis.com was not added to the database
+    return models.Member.findAll({
+      where: {
+        email: 'bad_email@kurtjlewis.com',
+      },
+    }).then((members) => {
+      assert.equal(members.length, 0);
+    });
   });
 
   // POST signup with no confirmPassword
-  it('POST signup wtih no confirmPassword', (done) => {
+  it('POST signup wtih no confirmPassword', () => {
     request.agent(app)
       .post('/signup')
       .send({
-        email: 'test_email@test.com',
+        email: 'bad_email@kurtjlewis.com',
         password: 'test_password',
         confirmPassword: '',
       })
-      .expect(400, done);
+      .expect(400);
+    // check that bad_email@kurtjlewis.com was not added to the database
+    return models.Member.findAll({
+      where: {
+        email: 'bad_email@kurtjlewis.com',
+      },
+    }).then((members) => {
+      assert.equal(members.length, 0);
+    });
   });
 
   // POST signup with password != confirm password
-  it('POST signup wtih mismatched passwords', (done) => {
+  it('POST signup wtih mismatched passwords', () => {
     request.agent(app)
       .post('/signup')
       .send({
-        email: 'test_email@test.com',
+        email: 'bad_email@kurtjlewis.com',
         password: 'test_password',
         confirmPassword: 'test_password_bad',
       })
-      .expect(400, done);
+      .expect(400);
+    // check that bad_email@kurtjlewis.com was not added to the database
+    return models.Member.findAll({
+      where: {
+        email: 'bad_email@kurtjlewis.com',
+      },
+    }).then((members) => {
+      assert.equal(members.length, 0);
+    });
   });
 
   // GET logout without being signed in
