@@ -4,17 +4,16 @@
 const { check, validationResult } = require('express-validator/check');
 const models = require('../models/');
 const passport = require('passport');
-const indexHandler = require('./index');
 /**
  * GET for the login page
  */
-const getLogin = (req, res, next) => {
+const getLogin = (req, res) => {
   if (req.user) {
-    req.locals.status = 400;
-    req.locals.alert.errorMessages.push('You are already logged in.');
-    return indexHandler.getIndex(req, res, next);
+    req.session.status = 400;
+    req.session.alert.errorMessages.push('You are already logged in.');
+    return res.redirect('/');
   }
-  return res.status(req.locals.status).render('member/login', {
+  return res.status(res.locals.status).render('member/login', {
     title: 'Login',
   });
 };
@@ -24,9 +23,9 @@ exports.getLogin = getLogin;
  */
 const postLogin = (req, res, next) => {
   if (req.user) {
-    req.locals.status = 400;
-    req.locals.alert.errorMessages.push('You are already logged in.');
-    return indexHandler.getIndex(req, res, next);
+    req.session.status = 400;
+    req.session.alert.errorMessages.push('You are already logged in.');
+    return res.redirect('/');
   }
   return passport.authenticate('local', (err, member, info) => {
     if (err) {
@@ -34,17 +33,17 @@ const postLogin = (req, res, next) => {
     }
     if (!member) {
       // there was not a succesful login
-      req.locals.status = 401;
-      req.locals.alert.errorMessages.push(`${info.message}`);
+      res.locals.status = 401;
+      res.locals.alert.errorMessages.push(`${info.message}`);
       return getLogin(req, res, next);
     }
     return req.logIn(member, (loginErr) => {
       if (loginErr) {
         return next(loginErr);
       }
-      req.locals.status = 200;
-      req.locals.alert.successMessages.push('Signed in!');
-      return indexHandler.getIndex(req, res, next);
+      req.session.status = 200;
+      req.session.alert.successMessages.push('Signed in!');
+      return res.redirect('/');
     });
   })(req, res, next);
 };
@@ -53,29 +52,29 @@ exports.postLogin = postLogin;
 /**
  * GET for logout
  */
-const getLogout = (req, res, next) => {
+const getLogout = (req, res) => {
   if (req.user) {
     req.logout();
-    req.locals.status = 200;
-    req.locals.alert.successMessages.push('You have been logged out.');
+    req.session.status = 200;
+    req.session.alert.successMessages.push('You have been logged out.');
   } else {
-    req.locals.status = 400;
-    req.locals.alert.errorMessages.push('You are not signed in.');
+    req.session.status = 400;
+    req.session.alert.errorMessages.push('You are not signed in.');
   }
-  return indexHandler.getIndex(req, res, next);
+  return res.redirect('/');
 };
 exports.getLogout = getLogout;
 
 /**
  * GET for the signup page
  */
-const getSignup = (req, res, next) => {
+const getSignup = (req, res) => {
   if (req.user) {
-    req.locals.status = 400;
-    req.locals.alert.errorMessages.push('You are already logged in.');
-    return indexHandler.getIndex(req, res, next);
+    req.session.status = 400;
+    req.session.alert.errorMessages.push('You are already logged in.');
+    return res.redirect('/');
   }
-  return res.status(req.locals.status).render('member/signup', {
+  return res.status(res.locals.status).render('member/signup', {
     title: 'Sign up',
   });
 };
@@ -92,21 +91,21 @@ const postSignup = [
     const errors = validationResult(req).formatWith(({ msg }) => { return `${msg}`; });
     if (!errors.isEmpty()) {
       // There was a validation error
-      req.locals.status = 400;
-      req.locals.alert.errorMessages.push(errors.array());
+      res.locals.status = 400;
+      res.locals.alert.errorMessages.push(errors.array());
       // redirect to getSignup()
       return getSignup(req, res, next);
     }
     if (req.body.password !== req.body.confirmPassword) {
       // Passwords don't match - send back to signup page with error
-      req.locals.status = 400;
-      req.locals.alert.errorMessages.push('Passwords must match');
+      res.locals.status = 400;
+      res.locals.alert.errorMessages.push('Passwords must match');
       return getSignup(req, res, next);
     }
     if (req.user) {
-      req.locals.status = 400;
-      req.locals.alert.errorMessages.push('You are already logged in.');
-      return indexHandler.getIndex(req, res, next);
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('You are already logged in.');
+      return res.redirect('/');
     }
 
     // define handler for errors on this page
@@ -114,8 +113,8 @@ const postSignup = [
       // If the code gets this far, there was a problem with one of the sequelize calls
       // Try and send them back to the signup page
       console.log(err);
-      req.locals.status = 500;
-      req.locals.alert.errorMessages.push('There was a problem. If it persists please contact the tech chair.');
+      res.locals.status = 500;
+      res.locals.alert.errorMessages.push('There was a problem. If it persists please contact the tech chair.');
       return getSignup(req, res, next);
     };
 
@@ -124,14 +123,10 @@ const postSignup = [
         email: req.body.email,
       },
     }).then((members) => {
-      // TODO - this is a very temporary fix to the fact
-      // that as soon as you enter this promise callback req.next is undefined
-      // need to research more
-      req.next = next;
       // if the query returns a member then an account is already registered with that email
       if (members.length !== 0) {
-        req.locals.status = 400;
-        req.locals.alert.errorMessages.push('An account with that email already exists');
+        res.locals.status = 400;
+        res.locals.alert.errorMessages.push('An account with that email already exists');
         return getSignup(req, res, next);
       }
       return models.Member.generatePasswordHash(req.body.password).then((hash) => {
@@ -145,9 +140,9 @@ const postSignup = [
           // req.logIn requires use of callbacks, doesn't support promises
           return req.logIn(member, (err) => {
             if (err) return next(err);
-            req.locals.status = 201;
-            req.locals.alert.successMessages.push('Account created!');
-            return indexHandler.getIndex(req, res, next);
+            req.session.status = 201;
+            req.session.alert.successMessages.push('Account created!');
+            return res.redirect('/');
           });
         }).catch(errorHandler);
       }).catch(errorHandler);

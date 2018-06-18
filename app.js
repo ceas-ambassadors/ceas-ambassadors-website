@@ -54,34 +54,31 @@ models.sequelize.authenticate().then(() => {
  * Defines status variable if it does not exist
 */
 function createVariablesMiddleware(req, res, next) {
-  // create req.locals object if it does not exist
-  // req.locals is the prefferred way of passing local variables between middleware
-  if (typeof req.locals === 'undefined') {
-    req.locals = {};
+  if (typeof req.session.status !== 'undefined') {
+    res.locals.status = req.session.status;
+  } else {
+    res.locals.status = 200;
   }
-
-  // if the status property isn't a number, set it to 200 OK by default
-  if (typeof req.locals.status !== 'number') {
-    req.locals.status = 200;
+  req.session.status = 200;
+  if (typeof req.session.alert !== 'undefined') {
+    // If the alert object exists, set it to the local object so it will render
+    res.locals.alert = req.session.alert;
+  } else {
+    // Regardless of if alert exists, set it to an empty object
+    res.locals.alert = {};
+    // Set all arrays to empty
+    res.locals.alert.errorMessages = [];
+    res.locals.alert.infoMessages = [];
+    res.locals.alert.successMessages = [];
   }
-
-  // if the alert object doesn't exist, create it
-  if (typeof req.locals.alert === 'undefined') {
-    req.locals.alert = {};
-  }
-  // If the messages arrays don't exist, create
-  if (typeof req.locals.alert.errorMessages === 'undefined' || !Array.isArray(req.locals.alert.errorMessages)) {
-    req.locals.alert.errorMessages = [];
-  }
-  if (typeof req.locals.alert.infoMessages === 'undefined' || !Array.isArray(req.locals.alert.infoMessages)) {
-    req.locals.alert.infoMessages = [];
-  }
-  if (typeof req.locals.alert.successMessages === 'undefined' || !Array.isArray(req.locals.alert.successMessages)) {
-    req.locals.alert.successMessages = [];
-  }
+  // Regardless of if alert exists, set it to an empty object
+  req.session.alert = {};
+  // Set all arrays to empty
+  req.session.alert.errorMessages = [];
+  req.session.alert.infoMessages = [];
+  req.session.alert.successMessages = [];
   // set res.locals variables so that the views have access to them
   res.locals.user = req.user;
-  res.locals.alert = req.locals.alert;
   // continue execution to next middleware handler
   next();
 }

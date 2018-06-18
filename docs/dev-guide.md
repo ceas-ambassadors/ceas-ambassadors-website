@@ -29,16 +29,18 @@ It's important to understand what Express.js does - it is a middlware/router fra
 
 So, we have handlers setup for the appropriate functionality defined in the `controllers` directory.  A controller has a handful of parts that make it acceptable. If it's a POST request, it verifies it's inputs using [express-validator](). The controller should use promises (look up javascript promises if you don't know what that is) whenever possible, and only use callbacks when absolutely necessary. It'll help with code formatting in the log run! Once it becomes necessary to do something, the program should **return** that function, to ensure that execution of the controller stops. 
 
-All handlers, because of custom middleware, have access to special variables defined in `req.locals`. These functions are defined in custom middleware in `app.js`. When rendering a page, you should almost always reference some of these objects, because this is how information like status and alerts are passed between controllers. Some objects, such as req.locals.alert are automatically sent to views via our custom middleware.
-
-### req.locals defined in our custom middleware
-#### req.locals.status
+All handlers, because of custom middleware, have access to special variables defined in `res.locals`. These functions are defined in custom middleware in `app.js`. When rendering a page, you should almost always reference some of these objects, because this is how information like status and alerts are passed between controllers. Some objects, such as res.locals.alert and res.user are automatically sent to the rendering engine. 
+### res.locals/req.session defined in our custom middleware
+There is a difference between `res.locals` and `req.sesson`! You can think of `res.locals` as variables for **this** specific request - that is, on `render`, `redirect`, or `send`, they will be gone! Use it to set alert messages or status immediately before rendering. `res.locals` preload variables from the sent `req.session` - if the previous request sent alert messages or a status code, they will be in the `res.locals` when handler execution begins. As you might guess, `req.session` variables are sent to the next request - primarily for use when it is necessary to `redirect`. **Alerts cannot be sent across redirects without using `req.session`!** Use `req.session` to send success codes, alert messages, and etc when you will be redirecting before rendering a page.
+#### res.locals.status / req.session.status
 For passing status between controllers - for instance if an object is created and you want to render a new page, but still want to return a 201 status, this is how that should be passed.
-#### req.locals.alerts
-`alert.errorMessages`, `alert.infoMessages`, `info.successMessages` - for rendering flash messages. You should `.push(<message>)` to these arrays, in case there are already existing messages in the arrays. It is not necessary to send req.locals.alert to a render function, as our custom middleware handles sending it to the renderer automatically!
+#### res.locals.alert / req.session.alert
+`alert.errorMessages`, `alert.infoMessages`, `info.successMessages` - for rendering flash messages. You should `.push(<message>)` to these arrays, in case there are already existing messages in the arrays. It is not necessary to send res.locals.alert to a render function, as our custom middleware handles sending it to the renderer automatically!
+#### res.user
+`res.user` is the currently signed in member.
 
 ### Common variables that can be passed to view renderer
-These variables can be used on every render command that uses the view `views/layout.pug`. In almost all cases, you can just use `req.locals.alert`, as defined above.
+These variables can be used on every render command that uses the view `views/layout.pug`. In almost all cases, you can just use `res.locals.alert`, as defined above.
 ```
 {
     'title': 'Title for tab goes here',

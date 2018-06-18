@@ -6,6 +6,6 @@
 // const models = require('../models/');
 
 const getIndex = (req, res) => {
-  return res.status(req.locals.status).render('index', { title: 'CEAS Ambassadors' });
+  return res.status(res.locals.status).render('index', { title: 'CEAS Ambassadors' });
 };
 exports.getIndex = getIndex;

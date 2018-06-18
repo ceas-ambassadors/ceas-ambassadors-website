@@ -54,6 +54,7 @@ describe('Account Tests', () => {
         password: 'password',
         confirmPassword: 'password',
       })
+      .redirects(1)
       .expect(201, done);
     // check that test@kurtjlewis.com was  added to the database
     // TODO - this fails
