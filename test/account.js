@@ -28,9 +28,15 @@ describe('Account Tests', () => {
   // Make sure there are no records after tests finish
   afterEach((done) => {
     // delete all records in Member table
-    models.Member.destroy({
+    const memberPromise = models.Member.destroy({
       where: {},
-    }).finally(done);
+    });
+    const sessionPromise = models.Session.destroy({
+      where: {},
+    });
+    Promise.all([memberPromise, sessionPromise]).then(() => {
+      done();
+    });
   });
 
   // GET /login/

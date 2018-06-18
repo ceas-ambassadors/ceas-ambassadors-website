@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     data: DataTypes.TEXT,
   }, {
     // set so that all autocreated table names are underscored
-    underscored: true,
+    // underscored: true,
   });
   return Session;
 };
