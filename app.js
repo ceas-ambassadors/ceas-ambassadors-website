@@ -9,6 +9,7 @@ const logger = require('morgan');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 // Load models directory (which loads ./models/index)
 const models = require('./models');
@@ -26,11 +27,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+/**
+ * Session configuration
+ */
+const sequelizeSessionStore = new SequelizeStore({
+  db: models.sequelize,
+  table: 'Session',
+});
 // TODO - use a better secret before we go to prod
 // TODO - see notes on cookie.secure here https://github.com/expressjs/session#compatible-session-stores
-app.use(session({ secret: 'keyboard cat' }));
+app.use(session({
+  secret: 'keyboard cat',
+  store: sequelizeSessionStore,
+  resave: false,
+  // proxy: true // if you do SSL outside of node
+}));
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 /**
  * Database configuration
@@ -103,22 +117,6 @@ app.use((err, req, res/* , next */) => {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
-});
-
-/**
- * Database configuration
- * The actual connecting to the database happend in `./models/index.js`,
- * this file just syncs the models and verifies the connection is valid
- */
-// Sync models - very important step
-models.sequelize.sync();
-// Check connection
-models.sequelize.authenticate().then(() => {
-  console.log('Connection to database established.');
-}).catch((err) => {
-  console.error('Unable to connect to the database:', err);
-  // Kill the process because there's no connection to the database
-  process.exit();
 });
 
 /**
