@@ -9,6 +9,7 @@ const request = require('supertest');
 const assert = require('assert');
 const app = require('../app.js');
 const models = require('../models');
+const common = require('./common');
 
 describe('Account Tests', () => {
   before((done) => {
@@ -22,29 +23,13 @@ describe('Account Tests', () => {
   // Make sure there are no records before tests start
   beforeEach((done) => {
     // delete all records in Member table
-    const memberPromise = models.Member.destroy({
-      where: {},
-    });
-    const sessionPromise = models.Session.destroy({
-      where: {},
-    });
-    Promise.all([memberPromise, sessionPromise]).then(() => {
-      done();
-    });
+    common.clearDatabase(done);
   });
 
   // Make sure there are no records after tests finish
   afterEach((done) => {
     // delete all records in Member table
-    const memberPromise = models.Member.destroy({
-      where: {},
-    });
-    const sessionPromise = models.Session.destroy({
-      where: {},
-    });
-    Promise.all([memberPromise, sessionPromise]).then(() => {
-      done();
-    });
+    common.clearDatabase(done);
   });
 
   // GET /login/

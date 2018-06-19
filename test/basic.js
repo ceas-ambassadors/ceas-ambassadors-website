@@ -7,33 +7,18 @@
 process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const app = require('../app.js');
-const models = require('../models');
+// const models = require('../models');
+const common = require('./common');
 
 describe('Basic Tests', () => {
   // any actions that need done before all tests in this suite
   before((done) => {
-    const memberPromise = models.Member.destroy({
-      where: {},
-    });
-    const sessionPromise = models.Session.destroy({
-      where: {},
-    });
-    Promise.all([memberPromise, sessionPromise]).then(() => {
-      done();
-    });
+    common.clearDatabase(done);
   });
 
   // any actions that need done after all tests in this suite
   after((done) => {
-    const memberPromise = models.Member.destroy({
-      where: {},
-    });
-    const sessionPromise = models.Session.destroy({
-      where: {},
-    });
-    Promise.all([memberPromise, sessionPromise]).then(() => {
-      done();
-    });
+    common.clearDatabase(done);
   });
 
   // Test /
