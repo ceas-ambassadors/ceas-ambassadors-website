@@ -11,6 +11,14 @@ const app = require('../app.js');
 const models = require('../models');
 
 describe('Account Tests', () => {
+  before((done) => {
+    // tests start so quick after the app code is loaded
+    // that sequelize hasn't had a chance to create the Session table
+    // so force sync it to make sure it is there.s
+    models.Session.sync();
+    done();
+  });
+
   // Make sure there are no records before tests start
   beforeEach((done) => {
     // delete all records in Member table
