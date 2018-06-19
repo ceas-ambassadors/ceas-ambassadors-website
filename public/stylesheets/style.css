@@ -67,3 +67,17 @@ a {
 #content {
   margin: 5% 10% 5% 10%;
 }
+
+/*********************
+*   Footer Styles    *
+*********************/
+/* Locks the footer to the bottom of the page */
+#footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #f4f7fc;
+  text-align: center;
+}
