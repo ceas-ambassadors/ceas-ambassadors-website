@@ -1,6 +1,11 @@
 
 'use strict';
 
+const bcrypt = require('bcrypt');
+
+// the number of rounds the salt will be generated
+const saltRounds = 10;
+
 module.exports = (sequelize, DataTypes) => {
   const Member = sequelize.define('Member', {
     email: {
@@ -59,5 +64,25 @@ module.exports = (sequelize, DataTypes) => {
       through: models.Attendance,
     });
   };
+
+  /**
+   * Generate password hash - returns promise of hash
+   * @param password - the plaintext password to be hashed
+   * @return promise function(hash) = password hash
+   */
+  Member.generatePasswordHash = (password) => {
+    return bcrypt.hash(password, saltRounds);
+  };
+
+  /**
+   * Compare password hash - returns promise of result
+   * @param password - the plaintext password to be compared
+   * @param member - the member to compare the hashed password to
+   * @return promise function(res) = true/false
+   */
+  Member.comparePassword = (password, member) => {
+    return bcrypt.compare(password, member.password);
+  };
+
   return Member;
 };

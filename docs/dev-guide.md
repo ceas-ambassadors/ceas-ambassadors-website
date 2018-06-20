@@ -21,8 +21,26 @@ CSS styles can be found in `public/stylesheets` directory. I intend to use only 
 
 Similar to CSS, javascript and image files are also held in the `public` directory. These files are where you would write frontend javascript (if we need it), which can then be included on pug files with the [`script` directive](https://pugjs.org/language/includes.html).
 
+## Working on the backend
+### Structure
+The backend is structured in a model view controller (MVC) architecture. All three parts are in folders of the appropriate name. Models define attributes, methods, and sequelize configurations - you can find more information on sequelize in [database.md](database.md). Views are defined using pug, as written above in the frontend section. Controllers are where the bulk of the backend code can be found, and what most of this section will be devoted to.
+
+It's important to understand what Express.js does - it is a middlware/router framework. Middlware refers to the different code that runs when you hit an endpoint (for instance, `/login`). Each of the defined middleware functions run, ending in your function, followed by error handlers and etc. Routes are defined in the `routes` directory. Here, specific routes are mapped to controller functions - there are controller functions for each type of http request a route expects. For instance, a handler for a get request to a page, that queries the database and sends the data to the renderer, or a handler for post requests to an endpoint, that verifies inputs and creates a new item in the databse before directing the user to a new page.
+
+So, we have handlers setup for the appropriate functionality defined in the `controllers` directory.  A controller has a handful of parts that make it acceptable. If it's a POST request, it verifies it's inputs using [express-validator](). The controller should use promises (look up javascript promises if you don't know what that is) whenever possible, and only use callbacks when absolutely necessary. It'll help with code formatting in the log run! Once it becomes necessary to do something, the program should **return** that function, to ensure that execution of the controller stops. 
+
+All handlers, because of custom middleware, have access to special variables defined in `res.locals`. These functions are defined in custom middleware in `app.js`. When rendering a page, you should almost always reference some of these objects, because this is how information like status and alerts are passed between controllers. Some objects, such as res.locals.alert and res.user are automatically sent to the rendering engine. 
+### res.locals/req.session defined in our custom middleware
+There is a difference between `res.locals` and `req.sesson`! You can think of `res.locals` as variables for **this** specific request - that is, on `render`, `redirect`, or `send`, they will be gone! Use it to set alert messages or status immediately before rendering. `res.locals` preload variables from the sent `req.session` - if the previous request sent alert messages or a status code, they will be in the `res.locals` when handler execution begins. As you might guess, `req.session` variables are sent to the next request - primarily for use when it is necessary to `redirect`. **Alerts cannot be sent across redirects without using `req.session`!** Use `req.session` to send success codes, alert messages, and etc when you will be redirecting before rendering a page.
+#### res.locals.status / req.session.status
+For passing status between controllers - for instance if an object is created and you want to render a new page, but still want to return a 201 status, this is how that should be passed.
+#### res.locals.alert / req.session.alert
+`alert.errorMessages`, `alert.infoMessages`, `info.successMessages` - for rendering flash messages. You should `.push(<message>)` to these arrays, in case there are already existing messages in the arrays. It is not necessary to send res.locals.alert to a render function, as our custom middleware handles sending it to the renderer automatically!
+#### res.user
+`res.user` is the currently signed in member.
+
 ### Common variables that can be passed to view renderer
-These variables can be used on every render command that uses the view `views/layout.pug`.
+These variables can be used on every render command that uses the view `views/layout.pug`. In almost all cases, you can just use `res.locals.alert`, as defined above.
 ```
 {
     'title': 'Title for tab goes here',
