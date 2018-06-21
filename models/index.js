@@ -12,9 +12,29 @@ var fs        = require('fs');
 var path      = require('path');
 var Sequelize = require('sequelize');
 var basename  = path.basename(__filename);
-var env       = process.env.NODE_ENV || 'development';
-var config    = require(__dirname + '/../config/config.js')[env];
+var env       = 'development';//process.env.NODE_ENV || 'development';
+var config    = 0;//require(__dirname + '/../config/config.js')[env];
 var db        = {};
+
+function UserException(message) {
+  this.message = message;
+  this.name = 'UserException';
+}
+
+if (typeof env == 'undefined'){
+  throw new UserException('env is undefined')
+} else if (env != 'development' || env != 'test' || env != 'production') {
+  throw new UserException('Invalid environment variable in /../models/index.js')
+}
+
+// Checks if config.url is defined
+if (typeof config.url == 'undefined') {
+  throw new UserException('Invalid config.url in /../models/index.js')
+}
+
+
+
+// if (env != 'development' || env != 'production' || env != 'test') throw "Check env in index.js";
 
 var sequelize = new Sequelize(config.url, config);
 
