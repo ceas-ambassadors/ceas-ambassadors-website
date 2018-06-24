@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+  h1 Create event
+  form(id='createEvent', action='create', method='post')
+    div
+      label Event Title:
+      input(type='text', name='title', placeholder='Tuesday Tour')
+    divmodule.exports = router;
+      label Start Time:
+      input(type='text', name='startTime', placeholder='2018 January 01 10:00 AM')
+    div
+      label End Time:
+      input(type='text', name='endTime', placeholder='2018 January 01 11:00 AM')
+    div
+      label Location:
+      input(type='text', name='location', placeholder='653 Baldwin Hall')
+    div
+      label Description:
+      input(type='text', name='description', placeholder='This event...')
+    div
+      label Public:
+      input(type='checkbox', name='isPublic', checked=true)
+      |  Mark event as public - members can sign up.
+    div
+      label Meeting:
+      input(type='checkbox', name='isMeeting', checked=false)
+      |  This is a meeting
+    input(type='submit', name='create', value='Create Event')
