@@ -8,7 +8,7 @@
  * GET for the create event page
  */
 const getCreate = (req, res) => {
-  if (req.user) {
+  if (!req.user) {
     req.session.status = 401;
     req.session.alert.errorMessages.push('You must be logged in to create an event.');
     // TODO - redirect to event page

@@ -23,13 +23,17 @@ describe('Account Tests', () => {
   // Make sure there are no records before tests start
   beforeEach((done) => {
     // delete all records in Member table
-    common.clearDatabase(done);
+    common.clearDatabase().then(() => {
+      done();
+    });
   });
 
   // Make sure there are no records after tests finish
   afterEach((done) => {
     // delete all records in Member table
-    common.clearDatabase(done);
+    common.clearDatabase().then(() => {
+      done();
+    });
   });
 
   // GET /login/
