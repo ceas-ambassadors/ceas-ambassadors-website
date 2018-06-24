@@ -15,6 +15,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const models = require('./models');
 
 const indexRouter = require('./routes/index');
+const eventRouter = require('./routes/event');
 
 const app = express();
 
@@ -102,6 +103,7 @@ app.use(createVariablesMiddleware);
  * define routes
  */
 app.use('/', indexRouter);
+app.use('/event', eventRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
