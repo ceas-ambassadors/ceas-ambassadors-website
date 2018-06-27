@@ -16,6 +16,18 @@ var env       = process.env.NODE_ENV || 'development';
 var config    = require(__dirname + '/../config/config.js')[env];
 var db        = {};
 
+// Verifies that env is both defined, and either 'development', 'test', or 'production'
+if (typeof env === 'undefined'){
+  throw "env is undefined";
+} else if (env !== 'development' && env !== 'test' && env !== 'production') {
+  throw "Invalid environment variable in /../models/index.js";
+}
+
+// Checks if config.url is defined
+if (typeof config.url == 'undefined') {
+  throw "Invalid config.url in /../models/index.js";
+}
+
 var sequelize = new Sequelize(config.url, config);
 
 fs
