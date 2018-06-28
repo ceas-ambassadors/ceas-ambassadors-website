@@ -11,7 +11,9 @@ const getLogin = (req, res) => {
   if (req.user) {
     req.session.status = 400;
     req.session.alert.errorMessages.push('You are already logged in.');
-    return res.redirect('/');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
   }
   return res.status(res.locals.status).render('member/login', {
     title: 'Login',
@@ -25,7 +27,9 @@ const postLogin = (req, res, next) => {
   if (req.user) {
     req.session.status = 400;
     req.session.alert.errorMessages.push('You are already logged in.');
-    return res.redirect('/');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
   }
   return passport.authenticate('local', (err, member, info) => {
     if (err) {
@@ -43,7 +47,9 @@ const postLogin = (req, res, next) => {
       }
       req.session.status = 200;
       req.session.alert.successMessages.push('Signed in!');
-      return res.redirect('/');
+      return req.session.save(() => {
+        return res.redirect('/');
+      });
     });
   })(req, res, next);
 };
@@ -61,7 +67,9 @@ const getLogout = (req, res) => {
     req.session.status = 400;
     req.session.alert.errorMessages.push('You are not signed in.');
   }
-  return res.redirect('/');
+  return req.session.save(() => {
+    return res.redirect('/');
+  });
 };
 exports.getLogout = getLogout;
 
@@ -72,7 +80,9 @@ const getSignup = (req, res) => {
   if (req.user) {
     req.session.status = 400;
     req.session.alert.errorMessages.push('You are already logged in.');
-    return res.redirect('/');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
   }
   return res.status(res.locals.status).render('member/signup', {
     title: 'Sign up',
@@ -105,7 +115,9 @@ const postSignup = [
     if (req.user) {
       req.session.status = 400;
       req.session.alert.errorMessages.push('You are already logged in.');
-      return res.redirect('/');
+      return req.session.save(() => {
+        return res.redirect('/');
+      });
     }
 
     // define handler for errors on this page
@@ -142,7 +154,9 @@ const postSignup = [
             if (err) return next(err);
             req.session.status = 201;
             req.session.alert.successMessages.push('Account created!');
-            return res.redirect('/');
+            return req.session.save(() => {
+              return res.redirect('/');
+            });
           });
         }).catch(errorHandler);
       }).catch(errorHandler);
