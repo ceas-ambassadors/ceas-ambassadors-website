@@ -26,22 +26,23 @@ describe('Event Tests', () => {
   });
 
   it('GET create not signed in', (done) => {
-    myApp = request.agent(app);
-    myApp.get('/event/create')
+    request.agent(app)
+      .get('/event/create')
       .redirects(1)
       .expect(401, done);
   });
 
   describe('Event tests which require a signed in user', () => {
+    let agent = null;
     beforeEach((done) => {
-      common.createNormalUserSession().then(() => {
+      agent = request.agent(app);
+      common.createNormalUserSession(agent).then(() => {
         done();
       });
     });
 
     it('GET create', (done) => {
-      request.agent(app)
-        .get('/event/create')
+      agent.get('/event/create')
         .expect(200, done);
     });
   });

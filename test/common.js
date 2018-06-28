@@ -3,8 +3,8 @@
  */
 process.env.NODE_ENV = 'test';
 const models = require('../models');
-const request = require('supertest');
-const app = require('../app.js');
+// const request = require('supertest');
+// const app = require('../app.js');
 
 const clearDatabase = () => {
   const memberPromise = models.Member.destroy({
@@ -21,7 +21,7 @@ exports.clearDatabase = clearDatabase;
  * Creates a normal user and signs them in, creating a user session
  * @param {*} done
  */
-const createNormalUserSession = () => {
+const createNormalUserSession = (agent) => {
   return models.Member.generatePasswordHash('password').then((passwordHash) => {
     return models.Member.create({
       email: 'normal@kurtjlewis.com',
@@ -30,7 +30,7 @@ const createNormalUserSession = () => {
       super_user: false,
       private_user: false,
     }).then(() => {
-      return request.agent(app)
+      return agent
         .post('/login')
         .send({
           email: 'normal@kurtjlewis.com',
