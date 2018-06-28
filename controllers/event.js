@@ -12,7 +12,9 @@ const getCreate = (req, res) => {
     req.session.status = 401;
     req.session.alert.errorMessages.push('You must be logged in to create an event.');
     // TODO - redirect to event page
-    return res.redirect('/');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
   }
   // TODO - check that user is a super user
   return res.status(res.locals.status).render('event/create', {
