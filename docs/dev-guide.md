@@ -39,6 +39,9 @@ For passing status between controllers - for instance if an object is created an
 #### res.user
 `res.user` is the currently signed in member.
 
+### Why does every `res.redirect()` call do a `req.session.save()`?
+This is because of a problem with [express-session](https://github.com/expressjs/session/issues/74) where sessions cannot be saved as a blocking event for the server response. Here's a relevant issue on the [connect-session-sequelize module](https://github.com/mweibel/connect-session-sequelize/issues/20). So, we have to manually ensure that all sessions are saved before sent back to the user. I hope to eventually override the `res.redirect` call to enable saving the session automatically before actually redirecting. One option for this is [express-interceptor](https://www.npmjs.com/package/express-interceptor).
+
 ### Common variables that can be passed to view renderer
 These variables can be used on every render command that uses the view `views/layout.pug`. In almost all cases, you can just use `res.locals.alert`, as defined above.
 ```
