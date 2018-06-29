@@ -51,8 +51,8 @@ describe('Account Tests', () => {
   });
 
   // POST signup
-  it('POST signup', (done) => {
-    request.agent(app)
+  it('POST signup', () => {
+    response = request.agent(app)
       .post('/signup')
       .send({
         email: 'test@kurtjlewis.com',
@@ -60,16 +60,24 @@ describe('Account Tests', () => {
         confirmPassword: 'password',
       })
       .redirects(1)
-      .expect(201, done);
+      .expect(201);
     // check that test@kurtjlewis.com was  added to the database
-    // TODO - this fails
+    return response.then(() => {
+      return models.Member.findAll({
+        where: {
+          email: 'test@kurtjlewis.com',
+        },
+      }).then((members) => {
+        assert(members[0], 'The member does not exist');
+      });
+    });
   });
 
   // POST signup while signed in
 
   // POST signup with no email
   it('POST signup wtih no email', () => {
-    request.agent(app)
+    response = request.agent(app)
       .post('/signup')
       .send({
         email: '',
@@ -78,16 +86,18 @@ describe('Account Tests', () => {
       })
       .expect(400);
     // check that no accounts were added to the database
-    return models.Member.findAll({
-      where: {},
-    }).then((members) => {
-      assert.equal(members.length, 0);
+    return response.then(() => {
+      return models.Member.findAll({
+        where: {},
+      }).then((members) => {
+        assert.equal(members.length, 0);
+      });
     });
   });
 
   // POST signup with no password
   it('POST signup wtih no password', () => {
-    request.agent(app)
+    response = request.agent(app)
       .post('/signup')
       .send({
         email: 'bad_email@kurtjlewis.com',
@@ -96,18 +106,20 @@ describe('Account Tests', () => {
       })
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
-    return models.Member.findAll({
-      where: {
-        email: 'bad_email@kurtjlewis.com',
-      },
-    }).then((members) => {
-      assert.equal(members.length, 0);
+    return response.then(() => {
+      return models.Member.findAll({
+        where: {
+          email: 'bad_email@kurtjlewis.com',
+        },
+      }).then((members) => {
+        assert.equal(members.length, 0);
+      });
     });
   });
 
   // POST signup with no confirmPassword
   it('POST signup wtih no confirmPassword', () => {
-    request.agent(app)
+    response = request.agent(app)
       .post('/signup')
       .send({
         email: 'bad_email@kurtjlewis.com',
@@ -116,18 +128,20 @@ describe('Account Tests', () => {
       })
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
-    return models.Member.findAll({
-      where: {
-        email: 'bad_email@kurtjlewis.com',
-      },
-    }).then((members) => {
-      assert.equal(members.length, 0);
+    return response.then(() => {
+      return models.Member.findAll({
+        where: {
+          email: 'bad_email@kurtjlewis.com',
+        },
+      }).then((members) => {
+        assert.equal(members.length, 0);
+      });
     });
   });
 
   // POST signup with password != confirm password
   it('POST signup wtih mismatched passwords', () => {
-    request.agent(app)
+    response = request.agent(app)
       .post('/signup')
       .send({
         email: 'bad_email@kurtjlewis.com',
@@ -136,12 +150,14 @@ describe('Account Tests', () => {
       })
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
-    return models.Member.findAll({
-      where: {
-        email: 'bad_email@kurtjlewis.com',
-      },
-    }).then((members) => {
-      assert.equal(members.length, 0);
+    return response.then(() => {
+      return models.Member.findAll({
+        where: {
+          email: 'bad_email@kurtjlewis.com',
+        },
+      }).then((members) => {
+        assert.equal(members.length, 0);
+      });
     });
   });
 

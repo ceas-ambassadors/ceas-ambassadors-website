@@ -2,8 +2,8 @@
  * This page is home to all code for controlling the member model
  */
 const { check, validationResult } = require('express-validator/check');
-const models = require('../models/');
 const passport = require('passport');
+const models = require('../models/');
 /**
  * GET for the login page
  */
@@ -102,7 +102,8 @@ const postSignup = [
     if (!errors.isEmpty()) {
       // There was a validation error
       res.locals.status = 400;
-      res.locals.alert.errorMessages.push(errors.array());
+      // append array items as separate items in array
+      res.locals.alert.errorMessages.push(...errors.array());
       // redirect to getSignup()
       return getSignup(req, res, next);
     }
