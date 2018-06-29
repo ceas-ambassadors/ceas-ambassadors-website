@@ -27,6 +27,8 @@ exports.getCreate = getCreate;
  * POST for the create event page
  * @param {*} req - incoming request
  * @param {*} res - outgoing response
+ * @description Expects the following req.body objects:
+ * `title`, `startTime`, `endTime`, `location`, `description`, `isMeeting`, `isPublic`
  */
 const postCreate = [
   check('title').not().isEmpty().withMessage('A title must be set.'),
@@ -83,7 +85,6 @@ const postCreate = [
       isMeeting = true;
     }
 
-    console.log(req.body);
     // create the event
     return models.Event.create({
       title: req.body.title,
@@ -99,7 +100,7 @@ const postCreate = [
       req.session.status = 201;
       req.session.alert.successMessages.push('Event created!');
       return req.session.save(() => {
-        // TODO: redirect to events listing page
+        // TODO: redirect to event details page
         return res.redirect('/');
       });
     }).catch((err) => {

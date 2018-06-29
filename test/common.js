@@ -13,7 +13,10 @@ const clearDatabase = () => {
   const sessionPromise = models.Session.destroy({
     where: {},
   });
-  return Promise.all([memberPromise, sessionPromise]);
+  const eventPromise = models.Event.destroy({
+    where: {},
+  });
+  return Promise.all([memberPromise, sessionPromise, eventPromise]);
 };
 exports.clearDatabase = clearDatabase;
 
