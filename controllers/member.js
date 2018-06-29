@@ -2,8 +2,8 @@
  * This page is home to all code for controlling the member model
  */
 const { check, validationResult } = require('express-validator/check');
-const models = require('../models/');
 const passport = require('passport');
+const models = require('../models/');
 /**
  * GET for the login page
  */
