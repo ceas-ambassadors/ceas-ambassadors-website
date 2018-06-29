@@ -102,7 +102,8 @@ const postSignup = [
     if (!errors.isEmpty()) {
       // There was a validation error
       res.locals.status = 400;
-      res.locals.alert.errorMessages.push(errors.array());
+      // append array items as separate items in array
+      res.locals.alert.errorMessages.push(...errors.array());
       // redirect to getSignup()
       return getSignup(req, res, next);
     }
