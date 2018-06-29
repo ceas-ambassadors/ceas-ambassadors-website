@@ -60,9 +60,9 @@ have been written.
 ## General Website
 ### [C] Testing framework
 Need a way to make writing tests easy - probably `mocha` and `chai`.
-### [I] Alert system
+### [C] Alert system
 Need an easy way to notify users that something has happened - using a notification system like the one on the old website works well. It would be an argument that could be passed to any render, because the base render page would render messages (including error, success, and info). Sometimes this is referred to as a flash
-### [I] Footer
+### [C] Footer
 Written by, copyright, github link, license.
 ### [I] Header
 Links to all pages
@@ -137,8 +137,8 @@ Super users should be able to insert a UC email to send an invite to a member. T
 instructions for creating their account. Via this email should be the only way a member can be created. 
 ### [I] Reset password
 Need to loop into an email service to send password reset tokens
-### [I] sign in
-### [I] sign out
+### [C] sign in
+### [C] sign out
 ### [I] change password
 
 # Maintenance
