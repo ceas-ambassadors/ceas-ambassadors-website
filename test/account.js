@@ -13,10 +13,6 @@ const common = require('./common');
 
 describe('Account Tests', () => {
   before((done) => {
-    // tests start so quick after the app code is loaded
-    // that sequelize hasn't had a chance to create the Session table
-    // so force sync it to make sure it is there.s
-    models.Session.sync();
     done();
   });
 
