@@ -10,23 +10,21 @@ const clearDatabase = () => {
   // tests start so quick after the app code is loaded
   // that sequelize hasn't had a chance to create all tables
   // so force sync it to make sure all tables are there
-  models.Session.sync();
-  models.Event.sync();
-  models.Member.sync();
-  models.Attendance.sync();
-  const memberPromise = models.Member.destroy({
-    where: {},
+  return models.sequelize.sync().then(() => {
+    const memberPromise = models.Member.destroy({
+      where: {},
+    });
+    const sessionPromise = models.Session.destroy({
+      where: {},
+    });
+    const eventPromise = models.Event.destroy({
+      where: {},
+    });
+    const attendancePromise = models.Attendance.destroy({
+      where: {},
+    });
+    return Promise.all([memberPromise, sessionPromise, eventPromise, attendancePromise]);
   });
-  const sessionPromise = models.Session.destroy({
-    where: {},
-  });
-  const eventPromise = models.Event.destroy({
-    where: {},
-  });
-  const attendancePromise = models.Attendance.destroy({
-    where: {},
-  });
-  return Promise.all([memberPromise, sessionPromise, eventPromise, attendancePromise]);
 };
 exports.clearDatabase = clearDatabase;
 
