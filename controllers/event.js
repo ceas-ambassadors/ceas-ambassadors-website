@@ -51,7 +51,8 @@ const postCreate = [
     if (!errors.isEmpty()) {
       // There was a validation error
       res.locals.status = 400;
-      res.locals.alert.errorMessages.push(errors.array());
+      // add errors as individual elements
+      res.locals.alert.errorMessages.push(...errors.array());
       // render create page
       return getCreate(req, res, next);
     }
