@@ -16,6 +16,7 @@ const models = require('./models');
 
 const indexRouter = require('./routes/index');
 const eventRouter = require('./routes/event');
+const memberRouter = require('./routes/member');
 
 const app = express();
 
@@ -104,6 +105,7 @@ app.use(createVariablesMiddleware);
  */
 app.use('/', indexRouter);
 app.use('/event', eventRouter);
+app.use('/member', memberRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
