@@ -68,7 +68,10 @@ This database is wiped entirely clean at the start and end of every test - so do
 This should hold production data.
 
 ## Tests
-There will be a comprehensive test suite for this codebase. To run tests, first configure the website using the above instructions - tests won't work until you've gotten the website to run yourself. Then, just run `npm test`.
+There will be a comprehensive test suite for this codebase. To run tests, first configure the website using the above instructions - tests won't work until you've gotten the website to run yourself. Then, just run `npm test`. Our tests are written using [mocha](https://mochajs.org/) as the runner, and [supertest](https://github.com/visionmedia/supertest) as a method of mocking a user on the website. In combination, they allow us to test the endpoints as if a user was using them. Ideally, all behavior on the website will have a test. This way, if we break that behavior with a code change or upgrading npm modules breaks behavior, it will be easy to determine.
+
+### Writing Tests
+To write tests, start by looking at existing tests - they are probably the easiest way to figure out how. Tests in Mocha are dividing into suites and test cases, and each test case should test one specific behavior. Use methods defined in `common.js` to avoid duplicating setup code, such as database clearing or session/event creation.
 
 ## Style Guide
 We'll follow the [Airbnb style guide](https://github.com/airbnb/javascript). I chose this because it was the most popular javascript style guide at the time of writing. It is enforced by a linter run on the Travis CI build. You can run it locally by running `npm run lint` after running `npm install`.
