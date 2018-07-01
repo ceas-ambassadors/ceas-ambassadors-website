@@ -13,12 +13,16 @@ const common = require('./common');
 describe('Basic Tests', () => {
   // any actions that need done before all tests in this suite
   before((done) => {
-    common.clearDatabase(done);
+    common.clearDatabase().then(() => {
+      done();
+    });
   });
 
   // any actions that need done after all tests in this suite
   after((done) => {
-    common.clearDatabase(done);
+    common.clearDatabase().then(() => {
+      done();
+    });
   });
 
   // Test /
