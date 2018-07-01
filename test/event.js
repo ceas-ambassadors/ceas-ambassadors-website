@@ -81,8 +81,8 @@ describe('Event Tests', () => {
       response = agent.post('/event/create')
         .send({
           title: 'Test Event!',
-          startTime: '2018 January 01 10:00 AM',
-          endTime: '2018 January 01 11:00 AM',
+          startTime: '2050 January 01 10:00 AM',
+          endTime: '2050 January 01 11:00 AM',
           location: 'Baldwin Hall',
           description: 'A test event',
           isPublic: 'on',
@@ -107,8 +107,8 @@ describe('Event Tests', () => {
       // POST create event with no title
       response = agent.post('/event/create')
         .send({
-          startTime: '2018 January 01 10:00 AM',
-          endTime: '2018 January 01 11:00 AM',
+          startTime: '2050 January 01 10:00 AM',
+          endTime: '2050 January 01 11:00 AM',
           location: 'Baldwin Hall',
           description: 'A test event',
           isPublic: 'on',
@@ -131,8 +131,8 @@ describe('Event Tests', () => {
       response = agent.post('/event/create')
         .send({
           title: 'No location event',
-          startTime: '2018 January 01 10:00 AM',
-          endTime: '2018 January 01 11:00 AM',
+          startTime: '2050 January 01 10:00 AM',
+          endTime: '2050 January 01 11:00 AM',
           description: 'A test event',
           isPublic: 'on',
           isMeeting: 'off',
@@ -154,7 +154,7 @@ describe('Event Tests', () => {
       response = agent.post('/event/create')
         .send({
           title: 'No Start time',
-          endTime: '2018 January 01 11:00 AM',
+          endTime: '2050 January 01 11:00 AM',
           location: 'Baldwin Hall',
           description: 'A test event',
           isPublic: 'on',
@@ -177,7 +177,7 @@ describe('Event Tests', () => {
       response = agent.post('/event/create')
         .send({
           title: 'No end time',
-          startTime: '2018 January 01 10:00 AM',
+          startTime: '2050 January 01 10:00 AM',
           location: 'Baldwin Hall',
           description: 'A test event',
           isPublic: 'on',
@@ -200,8 +200,32 @@ describe('Event Tests', () => {
       response = agent.post('/event/create')
         .send({
           title: 'Start time and end time out of order',
-          startTime: '2018 January 01 11:00 AM',
-          endTime: '2018 January 01 10:00 AM',
+          startTime: '2050 January 01 11:00 AM',
+          endTime: '2050 January 01 10:00 AM',
+          location: 'Baldwin Hall',
+          description: 'A test event',
+          isPublic: 'on',
+          isMeeting: 'off',
+        })
+        .expect(400);
+
+      return response.then(() => {
+        return models.Event.findAll({
+          where: {},
+        }).then((events) => {
+          // assert that event does not exist
+          assert.equal(events.length, 0, 'Event should not exist');
+        });
+      });
+    });
+
+    // POST create event with startTime < now
+    it('POST to create event with start time < now', () => {
+      response = agent.post('/event/create')
+        .send({
+          title: 'Start time and end time out of order',
+          startTime: '2000 January 01 10:00 AM',
+          endTime: '2000 January 01 11:00 AM',
           location: 'Baldwin Hall',
           description: 'A test event',
           isPublic: 'on',

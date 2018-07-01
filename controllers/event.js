@@ -62,15 +62,23 @@ const postCreate = [
     const endTime = Date.parse(req.body.endTime);
 
     // check for invalid start/end times
-    if (Number.isNaN(startTime) || Number.isNaN(endTime) || startTime > endTime) {
+    if (Number.isNaN(startTime) || Number.isNaN(endTime)) {
       if (Number.isNaN(startTime)) {
         res.locals.alert.errorMessages.push('The start time is not a valid time.');
       }
       if (Number.isNaN(endTime)) {
         res.locals.alert.errorMessages.push('The end time is not a valid time.');
       }
-      if (startTime >= endTime && Number.isNaN(startTime) && Number.isNaN(endTime)) {
-        res.locals.alert.errorMessages.push('The start time must be before the end time.');
+      res.locals.status = 400;
+      return getCreate(req, res, next);
+    }
+    // Make sure the times are in the future and the end time is after the start time
+    if (startTime >= endTime || startTime < Date.now()) {
+      if (startTime < Date.now()) {
+        res.locals.alert.errorMessages.push('The start time must be in the future.');
+      }
+      if (startTime >= endTime) {
+        res.locals.alert.errorMessages.push('The end time must be after the start time.');
       }
       res.locals.status = 400;
       return getCreate(req, res, next);
