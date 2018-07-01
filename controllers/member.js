@@ -165,3 +165,18 @@ const postSignup = [
   },
 ];
 exports.postSignup = postSignup;
+
+const getSettings = (req, res) => {
+  // Ensure there is a user signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be signed in to view settings.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+  return res.status(res.locals.status).render('member/settings', {
+    title: 'Settings',
+  });
+};
+exports.getSettings = getSettings;

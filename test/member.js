@@ -9,3 +9,7 @@ process.env.NODE_ENV = 'test';
 // const app = require('../app.js');
 // const models = require('../models');
 // const common = require('./common');
+
+describe('Member tests', () => {
+
+});

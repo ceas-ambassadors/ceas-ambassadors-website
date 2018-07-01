@@ -23,4 +23,7 @@ router.post('/signup', memberHandler.postSignup);
 /* GET logout page */
 router.get('/logout', memberHandler.getLogout);
 
+/* GET settings page */
+router.get('/settings', memberHandler.getSettings);
+
 module.exports = router;
