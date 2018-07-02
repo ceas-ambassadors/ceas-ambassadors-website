@@ -166,6 +166,73 @@ const postSignup = [
 ];
 exports.postSignup = postSignup;
 
+/**
+ * POST changePassword
+ * This endpoint is accessed via the /settings endpoint, so there is no GET
+ */
+const postChangePassword = [
+  check('currentPassword').not().isEmpty().withMessage('Current password must be provided'),
+  check('newPassword').not().isEmpty().withMessage('The new password must be provided.'),
+  check('repeatNewPassword').not().isEmpty().withMessage('The new password must be repeated.'),
+  (req, res) => {
+    const errors = validationResult(req).formatWith(({ msg }) => { return `${msg}`; });
+    if (!errors.isEmpty()) {
+      // There was a validation error
+      req.session.status = 400;
+      // append array items as separate items in array
+      req.session.alert.errorMessages.push(...errors.array());
+      // redirect to getSignup()
+      return req.session.save(() => {
+        return res.redirect('/settings');
+      });
+    }
+
+    // new password must match repeated new password
+    if (req.body.newPassword !== req.body.repeatNewPassword) {
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('New passwords must match.');
+      return req.session.save(() => {
+        return res.redirect('/settings');
+      });
+    }
+
+    // Generate hash of new password
+    const newPasswordPromise = models.Member.generatePasswordHash(req.body.newPassword);
+
+    // Ensure that the existing user password matches the inputted one
+    const passComparePromise = models.Member.comparePassword(req.body.currentPassword, req.user);
+
+    // use Promise.all so that the promises can resolve without dependency
+    return Promise.all([newPasswordPromise, passComparePromise]).then((output) => {
+      // output[0] => output of newPasswordPromise
+      // output[1] => output of passComparePromise
+      if (output[1] === true) {
+        // the passwords matched so update the member db entry
+        return req.user.update({
+          password: output[0],
+        }).then(() => {
+          req.session.alert.successMessages.push('Password changed!');
+          return req.session.save(() => {
+            return res.redirect('/settings');
+          });
+        });
+      }
+      // the passwords did not match
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('The current password did not match the saved password.');
+      return req.session.save(() => {
+        return res.redirect('/settings');
+      });
+    });
+  },
+];
+exports.postChangePassword = postChangePassword;
+
+/**
+ * Render the settings page
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
 const getSettings = (req, res) => {
   // Ensure there is a user signed in
   if (!req.user) {

@@ -26,4 +26,7 @@ router.get('/logout', memberHandler.getLogout);
 /* GET settings page */
 router.get('/settings', memberHandler.getSettings);
 
+/* POST changePassword */
+router.post('/changePassword', memberHandler.postChangePassword);
+
 module.exports = router;
