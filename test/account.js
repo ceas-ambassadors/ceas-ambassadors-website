@@ -193,15 +193,20 @@ describe('Account Tests', () => {
     // Try to login - should also hit logout after verifying - need not test logout's success
 
     describe('Tests which require being signed inj', () => {
+      let agent = null;
       beforeEach((done) => {
-        // sign the test@email.com in
-        done();
+        agent = request.agent(app);
+        // sign the user in
+        common.createNormalUserSession(agent).then(() => {
+          done();
+        });
       });
 
       afterEach((done) => {
         // any necessary cleanup actions
         done();
       });
+
       // GET logout
 
       // GET signup while signed in
@@ -209,6 +214,147 @@ describe('Account Tests', () => {
       // GET login while signed in
 
       // POST login while signed in
+
+      // POST changePassword successfully
+      it('POST to changePassword succesfully', () => {
+        response = agent.post('/changePassword')
+          .send({
+            currentPassword: 'password',
+            newPassword: 'newPassword',
+            repeatNewPassword: 'newPassword',
+          })
+          .redirects(1)
+          .expect(200);
+
+        return response.then(() => {
+          models.Member.findAll({
+            where: {
+              email: 'normal@kurtjlewis.com',
+            },
+          }).then((members) => {
+            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+              assert(res, 'The new password was not applied.');
+            });
+          });
+        });
+      });
+
+      // POST changePassword without currentPassword
+      it('POST to changePassword without currentPassword', () => {
+        response = agent.post('/changePassword')
+          .send({
+            newPassword: 'newPassword',
+            repeatNewPassword: 'newPassword',
+          })
+          .redirects(1)
+          .expect(400);
+
+        return response.then(() => {
+          models.Member.findAll({
+            where: {
+              email: 'normal@kurtjlewis.com',
+            },
+          }).then((members) => {
+            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+              assert(!res, 'The new password was wrongfully applied.');
+            });
+          });
+        });
+      });
+
+      // POST changePassword without newPassword
+      it('POST to changePassword without newPassword', () => {
+        response = agent.post('/changePassword')
+          .send({
+            currentPassword: 'password',
+            repeatNewPassword: 'newPassword',
+          })
+          .redirects(1)
+          .expect(400);
+
+        return response.then(() => {
+          models.Member.findAll({
+            where: {
+              email: 'normal@kurtjlewis.com',
+            },
+          }).then((members) => {
+            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+              assert(!res, 'The new password was wrongfully applied.');
+            });
+          });
+        });
+      });
+
+      // POST changePassword without repeatNewPassword
+      it('POST to changePassword without repeatNewPassword', () => {
+        response = agent.post('/changePassword')
+          .send({
+            currentPassword: 'password',
+            newPassword: 'newPassword',
+          })
+          .redirects(1)
+          .expect(400);
+
+        return response.then(() => {
+          models.Member.findAll({
+            where: {
+              email: 'normal@kurtjlewis.com',
+            },
+          }).then((members) => {
+            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+              assert(!res, 'The new password was wrongfully applied.');
+            });
+          });
+        });
+      });
+
+      // POST changePassword with incorrect current password
+      it('POST to changePassword without currentPassword', () => {
+        response = agent.post('/changePassword')
+          .send({
+            currentPassword: 'wrongPassword',
+            newPassword: 'newPassword',
+            repeatNewPassword: 'newPassword',
+          })
+          .redirects(1)
+          .expect(400);
+
+        return response.then(() => {
+          models.Member.findAll({
+            where: {
+              email: 'normal@kurtjlewis.com',
+            },
+          }).then((members) => {
+            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+              assert(!res, 'The new password was wrongfully applied.');
+            });
+          });
+        });
+      });
+
+      // POST changePassword without new passwords that don't match
+      it('POST to changePassword without currentPassword', () => {
+        response = agent.post('/changePassword')
+          .send({
+            currentPassword: 'password',
+            newPassword: 'newPassword',
+            repeatNewPassword: 'wrongPassword',
+          })
+          .redirects(1)
+          .expect(400);
+
+        return response.then(() => {
+          models.Member.findAll({
+            where: {
+              email: 'normal@kurtjlewis.com',
+            },
+          }).then((members) => {
+            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+              assert(!res, 'The new password was wrongfully applied.');
+            });
+          });
+        });
+      });
     });
   });
 });
