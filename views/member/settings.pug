@@ -3,7 +3,7 @@ extends ../layout
 block content
   h1 Profile
   | View your profile - MAKE LINK
-  form(id='updateProfile', action='settings', method='post')
+  form(id='updateProfile', action='member/profile/update', method='post')
     h2 Personal Information
     div
       label First Name:
@@ -35,7 +35,7 @@ block content
       label Co-ops:
       //- TODO - probably make this a text area
       input(type='text', name='coops', value=user.coops)
-  input(type='submit', name='submitProfile', value='Submit Changes')
+    input(type='submit', name='submitProfile', value='Submit Changes')
 
   //- Profile edit details
   h1 Account

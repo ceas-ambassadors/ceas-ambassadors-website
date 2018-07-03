@@ -215,6 +215,13 @@ const postChangePassword = [
           return req.session.save(() => {
             return res.redirect('/settings');
           });
+        }).catch((err) => {
+          console.log(err);
+          req.session.alert.errorMessages('There was a problem. Please alert the tech chair if it continues.');
+          req.session.status = 500;
+          return req.session.save(() => {
+            return res.redirect('/settings');
+          });
         });
       }
       // the passwords did not match
@@ -247,3 +254,45 @@ const getSettings = (req, res) => {
   });
 };
 exports.getSettings = getSettings;
+
+/**
+ *
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const postProfileUpdate = (req, res) => {
+  // Ensure there is a user signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be signed in to publish profile changes.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+  // Take any changes submitted as the whole truth - no verification needed.
+  return req.user.update({
+    first_name: req.body.firstName,
+    last_name: req.body.lastName,
+    major: req.body.major,
+    grad_year: req.body.gradYear,
+    clubs: req.body.clubs,
+    minors: req.body.minors,
+    // accend: ,
+    hometown: req.body.hometown,
+    coops: req.body.coops,
+  }).then(() => {
+    req.session.status = 200;
+    req.session.alert.successMessages.push('Profile updated!');
+    return req.session.save(() => {
+      return res.redirect('/settings');
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.alert.errorMessages('There was a problem. Please alert the tech chair if it continues.');
+    req.session.status = 500;
+    return req.session.save(() => {
+      return res.redirect('/settings');
+    });
+  });
+};
+exports.postProfileUpdate = postProfileUpdate;
