@@ -161,6 +161,19 @@ describe('Account Tests', () => {
     });
   });
 
+  // should reject a change in password when no user is logged in
+  it('POST changePassword without being logged in', (done) => {
+    request.agent(app)
+      .post('/changePassword')
+      .send({
+        currentPassword: 'password',
+        newPassword: 'newPassword',
+        repeatNewPassword: 'newPassword',
+      })
+      .redirects(1)
+      .expect(401, done);
+  });
+
   // GET logout without being signed in
 
   describe('Tests which require an existing user', () => {

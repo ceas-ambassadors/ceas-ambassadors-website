@@ -175,6 +175,14 @@ const postChangePassword = [
   check('newPassword').not().isEmpty().withMessage('The new password must be provided.'),
   check('repeatNewPassword').not().isEmpty().withMessage('The new password must be repeated.'),
   (req, res) => {
+    // Ensure there is a user signed in
+    if (!req.user) {
+      req.session.status = 401;
+      req.session.alert.errorMessages.push('You must be signed in to change your password.');
+      return req.session.save(() => {
+        return res.redirect('/');
+      });
+    }
     const errors = validationResult(req).formatWith(({ msg }) => { return `${msg}`; });
     if (!errors.isEmpty()) {
       // There was a validation error
