@@ -304,3 +304,49 @@ const postProfileUpdate = (req, res) => {
   });
 };
 exports.postProfileUpdate = postProfileUpdate;
+
+/**
+ * GET profile of user specified in param `email`
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing repsonse
+ */
+const getProfile = (req, res) => {
+  if (!req.params.email) {
+    req.session.status = 400;
+    req.session.alert.errorMessages.push('Incomplete URL');
+    // TODO - redirect to members list
+    return req.session.save(() => {
+      res.redirect('/');
+    });
+  }
+
+  return models.Member.findAll({
+    where: {
+      email: req.params.email,
+    },
+  }).then((members) => {
+    if (members.length !== 1) {
+      res.locals.status = 404;
+      res.locals.alert.errorMessages.push('Member not found.');
+      // TODO - build 404 page
+      return res.render('index', { title: 'Not Found' });
+      // return res.render('404', {
+      //   title: 'Not Found',
+      // });
+    }
+    const member = members[0]; // only one member should be returned anyways
+    // render their profile page
+    return res.render('member/profile', {
+      title: `${member.first_name} ${member.last_name}`,
+      member, // shorthand for member: member,
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There was an error. Please contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  });
+};
+exports.getProfile = getProfile;

@@ -1,0 +1,17 @@
+extends ../layout
+
+block content
+  //- TODO - picture
+  h1=member.first_name+' '+member.last_name
+  h4=member.major+' '+member.grad_year
+  div=member.hometown
+  if member.minors
+    h3 Minors
+    div=member.minors
+  h3 Coops
+  div=member.coops
+  if member.clubs
+    h3 Club
+    div=member.clubs
+
+  //- TODO - display hours for super users or the user themselves
