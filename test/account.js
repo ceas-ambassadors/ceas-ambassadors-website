@@ -162,9 +162,9 @@ describe('Account Tests', () => {
   });
 
   // should reject a change in password when no user is logged in
-  it('POST changePassword without being logged in', (done) => {
+  it('POST change-password without being logged in', (done) => {
     request.agent(app)
-      .post('/changePassword')
+      .post('/change-password')
       .send({
         currentPassword: 'password',
         newPassword: 'newPassword',
@@ -228,9 +228,9 @@ describe('Account Tests', () => {
 
       // POST login while signed in
 
-      // POST changePassword successfully
-      it('POST to changePassword succesfully', () => {
-        response = agent.post('/changePassword')
+      // POST change-password successfully
+      it('POST to change-password succesfully', () => {
+        response = agent.post('/change-password')
           .send({
             currentPassword: 'password',
             newPassword: 'newPassword',
@@ -252,9 +252,9 @@ describe('Account Tests', () => {
         });
       });
 
-      // POST changePassword without currentPassword
-      it('POST to changePassword without currentPassword', () => {
-        response = agent.post('/changePassword')
+      // POST change-password without currentPassword
+      it('POST to change-password without currentPassword', () => {
+        response = agent.post('/change-password')
           .send({
             newPassword: 'newPassword',
             repeatNewPassword: 'newPassword',
@@ -275,9 +275,9 @@ describe('Account Tests', () => {
         });
       });
 
-      // POST changePassword without newPassword
-      it('POST to changePassword without newPassword', () => {
-        response = agent.post('/changePassword')
+      // POST change-password without newPassword
+      it('POST to change-password without newPassword', () => {
+        response = agent.post('/change-password')
           .send({
             currentPassword: 'password',
             repeatNewPassword: 'newPassword',
@@ -298,9 +298,9 @@ describe('Account Tests', () => {
         });
       });
 
-      // POST changePassword without repeatNewPassword
-      it('POST to changePassword without repeatNewPassword', () => {
-        response = agent.post('/changePassword')
+      // POST change-password without repeatNewPassword
+      it('POST to change-password without repeatNewPassword', () => {
+        response = agent.post('/change-password')
           .send({
             currentPassword: 'password',
             newPassword: 'newPassword',
@@ -321,9 +321,9 @@ describe('Account Tests', () => {
         });
       });
 
-      // POST changePassword with incorrect current password
-      it('POST to changePassword without currentPassword', () => {
-        response = agent.post('/changePassword')
+      // POST change-password with incorrect current password
+      it('POST to change-password without currentPassword', () => {
+        response = agent.post('/change-password')
           .send({
             currentPassword: 'wrongPassword',
             newPassword: 'newPassword',
@@ -345,9 +345,9 @@ describe('Account Tests', () => {
         });
       });
 
-      // POST changePassword without new passwords that don't match
-      it('POST to changePassword without currentPassword', () => {
-        response = agent.post('/changePassword')
+      // POST change-password without new passwords that don't match
+      it('POST to change-password without currentPassword', () => {
+        response = agent.post('/change-password')
           .send({
             currentPassword: 'password',
             newPassword: 'newPassword',

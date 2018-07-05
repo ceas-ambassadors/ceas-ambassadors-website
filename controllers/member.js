@@ -167,7 +167,7 @@ const postSignup = [
 exports.postSignup = postSignup;
 
 /**
- * POST changePassword
+ * POST change-password
  * This endpoint is accessed via the /settings endpoint, so there is no GET
  */
 const postChangePassword = [
