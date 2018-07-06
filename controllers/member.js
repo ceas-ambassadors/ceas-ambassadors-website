@@ -312,6 +312,8 @@ exports.postProfileUpdate = postProfileUpdate;
  */
 const getProfile = (req, res) => {
   if (!req.params.email) {
+    // If the req.params.email isn't specified, this endpoint isn't hit.
+    // Leaving this just in case
     req.session.status = 400;
     req.session.alert.errorMessages.push('Incomplete URL');
     // TODO - redirect to members list
@@ -329,7 +331,7 @@ const getProfile = (req, res) => {
       res.locals.status = 404;
       res.locals.alert.errorMessages.push('Member not found.');
       // TODO - build 404 page
-      return res.render('index', { title: 'Not Found' });
+      return res.status(res.locals.status).render('index', { title: 'Not Found' });
       // return res.render('404', {
       //   title: 'Not Found',
       // });

@@ -43,6 +43,30 @@ describe('Member tests', () => {
       .expect(401, done);
   });
 
+  // GET /member/profile of created member
+  it('GET profile of existing member', () => {
+    return models.Member.create({
+      email: 'profile@kurtjlewis.com',
+      first_name: 'Profile',
+      last_name: 'mcProfile',
+      password: 'This isnt a hash!', // okay because we won't be logging in
+      accend: false,
+      private_user: false,
+      super_user: false,
+    }).then(() => {
+      return request.agent(app)
+        .get('/member/profile/profile@kurtjlewis.com')
+        .expect(200);
+    });
+  });
+
+  // GET /member/profile/ of a non-existent emial
+  it('GET profile of non-existent member', (done) => {
+    request.agent(app)
+      .get('/member/profile/not-real@kurtjlewis.com')
+      .expect(404, done);
+  });
+
   describe('Member tests which require a logged in normal user', () => {
     let agent = null;
     // Create a normal user session
