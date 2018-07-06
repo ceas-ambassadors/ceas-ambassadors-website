@@ -4,6 +4,45 @@
 const { check, validationResult } = require('express-validator/check');
 const models = require('../models/');
 
+
+/**
+ * Get details page for a specific event specified in req.params.id
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const getDetails = (req, res) => {
+  models.Event.findAll({
+    where: {
+      id: req.params.id,
+    },
+  }).then((events) => {
+    /**
+     * TODO
+     * only render private events for super users or people on the list of attendees
+     */
+    if (events.length !== 1) {
+      // TODO - make 404 page
+      res.locals.status = 404;
+      res.locals.alert.errorMessages.push('Event not found.');
+      return res.status(res.locals.status).render('index', { title: 'Event not found' });
+    }
+    // Event was found - render details
+    return res.status(res.locals.status).render('event/detail', {
+      title: events[0].title,
+      event: events[0],
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
+    return req.session.save(() => {
+      // TODO - redirect to event listing
+      return res.redirect('/');
+    });
+  });
+};
+exports.getDetails = getDetails;
+
 /**
  * GET for the create event page
  */
