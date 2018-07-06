@@ -43,6 +43,37 @@ describe('Event Tests', () => {
       .expect(401, done);
   });
 
+  // GET event listing page
+  it('GET event list page', () => {
+    // Create an event and a meeting, so that we may know there aren't any problems with the queries
+    const eventPromise = models.Event.create({
+      title: 'Test event',
+      start_time: Date.now(),
+      end_time: Date.now() + 100,
+      location: 'Your computer',
+      public: true,
+      meeting: false,
+      created_by: 'test@kurtjlewis.com',
+    });
+
+    const meetingPromise = models.Event.create({
+      title: 'Test Meeting',
+      start_time: Date.now(),
+      end_time: Date.now() + 100,
+      location: 'Your computer',
+      public: true,
+      meeting: true,
+      created_by: 'test@kurtjlewis.com',
+    });
+
+    // Once both promises resolve, hit the endpoint and ensure we receive a 200
+    return Promise.all([eventPromise, meetingPromise]).then(() => {
+      return request.agent(app)
+        .get('/event')
+        .expect(200);
+    });
+  });
+
   describe('Event tests which require a signed in non-super user', () => {
     // need to persist agent across requests to mantain logged in session
     let agent = null;
