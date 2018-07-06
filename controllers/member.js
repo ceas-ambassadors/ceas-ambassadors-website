@@ -277,6 +277,11 @@ const postProfileUpdate = (req, res) => {
       return res.redirect('/');
     });
   }
+  // Convert accend checkbox to bool
+  let accend = false;
+  if (req.body.accend === 'on') {
+    accend = true;
+  }
   // Take any changes submitted as the whole truth - no verification needed.
   return req.user.update({
     first_name: req.body.firstName,
@@ -285,7 +290,7 @@ const postProfileUpdate = (req, res) => {
     grad_year: req.body.gradYear,
     clubs: req.body.clubs,
     minors: req.body.minors,
-    // accend: ,
+    accend, // shorthand for accend: accend,
     hometown: req.body.hometown,
     coops: req.body.coops,
   }).then(() => {

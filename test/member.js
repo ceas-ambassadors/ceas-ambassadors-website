@@ -38,6 +38,7 @@ describe('Member tests', () => {
         minors: 'Javascript',
         clubs: 'Test Club',
         coops: 'Testing INC',
+        accend: true,
       })
       .redirects(1)
       .expect(401, done);
@@ -88,6 +89,8 @@ describe('Member tests', () => {
       const minors = 'Javascript';
       const clubs = 'Test Club';
       const coops = 'Testing INC';
+      const accendFrontend = 'on'; // because it's a checkbox on the frontend
+      const accend = true; // expected end value
       const response = agent.post('/member/profile/update')
         .send({
           firstName,
@@ -98,6 +101,7 @@ describe('Member tests', () => {
           minors,
           clubs,
           coops,
+          accend: accendFrontend,
         })
         .redirects(1)
         .expect(200);
@@ -118,6 +122,7 @@ describe('Member tests', () => {
           assert.deepEqual(member.grad_year, gradYear);
           assert.deepEqual(member.clubs, clubs);
           assert.deepEqual(member.coops, coops);
+          assert.equal(member.accend, accend);
         });
       });
     });
