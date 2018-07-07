@@ -37,11 +37,55 @@ const getDetails = (req, res) => {
     req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
     return req.session.save(() => {
       // TODO - redirect to event listing
-      return res.redirect('/');
+      req.redirect('/');
     });
   });
 };
 exports.getDetails = getDetails;
+
+/**
+ * GET for event list page
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const getList = (req, res) => {
+  // query for all events
+  const eventPromise = models.Event.findAll({
+    where: {
+      public: true,
+      meeting: false,
+    },
+    order: [
+      ['start_time', 'ASC'],
+    ],
+  });
+
+  const meetingPromise = models.Event.findAll({
+    where: {
+      meeting: true,
+      public: true,
+    },
+    order: [
+      ['start_time', 'ASC'],
+    ],
+  });
+
+  return Promise.all([eventPromise, meetingPromise]).then((output) => {
+    return res.status(res.locals.status).render('event/list', {
+      title: 'Events',
+      events: output[0],
+      meetings: output[1],
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  });
+};
+exports.getList = getList;
 
 /**
  * GET for the create event page

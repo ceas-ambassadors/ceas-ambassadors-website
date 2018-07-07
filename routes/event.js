@@ -11,6 +11,8 @@ const eventController = require('../controllers/event');
 
 router.get('/details/:id', eventController.getDetails);
 
+router.get('/', eventController.getList);
+
 router.get('/create', eventController.getCreate);
 
 router.post('/create', eventController.postCreate);

@@ -16,6 +16,6 @@
       if user
         td(width='10%')
         td(width='3%')
-          #nav-bar-link=user.email
+          a.nav-bar-link(href='/settings')=user.email
         td(width='3%')
           a.nav-bar-link(href='/logout') Logout
