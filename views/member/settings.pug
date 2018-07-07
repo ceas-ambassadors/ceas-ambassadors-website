@@ -1,0 +1,57 @@
+extends ../layout
+
+block content
+  h1 Profile
+  | View your profile - MAKE LINK
+  form(id='updateProfile', action='member/profile/update', method='post')
+    h2 Personal Information
+    div
+      label First Name:
+      input(type='text', name='firstName', value=user.first_name)
+    div
+      label Last Name:
+      input(type='text', name='lastName', value=user.last_name)
+    div
+      label Hometown:
+      input(type='text', name='hometown', value=user.hometown)
+    div
+      label Picture:
+      | TODO
+    h2 School Information
+    div
+      label Major:
+      input(type='text', name='major', value=user.major)
+    div
+      label Graduation Year:
+      input(type='text', name='gradYear', value=user.grad_year)
+    div
+      label ACCEND
+      input(type='checkbox', name='accend', checked=user.accend)
+    div
+      label Minors:
+      input(type='text', name='minors', value=user.minors)
+    div
+      label Clubs:
+      //- TODO - probably make this a text area
+      input(type='text', name='clubs', value=user.clubs)
+    div
+      label Co-ops:
+      //- TODO - probably make this a text area
+      input(type='text', name='coops', value=user.coops)
+    input(type='submit', name='submitProfile', value='Submit Changes')
+
+  //- Profile edit details
+  h1 Account
+  form(id='changePassword', action='change-password', method='post')
+    h2 Change Password
+    div 
+      label Current Password: 
+      input(type='password', name='currentPassword')
+    div
+      label New Password: 
+      input(type='password', name='newPassword')
+    div
+      label Repeat New Password: 
+      input(type='password', name='repeatNewPassword')
+    input(type='submit', name='changePassword', value='Change Password')
+  
