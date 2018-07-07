@@ -36,8 +36,7 @@ const getDetails = (req, res) => {
     req.session.status = 500;
     req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
     return req.session.save(() => {
-      // TODO - redirect to event listing
-      req.redirect('/');
+      req.redirect('/event');
     });
   });
 };
@@ -94,9 +93,8 @@ const getCreate = (req, res) => {
   if (!req.user) {
     req.session.status = 401;
     req.session.alert.errorMessages.push('You must be logged in to create an event.');
-    // TODO - redirect to event page
     return req.session.save(() => {
-      return res.redirect('/');
+      return res.redirect('/event');
     });
   }
   // TODO - check that user is a super user
@@ -124,9 +122,8 @@ const postCreate = [
     if (!req.user) {
       req.session.status = 401;
       req.session.alert.errorMessages.push('You must be logged in to create an event.');
-      // TODO - redirect to event page
       return req.session.save(() => {
-        return res.redirect('/');
+        return res.redirect('/event');
       });
     }
 
@@ -187,13 +184,12 @@ const postCreate = [
       public: isPublic,
       meeting: isMeeting,
       created_by: req.user.email,
-    }).then(() => {
+    }).then((event) => {
       // the event was succesfully created!
       req.session.status = 201;
       req.session.alert.successMessages.push('Event created!');
       return req.session.save(() => {
-        // TODO: redirect to event details page
-        return res.redirect('/');
+        return res.redirect(`/event/details/${event.id}`);
       });
     }).catch((err) => {
       // There was an error
