@@ -107,7 +107,7 @@ describe('Member tests', () => {
         .expect(200);
 
       return response.then(() => {
-        models.Member.findAll({
+        return models.Member.findAll({
           where: {
             email: 'normal@kurtjlewis.com',
           },

@@ -240,7 +240,7 @@ describe('Account Tests', () => {
           .expect(200);
 
         return response.then(() => {
-          models.Member.findAll({
+          return models.Member.findAll({
             where: {
               email: 'normal@kurtjlewis.com',
             },
@@ -263,7 +263,7 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          models.Member.findAll({
+          return models.Member.findAll({
             where: {
               email: 'normal@kurtjlewis.com',
             },
@@ -286,7 +286,7 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          models.Member.findAll({
+          return models.Member.findAll({
             where: {
               email: 'normal@kurtjlewis.com',
             },
@@ -309,7 +309,7 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          models.Member.findAll({
+          return models.Member.findAll({
             where: {
               email: 'normal@kurtjlewis.com',
             },
@@ -333,7 +333,7 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          models.Member.findAll({
+          return models.Member.findAll({
             where: {
               email: 'normal@kurtjlewis.com',
             },
@@ -357,7 +357,7 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          models.Member.findAll({
+          return models.Member.findAll({
             where: {
               email: 'normal@kurtjlewis.com',
             },
