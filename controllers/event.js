@@ -6,6 +6,43 @@ const models = require('../models/');
 
 
 /**
+ * Get details page for a specific event specified in req.params.id
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const getDetails = (req, res) => {
+  models.Event.findAll({
+    where: {
+      id: req.params.id,
+    },
+  }).then((events) => {
+    /**
+     * TODO
+     * only render private events for super users or people on the list of attendees
+     */
+    if (events.length !== 1) {
+      // TODO - make 404 page
+      res.locals.status = 404;
+      res.locals.alert.errorMessages.push('Event not found.');
+      return res.status(res.locals.status).render('index', { title: 'Event not found' });
+    }
+    // Event was found - render details
+    return res.status(res.locals.status).render('event/detail', {
+      title: events[0].title,
+      event: events[0],
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
+    return req.session.save(() => {
+      req.redirect('/event');
+    });
+  });
+};
+exports.getDetails = getDetails;
+
+/**
  * GET for event list page
  * @param {*} req - incoming request
  * @param {*} res - outgoing response
@@ -43,7 +80,7 @@ const getList = (req, res) => {
     req.session.status = 500;
     req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
     return req.session.save(() => {
-      req.redirect('/');
+      return res.redirect('/');
     });
   });
 };
@@ -56,9 +93,8 @@ const getCreate = (req, res) => {
   if (!req.user) {
     req.session.status = 401;
     req.session.alert.errorMessages.push('You must be logged in to create an event.');
-    // TODO - redirect to event page
     return req.session.save(() => {
-      return res.redirect('/');
+      return res.redirect('/event');
     });
   }
   // TODO - check that user is a super user
@@ -86,9 +122,8 @@ const postCreate = [
     if (!req.user) {
       req.session.status = 401;
       req.session.alert.errorMessages.push('You must be logged in to create an event.');
-      // TODO - redirect to event page
       return req.session.save(() => {
-        return res.redirect('/');
+        return res.redirect('/event');
       });
     }
 
@@ -149,13 +184,12 @@ const postCreate = [
       public: isPublic,
       meeting: isMeeting,
       created_by: req.user.email,
-    }).then(() => {
+    }).then((event) => {
       // the event was succesfully created!
       req.session.status = 201;
       req.session.alert.successMessages.push('Event created!');
       return req.session.save(() => {
-        // TODO: redirect to event details page
-        return res.redirect('/');
+        return res.redirect(`/event/details/${event.id}`);
       });
     }).catch((err) => {
       // There was an error

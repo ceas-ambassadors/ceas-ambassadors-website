@@ -74,6 +74,32 @@ describe('Event Tests', () => {
     });
   });
 
+  // GET event page for event that does not exist
+  // event ids are numerical, so `fake` should not return an event
+  it('GET nonexistent event details', (done) => {
+    request.agent(app)
+      .get('/event/details/fake')
+      .expect(404, done);
+  });
+
+  // GET event that has just been created
+  it('GET event details page', () => {
+    return models.Event.create({
+      title: 'Test Meeting',
+      start_time: Date.now(),
+      end_time: Date.now() + 100,
+      location: 'Your computer',
+      public: true,
+      meeting: true,
+      created_by: 'test@kurtjlewis.com',
+    }).then((event) => {
+      console.log(`/event/detaisl/${event.id}`);
+      return request.agent(app)
+        .get(`/event/details/${event.id}`)
+        .expect(200);
+    });
+  });
+
   describe('Event tests which require a signed in non-super user', () => {
     // need to persist agent across requests to mantain logged in session
     let agent = null;
@@ -87,6 +113,10 @@ describe('Event Tests', () => {
     // GET create event - a normal user cannot access create event page
 
     // POST create event - a normal user cannot post create event page
+
+    // GET private event - normal users cannot see a private event if not on attendees list
+
+    // GET private event as an attendee
   });
 
   describe('Event tests which require a signed in super user', () => {

@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+  h1
+    if event.meeting
+      span Meeting -
+    else
+      span Event -
+    //- Adds space between first part and second part
+    = ' '
+    span= event.title
+  h3=event.start_time
+  h3=event.end_time
+  h3=event.location
+  h4=event.description
+  h3=event.meeting
+
+  h1 Sign Up

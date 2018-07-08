@@ -24,7 +24,7 @@ block content
           td=meeting.location
           td
             //- Link to event details page
-            a(href='/event') View
+            a(href='/event/details/' + meeting.id) View
   h1 Events
   table
     thead
@@ -44,4 +44,4 @@ block content
           td=event.location
           td
             //- Link to event details page
-            a(href='/event') View
+            a(href='/event/details/' + event.id) View
