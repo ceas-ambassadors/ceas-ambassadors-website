@@ -8,7 +8,7 @@ To get started, first clone the repository using [git](#Version-Control).
 
 `$git clone https://github.com/kurtlewis/ceas-ambassadors-website.git`
 
-Then, install npm modules as specified in our `package.json`, using `npm install`. This will install the code that our website relies upon as well as some developer tools. To run the website locally, you'll need to configure environment variables. These are configuration options and secrets that SHOULD NOT be committed to version control. Copy `.env.example` to a new file called `.env`, and replace the placeholder values with relevant values. See [.env documentation for more instructions](#.env). If you need to start up a databse, this is the time to do so. If you don't, you'll need the url of a test database to connect to.
+Then, install npm modules as specified in our `package.json`, using `npm install`. This will install the code that our website relies upon as well as some developer tools. To run the website locally, you'll need to configure environment variables. These are configuration options and secrets that SHOULD NOT be committed to version control. Copy `.env.example` to a new file called `.env`, and replace the placeholder values with relevant values. See [.env documentation for more instructions](#.env). If you need to start up a databse, this is the time to do so. If you don't, you'll need the url of a test database to connect to. Using mysql for the first time? See [database.md](database.md) for instructions on getting started.
 
 To run the website, type `npm start`. Visit the website at localhost:3000. You're in business!
 

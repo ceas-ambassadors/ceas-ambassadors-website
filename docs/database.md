@@ -1,5 +1,10 @@
 This document is home to the actual design for our database, instructions for working with Sequelize, our ORM, and commonly used database queries.
 
+## Getting Started
+If you have mysql installed, you need to start by getting databases created for the website to connect to. For development, you'll need two - a dev and test database. The dev database is used when you run the website with `npm start`, the test database is used when you run `npm test`. They're different because testing routinely wipes the database of rows, meaning data you were using for development would be removed when you don't want it to be.
+
+First, make sure that mysql is running and that you can connect with the root user you created during installation. `$ mysql -u root -p`. If it's running and you're connected, create two databases on the mysql prompt `mysql> create database amb_site_test;` and `mysql> create database amb_site_dev;`. Next, you'll want to create a user and give it full access on both of those databases - [see this guide for instructions](https://www.lanexa.net/2011/08/create-a-mysql-database-username-password-and-permissions-from-the-command-line/). Finally, set your .env variables for the connection details following the instructions in [dev-guide.md](dev-guide.md).
+
 ## Naming Standards
 Models names should be nouns - `Member`, `Event`, `Attendance`, etc. Sequelize automatically pluralizes them for table names, so `Member` becomes `Members`. Sequelize has no regard for grammatic conventions, it just appends an `s`. Column names (and attributes) should be named with underscores, so `myAttribute` becomes `my_attribute`.
 
