@@ -17,4 +17,6 @@ router.get('/create', eventController.getCreate);
 
 router.post('/create', eventController.postCreate);
 
+router.post('/signup/:id', eventController.postSignup);
+
 module.exports = router;

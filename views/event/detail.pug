@@ -15,4 +15,7 @@ block content
   h4=event.description
   h3=event.meeting
 
-  h1 Sign Up
+  if user
+    h1 Sign Up
+    form(id='signUp', action='/event/signup/' + event.id, method='post')
+      input(type='submit', name='Sign Up', value='Sign Up')

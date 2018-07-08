@@ -201,3 +201,94 @@ const postCreate = [
   },
 ];
 exports.postCreate = postCreate;
+
+/**
+ * POST to a signup page with an event with req.params.id id.
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const postSignup = (req, res) => {
+  // Make sure the user is signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to signup');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  }
+
+  // Get the event
+  const eventPromise = models.Event.findById(req.params.id);
+
+  // Get the member
+  let memberEmail = null;
+  // If the current user is a super user, they can specify a member
+  // Super user tests
+  if (req.user.super_user && req.body.email) {
+    memberEmail = req.body.email;
+  } else {
+    memberEmail = req.user.email;
+  }
+
+  // A member cannot be signed up for an event for which they're already signed up
+  const attendancePromise = models.Attendance.findOne({
+    where: {
+      member_email: memberEmail,
+      event_id: req.params.id,
+    },
+  });
+
+  // Once member and event have been found, continue with creating the attendance entry
+  return Promise.all([eventPromise, attendancePromise]).then((output) => {
+    // output is in order of array
+    const event = output[0];
+    const attendance = output[1];
+    // If attendance exists there is no need to continue
+    if (attendance) {
+      req.session.status = 400;
+      req.session.alert.errorMessages.push(`${memberEmail} is already signed up for this event.`);
+      return req.session.save(() => {
+        return res.redirect(`/event/details/${event.id}`);
+      });
+    }
+    let status = models.Attendance.getStatusUnconfirmed();
+    if (event.meeting) {
+      status = models.Attendance.getStatusMeeting();
+    }
+    if (!event.public) {
+      // Private events are automatically confirmed because they're entered by a super user
+      // TODO - check that user is a super user - only proceed if so
+      status = models.Attendance.getStatusConfirmed();
+    }
+
+    // Create attendance
+    return models.Attendance.create({
+      event_id: req.params.id,
+      member_email: memberEmail,
+      status, // shorthand for status: status,
+    }).then(() => {
+      req.session.status = 201;
+      req.session.alert.successMessages.push(`Signed up for ${event.title}`);
+      return req.session.save(() => {
+        return res.redirect(`/event/details/${event.id}`);
+      });
+    }).catch((err) => {
+      // There was an error
+      console.log(err);
+      req.session.status = 500;
+      req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
+      return req.session.save(() => {
+        return res.redirect(`/event/details/${req.params.id}`);
+      });
+    });
+  }).catch((err) => {
+    // There was an error
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  });
+};
+exports.postSignup = postSignup;

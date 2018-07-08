@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     // This also has references to an event and a member - auto added as part of
     // the association process in the event and member model definitions
     // They are:
-    // EventId - int(11)
-    // MemberEmail - varchar(255)
+    // event_id - int(11)
+    // member_email - varchar(255)
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
@@ -20,5 +20,15 @@ module.exports = (sequelize, DataTypes) => {
   Attendance.associate = (/* models */) => {
     // associations can be defined here
   };
+
+  /**
+   * Define enum values for different status enum values
+   * THESE MUST MATCH THE ABOVE DEFINED
+   */
+  Attendance.getStatusUnconfirmed = () => { return 'unconfirmed'; };
+  Attendance.getStatusConfirmed = () => { return 'confirmed'; };
+  Attendance.getStatusNotNeeded = () => { return 'not_needed'; };
+  Attendance.getStatusMeeting = () => { return 'meeting'; };
+
   return Attendance;
 };
