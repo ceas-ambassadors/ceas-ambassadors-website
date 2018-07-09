@@ -53,3 +53,51 @@ const createNormalUserSession = (agent) => {
   });
 };
 exports.createNormalUserSession = createNormalUserSession;
+
+/**
+ * Create a non-meeting event
+ */
+const createPublicEvent = () => {
+  return models.Event.create({
+    title: 'Test Meeting',
+    start_time: Date.now(),
+    end_time: Date.now() + 100,
+    location: 'Your computer',
+    public: true,
+    meeting: false,
+    created_by: 'test@kurtjlewis.com',
+  });
+};
+exports.createPublicEvent = createPublicEvent;
+
+/**
+ * Create a non-meeting private event
+ */
+const createPrivateEvent = () => {
+  return models.Event.create({
+    title: 'Test Meeting',
+    start_time: Date.now(),
+    end_time: Date.now() + 100,
+    location: 'Your computer',
+    public: false,
+    meeting: false,
+    created_by: 'test@kurtjlewis.com',
+  });
+};
+exports.createPrivateEvent = createPrivateEvent;
+
+/**
+ * Create a meeting event
+ */
+const createMeeting = () => {
+  return models.Event.create({
+    title: 'Test Meeting',
+    start_time: Date.now(),
+    end_time: Date.now() + 100,
+    location: 'Your computer',
+    public: true,
+    meeting: true,
+    created_by: 'test@kurtjlewis.com',
+  });
+};
+exports.createMeeting = createMeeting;

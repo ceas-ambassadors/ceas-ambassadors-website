@@ -46,25 +46,9 @@ describe('Event Tests', () => {
   // GET event listing page
   it('GET event list page', () => {
     // Create an event and a meeting, so that we may know there aren't any problems with the queries
-    const eventPromise = models.Event.create({
-      title: 'Test event',
-      start_time: Date.now(),
-      end_time: Date.now() + 100,
-      location: 'Your computer',
-      public: true,
-      meeting: false,
-      created_by: 'test@kurtjlewis.com',
-    });
+    const eventPromise = common.createPublicEvent();
 
-    const meetingPromise = models.Event.create({
-      title: 'Test Meeting',
-      start_time: Date.now(),
-      end_time: Date.now() + 100,
-      location: 'Your computer',
-      public: true,
-      meeting: true,
-      created_by: 'test@kurtjlewis.com',
-    });
+    const meetingPromise = common.createMeeting();
 
     // Once both promises resolve, hit the endpoint and ensure we receive a 200
     return Promise.all([eventPromise, meetingPromise]).then(() => {
@@ -84,19 +68,20 @@ describe('Event Tests', () => {
 
   // GET event that has just been created
   it('GET event details page', () => {
-    return models.Event.create({
-      title: 'Test Meeting',
-      start_time: Date.now(),
-      end_time: Date.now() + 100,
-      location: 'Your computer',
-      public: true,
-      meeting: true,
-      created_by: 'test@kurtjlewis.com',
-    }).then((event) => {
-      console.log(`/event/detaisl/${event.id}`);
+    return common.createMeeting().then((event) => {
       return request.agent(app)
         .get(`/event/details/${event.id}`)
         .expect(200);
+    });
+  });
+
+  // POST /event/signup/:id not signed in
+  it('POST signup for event not signed in', () => {
+    return common.createPublicEvent().then((event) => {
+      return request.agent(app)
+        .post(`/event/signup/${event.id}`)
+        .redirects(1)
+        .expect(401);
     });
   });
 
@@ -117,6 +102,69 @@ describe('Event Tests', () => {
     // GET private event - normal users cannot see a private event if not on attendees list
 
     // GET private event as an attendee
+
+    // POST signup for an event
+    it('POST signup for event', () => {
+      return common.createPublicEvent().then((event) => {
+        const response = agent
+          .post(`/event/signup/${event.id}`)
+          .redirects(1)
+          .expect(201);
+
+        return response.then(() => {
+          return models.Attendance.findOne({
+            where: {
+              event_id: event.id,
+              member_email: 'normal@kurtjlewis.com',
+            },
+          }).then((attendance) => {
+            assert(attendance);
+            assert.deepEqual(attendance.status, models.Attendance.getStatusUnconfirmed());
+          });
+        });
+      });
+    });
+
+    // POST signup for a meeting
+    it('POST signup for Meeting', () => {
+      return common.createMeeting().then((event) => {
+        const response = agent
+          .post(`/event/signup/${event.id}`)
+          .redirects(1)
+          .expect(201);
+
+        return response.then(() => {
+          return models.Attendance.findOne({
+            where: {
+              event_id: event.id,
+              member_email: 'normal@kurtjlewis.com',
+            },
+          }).then((attendance) => {
+            assert(attendance);
+            assert.deepEqual(attendance.status, models.Attendance.getStatusMeeting());
+          });
+        });
+      });
+    });
+
+    // POST signup for an event that has already been signed up for
+    it('POST signup for event that has already been signed up for', () => {
+      return common.createPublicEvent().then((event) => {
+        const response = agent
+          .post(`/event/signup/${event.id}`)
+          .redirects(1)
+          .expect(201);
+
+        return response.then(() => {
+          return agent
+            .post(`/event/signup/${event.id}`)
+            .redirects(1)
+            .expect(400);
+        });
+      });
+    });
+
+    // POST signup for event with specified email as non super user
   });
 
   describe('Event tests which require a signed in super user', () => {
@@ -303,5 +351,7 @@ describe('Event Tests', () => {
         });
       });
     });
+
+    // POST signup with specified email
   });
 });
