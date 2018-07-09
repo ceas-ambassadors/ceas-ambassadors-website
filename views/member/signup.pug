@@ -1,16 +1,11 @@
 extends ../layout
 
 block content
-  link(rel='stylesheet' href='/stylesheets/signup_login.css')
-
   div(class='container')
     div(class='box-border')
-      h1 Sign up
-      form(id='signup', action='signup', method='post')
-        div
-          input(type='text', name='email', placeholder='6+2@mail.uc.edu', class='entry')
-        div
-          input(type='password', name='password', placeholder='Password', class='entry')
-        div
-          input(type='password', name='confirmPassword', placeholder='Confirm Password', class='entry')
-        input(type='submit', name='signup', value='Register')
+      h1(class='title') Sign up
+      form(id='signup', action='signup', method='post', class='sign-log')
+        input(type='text', name='email', placeholder='6+2@mail.uc.edu', class='entry')
+        input(type='password', name='password', placeholder='Password', class='entry')
+        input(type='password', name='confirmPassword', placeholder='Confirm Password', class='entry')
+        input(type='submit', name='signup', value='Register', class='submit')
