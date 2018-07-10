@@ -16,9 +16,8 @@ a {
 #nav-bar {
   background-color: #f4f7fc;
   border-style: none none solid none;
-  border-color: #c0c1c4;
+  border-color: rgba(0,0,0,.1);
   font-size: 18px;
-  /*line-height: 0.1;*/
   display: flex;
   justify-content: space-between;
 }
