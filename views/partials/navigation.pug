@@ -1,21 +1,11 @@
 #nav-bar
-  //- Writing this as a table isn't a great idea
-  //- A table might have a hard time resizing for mobile - 
-  table(width='100%')
-    //- Create a single row - each td is a column
-    tr
-      td(width='7%')
-      td(width='20%')
-        a.nav-bar-link(href='/') CEAS Ambassadors
-      td(width='13%')
-      if user == null
-        td(width='5%')
-          a.nav-bar-link(href='/signup') Sign up
-        td(width='5%')
-          a.nav-bar-link(href='/login') Log in     
-      if user
-        td(width='10%')
-        td(width='3%')
-          a.nav-bar-link(href='/settings')=user.email
-        td(width='3%')
-          a.nav-bar-link(href='/logout') Logout
+
+  div(class='logo')
+    a.nav-bar-link(href='/') CEAS Ambassadors
+  div(class='page-links')
+    if user == null
+      a.nav-bar-link(href='/signup') Sign Up
+      a.nav-bar-link(href='/login') Log in
+    if user
+      a.nav-bar-link(href='/settings')=user.email
+      a.nav-bar-link(href='/logout') Logout

@@ -15,11 +15,12 @@ a {
 *********************/
 #nav-bar {
   background-color: #f4f7fc;
-  padding: 2%;
   border-style: none none solid none;
   border-color: #c0c1c4;
-  font: 18px "Lato";
-  line-height: 0.1;
+  font-size: 18px;
+  /*line-height: 0.1;*/
+  display: flex;
+  justify-content: space-between;
 }
 
 /* Default colored links would look dumb */
@@ -28,6 +29,41 @@ a {
   text-decoration: none; /* Turn off underlining */
 }
 
+.logo{
+  flex: 2;
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+}
+
+.page-links{
+  flex: 2;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.page-links a, .logo a{
+  padding: 15px 20px;
+}
+
+.page-links a:hover{
+  background: #edf1f7;
+}
+
+.page-links a:active{
+  background: #eaedf2;
+}
+
+@media (max-width:475px) {
+  .page-links a{
+    padding: 22px 20px;
+  }
+  .logo a{
+    padding: 0 10px;
+  }
+}
 
 /*********************
 *   Alert Styles     *
