@@ -2,7 +2,7 @@
 body {
   margin: 0px;
   font: 14px "Lato", Helvetica, Arial, sans-serif;
-  background-color: #fcfdff;
+  background-color: #fcfeff;
 }
 
 /* Link */
@@ -80,4 +80,65 @@ a {
   padding: 1rem;
   background-color: #f4f7fc;
   text-align: center;
+}
+
+/***************************
+*   Sign-Up/Login Styles
+**************************** */
+.container{
+  display: flex;
+  justify-content: center;
+}
+
+.box-border{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 360px;
+  background: #ffffff;
+  padding: 20px 50px 40px 50px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.title{
+  margin-top: 0;
+}
+
+/* Styles the form holding the inputs */
+.sign-log{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 360px;
+  width: 100%;
+}
+
+/* Styling the input text fields */
+.entry{
+  outline: 0;
+  background: #f2f2f2;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.submit{
+  background-color: #ec1818;
+  border: none;
+  color: white;
+  padding: 10px 24px;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  width: 100%;
+  border-radius: 4px;
+  outline: none;
+}
+
+.submit:hover{
+  background: #ac0000;
 }
