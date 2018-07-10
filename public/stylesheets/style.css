@@ -36,7 +36,7 @@ a {
 }
 
 .page-links{
-  flex: 2;
+  flex: 4;
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
@@ -55,12 +55,14 @@ a {
   background: #eaedf2;
 }
 
-@media (max-width:475px) {
+@media (max-width:675px) {
   .page-links a{
-    padding: 22px 20px;
+    padding: 12px 20px;
+    font-size: 14px;
   }
   .logo a{
     padding: 0 10px;
+    font-size: 18px;
   }
 }
 
