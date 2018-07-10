@@ -127,7 +127,7 @@ a {
 }
 
 .submit{
-  background-color: #19a6ff;
+  background-color: #ec1818;
   border: none;
   color: white;
   padding: 10px 24px;
@@ -140,5 +140,5 @@ a {
 }
 
 .submit:hover{
-  background: #0094f2;
+  background: #ac0000;
 }
