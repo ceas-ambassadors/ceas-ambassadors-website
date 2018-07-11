@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* http://docs.sequelizejs.com/manual/tutorial/associations.html#belongs-to-many-associations */
 
 'use strict';
@@ -16,6 +17,17 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
+    hooks: {
+      afterCreate: (attendance /* , options */) => {
+        return updateMemberColumns(attendance);
+      },
+      afterUpdate: (attendance /* , options */) => {
+        return updateMemberColumns(attendance);
+      },
+      afterUpsert: (attendance /* , options */) => {
+        return updateMemberColumns(attendance);
+      },
+    },
   });
   Attendance.associate = (/* models */) => {
     // associations can be defined here
@@ -29,5 +41,45 @@ module.exports = (sequelize, DataTypes) => {
   Attendance.getStatusConfirmed = () => { return 'confirmed'; };
   Attendance.getStatusNotNeeded = () => { return 'not_needed'; };
 
+  /**
+   * This is a function to be called from hooks, in which the given attendance is
+   * applied to a member's columns reflecting their hours
+   * @param {*} attendance - the attendance record passed in from the hook
+   */
+  const updateMemberColumns = (attendance) => {
+    // if status is unconfirmed take no action
+    if (attendance.status === Attendance.getStatusUnconfirmed()) {
+      // Resolve an empty promise so that this function has a consistent return value
+      return Promise.resolve();
+    }
+    const eventPromise = sequelize.models.Event.findById(attendance.event_id);
+
+    const memberPromise = sequelize.models.Member.findById(attendance.member_email);
+
+    return Promise.all([eventPromise, memberPromise]).then((output) => {
+      // Output is in order of input array
+      const event = output[0];
+      const member = output[1];
+      const length = event.end_time - event.start_time;
+      if (attendance.status === Attendance.getStatusConfirmed()) {
+        if (event.meeting) {
+          // its a meeting, so update the meetings column
+          return member.update({
+            meetings: member.meetings + 1,
+          });
+        }
+        // not a meeting
+        return member.update({
+          minutes: member.minutes + length,
+        });
+      }
+      if (attendance.status === Attendance.getStatusNotNeeded()) {
+        return member.update({
+          minutes_not_needed: member.minutes_not_needed + length,
+        });
+      }
+      throw Error('Something unexpected happened in the attendance update member columns function');
+    });
+  };
   return Attendance;
 };
