@@ -253,7 +253,7 @@ const postSignup = (req, res) => {
     }
     let status = models.Attendance.getStatusUnconfirmed();
     if (event.meeting) {
-      status = models.Attendance.getStatusMeeting();
+      status = models.Attendance.getStatusConfirmed();
     }
     if (!event.public) {
       // Private events are automatically confirmed because they're entered by a super user
