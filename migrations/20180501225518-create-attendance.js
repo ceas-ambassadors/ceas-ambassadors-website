@@ -22,7 +22,7 @@ module.exports = {
         },
       },
       status: {
-        type: Sequelize.ENUM('unconfirmed', 'confirmed', 'not_needed', 'meeting'),
+        type: Sequelize.ENUM('unconfirmed', 'confirmed', 'not_needed'),
         allowNull: false
       },
       created_at: {

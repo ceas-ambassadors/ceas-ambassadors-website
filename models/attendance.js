@@ -5,7 +5,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Attendance = sequelize.define('Attendance', {
     status: {
-      type: DataTypes.ENUM('unconfirmed', 'confirmed', 'not_needed', 'meeting'),
+      type: DataTypes.ENUM('unconfirmed', 'confirmed', 'not_needed'),
       allowNull: false,
     },
     // This also has references to an event and a member - auto added as part of
@@ -28,7 +28,6 @@ module.exports = (sequelize, DataTypes) => {
   Attendance.getStatusUnconfirmed = () => { return 'unconfirmed'; };
   Attendance.getStatusConfirmed = () => { return 'confirmed'; };
   Attendance.getStatusNotNeeded = () => { return 'not_needed'; };
-  Attendance.getStatusMeeting = () => { return 'meeting'; };
 
   return Attendance;
 };
