@@ -141,7 +141,7 @@ describe('Event Tests', () => {
             },
           }).then((attendance) => {
             assert(attendance);
-            assert.deepEqual(attendance.status, models.Attendance.getStatusMeeting());
+            assert.deepEqual(attendance.status, models.Attendance.getStatusConfirmed());
           });
         });
       });
