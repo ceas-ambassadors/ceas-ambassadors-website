@@ -67,9 +67,6 @@ This database is wiped entirely clean at the start and end of every test - so do
 #### PROD_DB_URL
 This should hold production data.
 
-##### Troubleshooting Database URL's
-On Windows, to connect the first time to a MySQL server, open MySQL Shell and first type `\sql` to allow for SQL scripting. To connect to the databases, `\connect <root>:<insert password>@localhost:3306`. To reveal databases type: `show databases;`, which can give you the names of your dev and test databases for your .env file. There is no database for the `PROD_DB_URL` if you're running this locally.
-
 ## Tests
 There will be a comprehensive test suite for this codebase. To run tests, first configure the website using the above instructions - tests won't work until you've gotten the website to run yourself. Then, just run `npm test`. Our tests are written using [mocha](https://mochajs.org/) as the runner, and [supertest](https://github.com/visionmedia/supertest) as a method of mocking a user on the website. In combination, they allow us to test the endpoints as if a user was using them. Ideally, all behavior on the website will have a test. This way, if we break that behavior with a code change or upgrading npm modules breaks behavior, it will be easy to determine.
 
