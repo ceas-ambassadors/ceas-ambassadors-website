@@ -44,19 +44,25 @@ module.exports = (sequelize, DataTypes) => {
         return handleEventUpdateOnAttendance(event, false);
       },
       beforeDestroy: (event) => {
-        return handleEventUpdateOnAttendance(event, true).then(() => {
-          // Destroy all attendance records which now correspond to the dead event
-          return sequelize.models.Attendance.findAll({
-            where: {
-              event_id: event.id,
-            },
-          }).then((attendances) => {
-            const promises = [];
-            for (let i = 0; i < attendances.length; i += 1) {
-              promises.push(attendances[i].destroy());
-            }
-            return Promise.all(promises);
-          });
+        // Destroy all attendance records which now correspond to the dead event
+        /**
+         * TODO: verify that this works - the question here is - what happens first?
+         * The attendance model should handle deducting deleted events when it's destroy hook is hit
+         * but, if the event doesn't exist by the time that hook gets called, it could cause errors
+         * but, if I handle it here, then the deduction would be duplicated
+         * One possible action is adding a feux deletion column - something that denotes
+         * that the attendance record has been deleted, without actually deleting it
+         */
+        return sequelize.models.Attendance.findAll({
+          where: {
+            event_id: event.id,
+          },
+        }).then((attendances) => {
+          const promises = [];
+          for (let i = 0; i < attendances.length; i += 1) {
+            promises.push(attendances[i].destroy());
+          }
+          return Promise.all(promises);
         });
       },
     },
