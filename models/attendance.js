@@ -27,6 +27,9 @@ module.exports = (sequelize, DataTypes) => {
       afterUpsert: (attendance /* , options */) => {
         return updateMemberColumns(attendance);
       },
+      beforeDestroy: (attendance /* , options */) => {
+        return updateMemberColumnsOnRowDeletion(attendance);
+      },
     },
   });
   Attendance.associate = (/* models */) => {
@@ -79,6 +82,46 @@ module.exports = (sequelize, DataTypes) => {
         });
       }
       throw Error('Something unexpected happened in the attendance update member columns function');
+    });
+  };
+
+  /**
+   * This function handles updating the relevant member when an attendance row gets deleted
+   * @param {*} attendance - the attendance record being deleted
+   */
+  const updateMemberColumnsOnRowDeletion = (attendance) => {
+    if (attendance.status === Attendance.getStatusUnconfirmed()) {
+      // resolve an empty promise so that this function has a consistent return value
+      return Promise.resolve();
+    }
+
+    const eventPromise = sequelize.models.Event.findById(attendance.event_id);
+
+    const memberPromise = sequelize.models.Member.findById(attendance.member_email);
+
+    return Promise.all([eventPromise, memberPromise]).then((output) => {
+      // output is in order of input array
+      const event = output[0];
+      const member = output[1];
+      const length = event.end_time - event.start_time;
+      if (attendance.status === Attendance.getStatusConfirmed()) {
+        if (event.meeting) {
+          // its a meeting, so remove the meetings column
+          return member.update({
+            meetings: member.meetings - 1,
+          });
+        }
+        // not a meeting
+        return member.update({
+          minutes: member.minutes - length,
+        });
+      }
+      if (attendance.status === Attendance.getStatusNotNeeded()) {
+        return member.updajte({
+          minutes_not_needed: member.minutes_not_needed - length,
+        });
+      }
+      throw Error('Somethign unexpected happened in the attendance delete member columns function');
     });
   };
   return Attendance;
