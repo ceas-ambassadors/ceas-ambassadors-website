@@ -19,16 +19,16 @@ module.exports = (sequelize, DataTypes) => {
     underscored: true,
     hooks: {
       afterCreate: (attendance /* , options */) => {
-        return updateMemberColumns(attendance);
+        return updateMemberColumns(attendance, false);
       },
       afterUpdate: (attendance /* , options */) => {
-        return updateMemberColumns(attendance);
+        return updateMemberColumns(attendance, false);
       },
       afterUpsert: (attendance /* , options */) => {
-        return updateMemberColumns(attendance);
+        return updateMemberColumns(attendance, false);
       },
       beforeDestroy: (attendance /* , options */) => {
-        return updateMemberColumnsOnRowDeletion(attendance);
+        return updateMemberColumns(attendance, true);
       },
     },
   });
@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
    * applied to a member's columns reflecting their hours
    * @param {*} attendance - the attendance record passed in from the hook
    */
-  const updateMemberColumns = (attendance) => {
+  const updateMemberColumns = (attendance, remove) => {
     // if status is unconfirmed take no action
     if (attendance.status === Attendance.getStatusUnconfirmed()) {
       // Resolve an empty promise so that this function has a consistent return value
@@ -63,10 +63,19 @@ module.exports = (sequelize, DataTypes) => {
       // Output is in order of input array
       const event = output[0];
       const member = output[1];
-      const length = event.end_time - event.start_time;
+      let length = event.end_time - event.start_time;
+      if (remove) {
+        length *= -1;
+      }
       if (attendance.status === Attendance.getStatusConfirmed()) {
         if (event.meeting) {
           // its a meeting, so update the meetings column
+          if (remove) {
+            // Remove the meeting
+            return member.update({
+              meetings: member.meetings - 1,
+            });
+          }
           return member.update({
             meetings: member.meetings + 1,
           });
@@ -82,46 +91,6 @@ module.exports = (sequelize, DataTypes) => {
         });
       }
       throw Error('Something unexpected happened in the attendance update member columns function');
-    });
-  };
-
-  /**
-   * This function handles updating the relevant member when an attendance row gets deleted
-   * @param {*} attendance - the attendance record being deleted
-   */
-  const updateMemberColumnsOnRowDeletion = (attendance) => {
-    if (attendance.status === Attendance.getStatusUnconfirmed()) {
-      // resolve an empty promise so that this function has a consistent return value
-      return Promise.resolve();
-    }
-
-    const eventPromise = sequelize.models.Event.findById(attendance.event_id);
-
-    const memberPromise = sequelize.models.Member.findById(attendance.member_email);
-
-    return Promise.all([eventPromise, memberPromise]).then((output) => {
-      // output is in order of input array
-      const event = output[0];
-      const member = output[1];
-      const length = event.end_time - event.start_time;
-      if (attendance.status === Attendance.getStatusConfirmed()) {
-        if (event.meeting) {
-          // its a meeting, so remove the meetings column
-          return member.update({
-            meetings: member.meetings - 1,
-          });
-        }
-        // not a meeting
-        return member.update({
-          minutes: member.minutes - length,
-        });
-      }
-      if (attendance.status === Attendance.getStatusNotNeeded()) {
-        return member.updajte({
-          minutes_not_needed: member.minutes_not_needed - length,
-        });
-      }
-      throw Error('Somethign unexpected happened in the attendance delete member columns function');
     });
   };
   return Attendance;
