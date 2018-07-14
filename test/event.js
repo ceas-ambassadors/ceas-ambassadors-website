@@ -112,7 +112,7 @@ describe('Event Tests', () => {
           .expect(201);
 
         return response.then(() => {
-          return models.Attendance.findOne({
+          const attendancePromise = models.Attendance.findOne({
             where: {
               event_id: event.id,
               member_email: 'normal@kurtjlewis.com',
@@ -121,6 +121,13 @@ describe('Event Tests', () => {
             assert(attendance);
             assert.deepEqual(attendance.status, models.Attendance.getStatusUnconfirmed());
           });
+
+          // events should not increase amount of minutes attended, added as unconfirmed
+          const memberPromise = models.Member.findById('normal@kurtjlewis.com').then((member) => {
+            assert.equal(member.minutes, 0);
+          });
+
+          return Promise.all([attendancePromise, memberPromise]);
         });
       });
     });
@@ -134,7 +141,7 @@ describe('Event Tests', () => {
           .expect(201);
 
         return response.then(() => {
-          return models.Attendance.findOne({
+          const attendancePromise = models.Attendance.findOne({
             where: {
               event_id: event.id,
               member_email: 'normal@kurtjlewis.com',
@@ -143,6 +150,13 @@ describe('Event Tests', () => {
             assert(attendance);
             assert.deepEqual(attendance.status, models.Attendance.getStatusConfirmed());
           });
+
+          // Meeting should automatically add to the meeting count
+          const memberPromise = models.Member.findById('normal@kurtjlewis.com').then((member) => {
+            assert.equal(member.meetings, 1);
+          });
+
+          return Promise.all([attendancePromise, memberPromise]);
         });
       });
     });
