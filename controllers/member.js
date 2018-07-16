@@ -342,10 +342,20 @@ const getProfile = (req, res) => {
       // });
     }
     const member = members[0]; // only one member should be returned anyways
+
+    // render hours only if the user is looking at their own page
+    // or the current user is a super user
+    const renderHours = ((req.user) && (req.user.super_user || req.user.email === member.email));
+    const service = member.minutes / 3600000;
+    const serviceNotNeeded = member.minutes_not_needed / 3600000;
     // render their profile page
     return res.render('member/profile', {
       title: `${member.first_name} ${member.last_name}`,
       member, // shorthand for member: member,
+      renderHours,
+      service,
+      meetings: member.meetings,
+      serviceNotNeeded,
     });
   }).catch((err) => {
     console.log(err);
