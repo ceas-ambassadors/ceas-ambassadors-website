@@ -115,12 +115,12 @@ module.exports = (sequelize, DataTypes) => {
         for (let i = 0; i < output.length; i += 1) {
           if (attendances[i].status === sequelize.models.Attendance.getStatusConfirmed()) {
             returns.push(output[i].update({
-              minutes: output[i].minutes + length,
+              service: output[i].service + length,
             }));
           }
           if (attendances[i].status === sequelize.models.Attendance.getStatusNotNeeded()) {
             returns.push(output[i].update({
-              minutes_not_needed: output[i].minutes_not_needed + length,
+              service_not_needed: output[i].service_not_needed + length,
             }));
           }
         }

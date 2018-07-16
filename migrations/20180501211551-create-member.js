@@ -21,7 +21,7 @@ module.exports = {
       grad_year: {
         type: Sequelize.INTEGER,
       },
-      minutes: {
+      service: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
@@ -31,7 +31,7 @@ module.exports = {
         allowNull: false,
         defaultValue: 0,
       },
-      minutes_not_needed: {
+      service_not_needed: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,

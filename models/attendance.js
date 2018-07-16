@@ -82,12 +82,12 @@ module.exports = (sequelize, DataTypes) => {
         }
         // not a meeting
         return member.update({
-          minutes: member.minutes + length,
+          service: member.service + length,
         });
       }
       if (attendance.status === Attendance.getStatusNotNeeded()) {
         return member.update({
-          minutes_not_needed: member.minutes_not_needed + length,
+          service_not_needed: member.service_not_needed + length,
         });
       }
       throw Error('Something unexpected happened in the attendance update member columns function');

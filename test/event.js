@@ -122,9 +122,9 @@ describe('Event Tests', () => {
             assert.deepEqual(attendance.status, models.Attendance.getStatusUnconfirmed());
           });
 
-          // events should not increase amount of minutes attended, added as unconfirmed
+          // events should not increase amount of service attended, added as unconfirmed
           const memberPromise = models.Member.findById('normal@kurtjlewis.com').then((member) => {
-            assert.equal(member.minutes, 0);
+            assert.equal(member.service, 0);
           });
 
           return Promise.all([attendancePromise, memberPromise]);

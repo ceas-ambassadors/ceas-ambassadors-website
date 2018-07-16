@@ -17,14 +17,14 @@ This is the actual structue of the tables and their relationships.
 * last_name
 * major
 * grad_year
-* minutes **summation**
-  * This field is a summation of the minutes of events a user has attended.
+* service **summation**
+  * This field is a summation of the time of events a user has attended.
   * See below for notes on how we'll handle the summation columns
 * meetings **summation**
-  * This field is a summation of the minutes of meetings a user has attended.
+  * This field is a summation of the number of meetings a user has attended.
   * See below for notes on how we'll handle the summation columns
-* minutes_not_needed **summation**
-  * This field is a summation of the minutes of events a user has been sent home from because they were unneeded.
+* service_not_needed **summation**
+  * This field is a summation of the time of events a user has been sent home from because they were unneeded.
   * See below for notes on how we'll handle the summation columns
 * path_to_picture
   * hopefully we will implement bio pictures - this field is there to hold the path to their bio picture
@@ -88,7 +88,7 @@ This is the actual structue of the tables and their relationships.
   * date record was last updated - automatically handled by sequelize
 
 ## On summation columns
-There are a few ways I can approach summation columns (minutes, meetings, etc) on member. There needs to be a way to stop those values from becoming stale - if an event is updated, when a member is confirmed for attending, etc.
+There are a few ways I can approach summation columns (service, meetings, etc) on member. There needs to be a way to stop those values from becoming stale - if an event is updated, when a member is confirmed for attending, etc.
 1. I can setup a [SQL trigger](https://dev.mysql.com/doc/refman/8.0/en/triggers.html) on event update, insert, delete to recalculate those numbers. 
 2. Using the above, I can set a [trigger in sequelize](https://dev.mysql.com/doc/refman/8.0/en/triggers.html). This could be implemented through a [sequelize hook](http://docs.sequelizejs.com/manual/tutorial/hooks.html).
 3. I could not store these fields. I could just manually calculate them everytime they are requested. This would be slow though.
