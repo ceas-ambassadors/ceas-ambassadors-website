@@ -1,4 +1,5 @@
 /* eslint-disable no-use-before-define */
+/* eslint no-param-reassign: ["error", { "props": false }] */
 /* http://docs.sequelizejs.com/manual/tutorial/associations.html#belongs-to-many-associations */
 
 'use strict';
@@ -29,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       beforeDestroy: (attendance /* , options */) => {
         return updateMemberColumns(attendance, true);
+      },
+      beforeBulkDestroy: (options) => {
+        // call individual hooks for each record destroyed
+        options.individualHooks = true;
+      },
+      afterBulkUpdate: (options) => {
+        // call individual hooks for each record udpated
+        options.individualHooks = true;
       },
     },
   });

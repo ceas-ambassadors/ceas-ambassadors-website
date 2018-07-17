@@ -1,4 +1,5 @@
 /* eslint-disable no-use-before-define */
+/* eslint no-param-reassign: ["error", { "props": false }] */
 
 'use strict';
 
@@ -37,33 +38,26 @@ module.exports = (sequelize, DataTypes) => {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
     hooks: {
+      // http://docs.sequelizejs.com/manual/tutorial/hooks.html
       beforeUpdate: (event) => {
         return handleEventUpdateOnAttendance(event, true);
       },
       afterUpdate: (event) => {
         return handleEventUpdateOnAttendance(event, false);
       },
-      beforeDestroy: (event) => {
-        // Destroy all attendance records which now correspond to the dead event
-        /**
-         * TODO: verify that this works - the question here is - what happens first?
-         * The attendance model should handle deducting deleted events when it's destroy hook is hit
-         * but, if the event doesn't exist by the time that hook gets called, it could cause errors
-         * but, if I handle it here, then the deduction would be duplicated
-         * One possible action is adding a feux deletion column - something that denotes
-         * that the attendance record has been deleted, without actually deleting it
-         */
-        return sequelize.models.Attendance.findAll({
-          where: {
-            event_id: event.id,
-          },
-        }).then((attendances) => {
-          const promises = [];
-          for (let i = 0; i < attendances.length; i += 1) {
-            promises.push(attendances[i].destroy());
-          }
-          return Promise.all(promises);
-        });
+      // beforeDestroy: - this is handled by cascading deletes and ensuring hooks are called
+      // see options in Event.associate()
+      beforeBulkDestroy: (options) => {
+        // make it so that individual hooks are called for each destroyed row
+        options.individualHooks = true;
+      },
+      beforeBulkUpdate: (options) => {
+        // call beforeUpdate for each individual record
+        options.individualHooks = true;
+      },
+      afterBulkUpdate: (options) => {
+        // call afterUpdate for each individual record
+        options.individualHooks = true;
       },
     },
   });
@@ -72,6 +66,8 @@ module.exports = (sequelize, DataTypes) => {
     models.Event.belongsToMany(models.Member, {
       as: 'event_id',
       through: models.Attendance,
+      onDelete: 'cascade',
+      hooks: true,
     });
     models.Event.belongsTo(models.Member);
   };
