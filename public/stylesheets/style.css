@@ -73,7 +73,6 @@ a {
 *********************/
 /* Locks the footer to the bottom of the page */
 #footer {
-  /* position: absolute; */
   right: 0;
   bottom: 0;
   left: 0;
