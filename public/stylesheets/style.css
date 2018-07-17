@@ -13,57 +13,12 @@ a {
 /*********************
 *  Nav bar styles    *
 *********************/
-#nav-bar {
-  background-color: #f4f7fc;
-  border-style: none none solid none;
-  border-color: rgba(0,0,0,.1);
-  font-size: 18px;
-  display: flex;
-  justify-content: space-between;
+.navbar-brand{
+  font-size: 1.4em;
 }
 
-/* Default colored links would look dumb */
-.nav-bar-link {
-  color: #000000;
-  text-decoration: none; /* Turn off underlining */
-}
-
-.logo{
-  flex: 2;
-  display: flex;
-  align-items: center;
-  font-size: 22px;
-}
-
-.page-links{
-  flex: 4;
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.page-links a, .logo a{
-  padding: 15px 20px;
-}
-
-.page-links a:hover{
-  background: #edf1f7;
-}
-
-.page-links a:active{
-  background: #eaedf2;
-}
-
-@media (max-width:675px) {
-  .page-links a{
-    padding: 12px 20px;
-    font-size: 14px;
-  }
-  .logo a{
-    padding: 0 10px;
-    font-size: 18px;
-  }
+nav{
+  font-size: 1.2em;
 }
 
 /*********************
@@ -102,7 +57,7 @@ a {
 *********************/
 /* Everything content wise appears within this container */
 #content {
-  margin: 5% 10% 5% 10%;
+  margin: 5% 10%;
 }
 
 /*********************
@@ -117,15 +72,17 @@ a {
   padding: 1rem;
   background-color: #f4f7fc;
   text-align: center;
+  height: 70px;
+  margin-top: -50px;
 }
 
 /***************************
 *   Sign-Up/Login Styles
 **************************** */
 .container{
-  display: flex;
-  justify-content: center;
-}
+   display: flex;
+   justify-content: center;
+ }
 
 .box-border{
   display: flex;

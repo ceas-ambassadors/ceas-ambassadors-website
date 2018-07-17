@@ -1,11 +1,19 @@
-#nav-bar
-
-  div(class='logo')
-    a.nav-bar-link(href='/') CEAS Ambassadors
-  div(class='page-links')
-    if user == null
-      a.nav-bar-link(href='/signup') Sign Up
-      a.nav-bar-link(href='/login') Log in
-    if user
-      a.nav-bar-link(href='/settings')=user.email
-      a.nav-bar-link(href='/logout') Logout
+nav(class="navbar navbar-expand-lg navbar-light bg-light")
+  a(class="navbar-brand", href="/") CEAS Ambassadors
+  button(class="navbar-toggler", type="button", data-toggle="collapse", data-target="#navbarNav", aria-controls="navbarNav", aria-expanded="false", aria-label="Toggle navigation")
+    span(class="navbar-toggler-icon")
+  div(class="collapse navbar-collapse", id="navbarNav")
+    ul(class="navbar-nav mr-auto")
+      li(class="nav-item")
+        a(class="nav-link", href="/event") Events
+    ul(class='navbar-nav')
+      if user == null
+        li(class="nav-item")
+          a(class="nav-link", href="/signup") Sign Up
+        li(class="nav-item")
+          a(class="nav-link", href="/login") Login
+      if user
+        li(class="nav-item")
+          a(class="nav-link", href="/settings")=user.email
+        li(class="nav-item")
+          a(class="nav-link", href="/logout") Logout
