@@ -13,21 +13,13 @@ a {
 /*********************
 *  Nav bar styles    *
 *********************/
-#nav-bar {
-  background-color: #f4f7fc;
-  padding: 2%;
-  border-style: none none solid none;
-  border-color: #c0c1c4;
-  font: 18px "Lato";
-  line-height: 0.1;
+.navbar-brand{
+  font-size: 1.4em;
 }
 
-/* Default colored links would look dumb */
-.nav-bar-link {
-  color: #000000;
-  text-decoration: none; /* Turn off underlining */
+nav{
+  font-size: 1.2em;
 }
-
 
 /*********************
 *   Alert Styles     *
@@ -65,7 +57,7 @@ a {
 *********************/
 /* Everything content wise appears within this container */
 #content {
-  margin: 5% 10% 5% 10%;
+  margin: 5% 10%;
 }
 
 /*********************
@@ -79,15 +71,17 @@ a {
   padding: 1rem;
   background-color: #f4f7fc;
   text-align: center;
+  height: 70px;
+  margin-top: -50px;
 }
 
 /***************************
 *   Sign-Up/Login Styles
 **************************** */
 .container{
-  display: flex;
-  justify-content: center;
-}
+   display: flex;
+   justify-content: center;
+ }
 
 .box-border{
   display: flex;
