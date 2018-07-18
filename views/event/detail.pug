@@ -37,14 +37,14 @@ block content
             tr
               td=member.first_name+' '+member.last_name
               td
-                a(href='/event/:id/confirm?status=confirmed&member='+member.email)
-                  |Confirm
+                form(id='confirmAttendance', action='/event/confirm/' + event.id + '/' + member.email + '?status=confirmed', method='post')
+                  input(type='submit', name='Confirm', value='Confirm')
               td
-                a(href='/event/:id/confirm?status=notNeeded&member='+member.email)
-                  |Not Needed
+                form(id='notNeededAttendance', action='/event/confirm/' + event.id + '/' + member.email + '?status=notNeeded', method='post')
+                  input(type='submit', name='NotNeeded', value='Not Needed')
               td
-                a(href='/event/:id/confirm?status=didNotAttend&member='+member.email)
-                  |Did Not Attend
+                form(id='denyAttendance', action='/event/confirm/' + event.id + '/' + member.email + '?status=deny', method='post')
+                  input(type='submit', name='Deny', value='Did Not Attend')
     if confirmedAttendees.length > 0
       h1 Confirmed
       table
