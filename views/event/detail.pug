@@ -1,3 +1,4 @@
+//- @param unconfirmedAttendees - attendees that are unconfirmed
 extends ../layout
 
 block content
@@ -19,3 +20,39 @@ block content
     h1 Sign Up
     form(id='signUp', action='/event/signup/' + event.id, method='post')
       input(type='submit', name='Sign Up', value='Sign Up')
+
+  //- TODO only display if super user
+  if user
+    if !event.meeting && unconfirmedAttendees.length > 0
+      h1 Confirm Attendance
+      table
+        thead
+          tr
+            th Member
+            th Confirm
+            th Not Needed
+            th Did Not Attend
+        tbody
+          each member in unconfirmedAttendees
+            tr
+              td=member.first_name+' '+member.last_name
+              td
+                a(href='/event/:id/confirm?status=confirmed&member='+member.email)
+                  |Confirm
+              td
+                a(href='/event/:id/confirm?status=notNeeded&member='+member.email)
+                  |Not Needed
+              td
+                a(href='/event/:id/confirm?status=didNotAttend&member='+member.email)
+                  |Did Not Attend
+    if confirmedAttendees.length > 0
+      h1 Confirmed
+      table
+        thead
+          tr
+            th Member
+        tbody
+          each member in confirmedAttendees
+            tr
+              td=member.first_name+' '+member.last_name
+            

@@ -11,25 +11,47 @@ const models = require('../models/');
  * @param {*} res - outgoing response
  */
 const getDetails = (req, res) => {
-  models.Event.findAll({
-    where: {
-      id: req.params.id,
-    },
-  }).then((events) => {
+  models.Event.findById(req.params.id).then((event) => {
     /**
      * TODO
      * only render private events for super users or people on the list of attendees
      */
-    if (events.length !== 1) {
+    if (!event) {
       // TODO - make 404 page
       res.locals.status = 404;
       res.locals.alert.errorMessages.push('Event not found.');
       return res.status(res.locals.status).render('index', { title: 'Event not found' });
     }
-    // Event was found - render details
-    return res.status(res.locals.status).render('event/detail', {
-      title: events[0].title,
-      event: events[0],
+
+    // It's faster to run a raw sql query than it is to run two queries in a row
+    // This is because Sequelize can't do joins
+    // http://docs.sequelizejs.com/manual/tutorial/raw-queries.html
+    return models.sequelize.query(`SELECT Members.first_name, Members.last_name, Members.email,
+                                   Attendances.status FROM Members INNER JOIN Attendances
+                                   ON Members.email = Attendances.member_email WHERE
+                                   Attendances.event_id = :event_id`, {
+      replacements: {
+        event_id: req.params.id,
+      },
+      type: models.sequelize.QueryTypes.SELECT,
+    }).then((members) => {
+      // members is not an array of full members - it only has the above selected attrs + status
+      const confirmedAttendees = [];
+      const unconfirmedAttendees = [];
+      // Separate members into confirmed and unconfirmed
+      for (let i = 0; i < members.length; i += 1) {
+        if (members[i].status === models.Attendance.getStatusConfirmed()) {
+          confirmedAttendees.push(members[i]);
+        } else {
+          unconfirmedAttendees.push(members[i]);
+        }
+      }
+      return res.status(res.locals.status).render('event/detail', {
+        title: event.title,
+        event, // shorthand for event: event,
+        unconfirmedAttendees,
+        confirmedAttendees,
+      });
     });
   }).catch((err) => {
     console.log(err);
