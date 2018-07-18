@@ -1,29 +1,32 @@
 extends ../layout
 
 block content
-  h1 Create event
-  form(id='createEvent', action='create', method='post')
-    div
-      label Event Title:
-      input(type='text', name='title', placeholder='Tuesday Tour')
-    div
-      label Start Time:
-      input(type='text', name='startTime', placeholder='2018 January 01 10:00 AM')
-    div
-      label End Time:
-      input(type='text', name='endTime', placeholder='2018 January 01 11:00 AM')
-    div
-      label Location:
-      input(type='text', name='location', placeholder='653 Baldwin Hall')
-    div
-      label Description:
-      input(type='text', name='description', placeholder='This event...')
-    div
-      label Public:
-      input(type='checkbox', name='isPublic', checked=true)
-      |  Mark event as public - members can sign up.
-    div
-      label Meeting:
-      input(type='checkbox', name='isMeeting', checked=false)
-      |  This is a meeting
-    input(type='submit', name='create', value='Create Event')
+  .container
+    .box-border
+      h1.create-title Create event
+      form.create-event(id='createEvent', action='create', method='post')
+        .form-grid
+          .left-grid
+            div.form-group
+              label Event Title:
+              input.form-control.form-control-sm(type='text', name='title', placeholder='Tuesday Tour')
+            div.form-group
+              label Start Time:
+              input.form-control.form-control-sm(type='text', name='startTime', placeholder='2018 January 01 10:00 AM')
+          .right-grid
+            div.form-group
+              label Location:
+              input.form-control.form-control-sm(type='text', name='location', placeholder='653 Baldwin Hall')
+            div.form-group
+              label End Time:
+              input.form-control.form-control-sm(type='text', name='endTime', placeholder='2018 January 01 11:00 AM')
+        div.form-group
+          label Description:
+          input.form-control.form-control-sm(type='text', name='description', placeholder='This event...')
+        div.form-group.form-check
+          input.form-check-input(type='checkbox', name='isPublic', checked=true)
+          label.form-check-label Public Event
+        div.form-group.form-check
+          input.form-check-input(type='checkbox', name='isMeeting', checked=false)
+          label.form-check-label Meeting
+        input.submit(type='submit', name='create', value='Create Event')
