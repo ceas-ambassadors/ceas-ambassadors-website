@@ -2,7 +2,7 @@
 body {
   margin: 0px;
   font: 14px "Lato", Helvetica, Arial, sans-serif;
-  background-color: #fcfdff;
+  background-color: #fcfeff;
 }
 
 /* Link */
@@ -13,21 +13,13 @@ a {
 /*********************
 *  Nav bar styles    *
 *********************/
-#nav-bar {
-  background-color: #f4f7fc;
-  padding: 2%;
-  border-style: none none solid none;
-  border-color: #c0c1c4;
-  font: 18px "Lato";
-  line-height: 0.1;
+.navbar-brand{
+  font-size: 1.4em;
 }
 
-/* Default colored links would look dumb */
-.nav-bar-link {
-  color: #000000;
-  text-decoration: none; /* Turn off underlining */
+nav{
+  font-size: 1.2em;
 }
-
 
 /*********************
 *   Alert Styles     *
@@ -65,7 +57,7 @@ a {
 *********************/
 /* Everything content wise appears within this container */
 #content {
-  margin: 5% 10% 5% 10%;
+  margin: 5% 10%;
 }
 
 /*********************
@@ -73,11 +65,109 @@ a {
 *********************/
 /* Locks the footer to the bottom of the page */
 #footer {
-  position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
   padding: 1rem;
   background-color: #f4f7fc;
   text-align: center;
+  height: 70px;
+  margin-top: -50px;
+}
+
+/***************************
+*   Sign-Up/Login Styles
+**************************** */
+.container{
+   display: flex;
+   justify-content: center;
+ }
+
+.box-border{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  padding: 20px 50px 20px 50px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.signin{
+  max-width: 360px;
+}
+
+.title{
+  margin-top: 0;
+}
+
+/* Styles the form holding the inputs */
+.sign-log{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 360px;
+  width: 100%;
+}
+
+/* Styling the input text fields */
+.entry{
+  outline: 0;
+  background: #f2f2f2;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.submit{
+  background-color: #ec1818;
+  border: none;
+  color: white;
+  padding: 10px 24px;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  width: 100%;
+  border-radius: 4px;
+  outline: none;
+  margin: auto;
+  text-align: center;
+}
+
+.submit:hover{
+  background: #ac0000;
+}
+
+/********************
+* Create Event Styles
+ ********************/
+
+.create-event{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.create-title{
+  font-size: 35px;
+}
+
+.form-grid{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.left-grid{
+  margin-right: 10px;
+}
+
+
+@media (max-width: 585px) {
+  .create-title{
+    font-size: 24px;
+  }
 }

@@ -1,21 +1,19 @@
-#nav-bar
-  //- Writing this as a table isn't a great idea
-  //- A table might have a hard time resizing for mobile - 
-  table(width='100%')
-    //- Create a single row - each td is a column
-    tr
-      td(width='7%')
-      td(width='20%')
-        a.nav-bar-link(href='/') CEAS Ambassadors
-      td(width='13%')
+nav(class="navbar navbar-expand-lg navbar-light bg-light")
+  a(class="navbar-brand", href="/") CEAS Ambassadors
+  button(class="navbar-toggler", type="button", data-toggle="collapse", data-target="#navbarNav", aria-controls="navbarNav", aria-expanded="false", aria-label="Toggle navigation")
+    span(class="navbar-toggler-icon")
+  div(class="collapse navbar-collapse", id="navbarNav")
+    ul(class="navbar-nav mr-auto")
+      li(class="nav-item")
+        a(class="nav-link", href="/event") Events
+    ul(class='navbar-nav')
       if user == null
-        td(width='5%')
-          a.nav-bar-link(href='/signup') Sign up
-        td(width='5%')
-          a.nav-bar-link(href='/login') Log in     
+        li(class="nav-item")
+          a(class="nav-link", href="/signup") Sign Up
+        li(class="nav-item")
+          a(class="nav-link", href="/login") Login
       if user
-        td(width='10%')
-        td(width='3%')
-          a.nav-bar-link(href='/settings')=user.email
-        td(width='3%')
-          a.nav-bar-link(href='/logout') Logout
+        li(class="nav-item")
+          a(class="nav-link", href="/settings")=user.email
+        li(class="nav-item")
+          a(class="nav-link", href="/logout") Logout

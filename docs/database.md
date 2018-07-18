@@ -5,6 +5,10 @@ If you have mysql installed, you need to start by getting databases created for 
 
 First, make sure that mysql is running and that you can connect with the root user you created during installation. `$ mysql -u root -p`. If it's running and you're connected, create two databases on the mysql prompt `mysql> create database amb_site_test;` and `mysql> create database amb_site_dev;`. Next, you'll want to create a user and give it full access on both of those databases - [see this guide for instructions](https://www.lanexa.net/2011/08/create-a-mysql-database-username-password-and-permissions-from-the-command-line/). Finally, set your .env variables for the connection details following the instructions in [dev-guide.md](dev-guide.md).
 
+### Troubleshooting
+On Windows, to connect the first time to a MySQL server, open MySQL Shell and first type `\sql` to allow for SQL scripting. To connect to the databases, `\connect <root>:<insert password>@localhost:3306`. To reveal databases type: `show databases;`, which can give you the names of your dev and test databases for your .env file. There is no database for the `PROD_DB_URL` if you're running this locally.
+
+
 ## Naming Standards
 Models names should be nouns - `Member`, `Event`, `Attendance`, etc. Sequelize automatically pluralizes them for table names, so `Member` becomes `Members`. Sequelize has no regard for grammatic conventions, it just appends an `s`. Column names (and attributes) should be named with underscores, so `myAttribute` becomes `my_attribute`.
 
