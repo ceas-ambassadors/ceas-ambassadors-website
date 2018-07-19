@@ -37,11 +37,14 @@ const getDetails = (req, res) => {
     }).then((members) => {
       // members is not an array of full members - it only has the above selected attrs + status
       const confirmedAttendees = [];
+      const notNeededAttendees = [];
       const unconfirmedAttendees = [];
       // Separate members into confirmed and unconfirmed
       for (let i = 0; i < members.length; i += 1) {
         if (members[i].status === models.Attendance.getStatusConfirmed()) {
           confirmedAttendees.push(members[i]);
+        } else if (members[i].status === models.Attendance.getStatusNotNeeded()) {
+          notNeededAttendees.push(members[i]);
         } else {
           unconfirmedAttendees.push(members[i]);
         }
@@ -50,6 +53,7 @@ const getDetails = (req, res) => {
         title: event.title,
         event, // shorthand for event: event,
         unconfirmedAttendees,
+        notNeededAttendees,
         confirmedAttendees,
       });
     });
@@ -314,3 +318,77 @@ const postSignup = (req, res) => {
   });
 };
 exports.postSignup = postSignup;
+
+const postConfirmAttendance = (req, res) => {
+  // Make sure the user is signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to signup');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  }
+  // TODO: make sure the user is a super user
+
+  // constants sent by ui
+  const confirmedConstant = 'confirmed';
+  const notNeededConstant = 'notNeeded';
+  const denyConstant = 'deny';
+  // Check that the value of the status query is valid
+  if (req.query.status !== confirmedConstant && req.query.status !== notNeededConstant
+      && req.query.status !== denyConstant) {
+    req.session.status = 400;
+    req.session.alert.errorMessages.push('Incorrect value for status. Please use UI buttons.');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  }
+  // find the relevant attendance record and update it accordingly
+  return models.Attendance.findOne({
+    where: {
+      member_email: req.query.member,
+      event_id: req.params.id,
+    },
+  }).then((attendance) => {
+    if (!attendance) {
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('Attendance record not found. Please retry.');
+      return req.session.save(() => {
+        return res.redirect(`/event/details/${req.params.id}`);
+      });
+    }
+    // attendance record was found
+    // confirmed option
+    if (req.query.status === confirmedConstant) {
+      return attendance.update({
+        status: models.Attendance.getStatusConfirmed(),
+      }).then(() => {
+        return res.redirect(`/event/details/${req.params.id}`);
+      });
+    }
+    // not needed option
+    if (req.query.status === notNeededConstant) {
+      return attendance.update({
+        status: models.Attendance.getStatusNotNeeded(),
+      }).then(() => {
+        return res.redirect(`/event/details/${req.params.id}`);
+      });
+    }
+    // destroy attendance record since it's unneeded
+    if (req.query.status === denyConstant) {
+      return attendance.destroy().then(() => {
+        return res.redirect(`/event/details/${req.params.id}`);
+      });
+    }
+    // code should not get here
+    throw Error('Attendance status wasnt updated.');
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  });
+};
+exports.postConfirmAttendance = postConfirmAttendance;
