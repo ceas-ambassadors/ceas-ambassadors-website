@@ -242,7 +242,7 @@ describe('Account Tests', () => {
         return response.then(() => {
           return models.Member.findAll({
             where: {
-              email: 'normal@kurtjlewis.com',
+              email: common.getNormalUserEmail(),
             },
           }).then((members) => {
             return models.Member.comparePassword('newPassword', members[0]).then((res) => {
@@ -265,7 +265,7 @@ describe('Account Tests', () => {
         return response.then(() => {
           return models.Member.findAll({
             where: {
-              email: 'normal@kurtjlewis.com',
+              email: common.getNormalUserEmail(),
             },
           }).then((members) => {
             return models.Member.comparePassword('newPassword', members[0]).then((res) => {
@@ -288,7 +288,7 @@ describe('Account Tests', () => {
         return response.then(() => {
           return models.Member.findAll({
             where: {
-              email: 'normal@kurtjlewis.com',
+              email: common.getNormalUserEmail(),
             },
           }).then((members) => {
             return models.Member.comparePassword('newPassword', members[0]).then((res) => {
@@ -311,7 +311,7 @@ describe('Account Tests', () => {
         return response.then(() => {
           return models.Member.findAll({
             where: {
-              email: 'normal@kurtjlewis.com',
+              email: common.getNormalUserEmail(),
             },
           }).then((members) => {
             return models.Member.comparePassword('newPassword', members[0]).then((res) => {
@@ -335,7 +335,7 @@ describe('Account Tests', () => {
         return response.then(() => {
           return models.Member.findAll({
             where: {
-              email: 'normal@kurtjlewis.com',
+              email: common.getNormalUserEmail(),
             },
           }).then((members) => {
             return models.Member.comparePassword('newPassword', members[0]).then((res) => {
@@ -359,7 +359,7 @@ describe('Account Tests', () => {
         return response.then(() => {
           return models.Member.findAll({
             where: {
-              email: 'normal@kurtjlewis.com',
+              email: common.getNormalUserEmail(),
             },
           }).then((members) => {
             return models.Member.comparePassword('newPassword', members[0]).then((res) => {

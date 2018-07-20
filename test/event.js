@@ -123,9 +123,10 @@ describe('Event Tests', () => {
           });
 
           // events should not increase amount of service attended, added as unconfirmed
-          const memberPromise = models.Member.findById('normal@kurtjlewis.com').then((member) => {
-            assert.equal(member.service, 0);
-          });
+          const memberPromise = models.Member.findById(common.getNormalUserEmail())
+            .then((member) => {
+              assert.equal(member.service, 0);
+            });
 
           return Promise.all([attendancePromise, memberPromise]);
         });
@@ -144,7 +145,7 @@ describe('Event Tests', () => {
           const attendancePromise = models.Attendance.findOne({
             where: {
               event_id: event.id,
-              member_email: 'normal@kurtjlewis.com',
+              member_email: common.getNormalUserEmail(),
             },
           }).then((attendance) => {
             assert(attendance);
@@ -152,9 +153,10 @@ describe('Event Tests', () => {
           });
 
           // Meeting should automatically add to the meeting count
-          const memberPromise = models.Member.findById('normal@kurtjlewis.com').then((member) => {
-            assert.equal(member.meetings, 1);
-          });
+          const memberPromise = models.Member.findById(common.getNormalUserEmail())
+            .then((member) => {
+              assert.equal(member.meetings, 1);
+            });
 
           return Promise.all([attendancePromise, memberPromise]);
         });
@@ -367,5 +369,9 @@ describe('Event Tests', () => {
     });
 
     // POST signup with specified email
+
+    // POST signup with not-real email
+
+    //
   });
 });

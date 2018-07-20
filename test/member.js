@@ -109,7 +109,7 @@ describe('Member tests', () => {
       return response.then(() => {
         return models.Member.findAll({
           where: {
-            email: 'normal@kurtjlewis.com',
+            email: common.getNormalUserEmail(),
           },
         }).then((members) => {
           // TODO - this won't actually fail the test - see #15

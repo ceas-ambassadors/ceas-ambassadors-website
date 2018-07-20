@@ -28,28 +28,41 @@ const clearDatabase = () => {
 };
 exports.clearDatabase = clearDatabase;
 
+const getNormalUserEmail = () => {
+  return 'normal@kurtjlewis.com';
+};
+exports.getNormalUserEmail = getNormalUserEmail;
+
+/**
+ * Creates a normal user
+ */
+const createNormalUser = () => {
+  return models.Member.generatePasswordHash('password').then((passwordHash) => {
+    return models.Member.create({
+      email: getNormalUserEmail(),
+      password: passwordHash,
+      accend: false,
+      super_user: false,
+      private_user: false,
+    });
+  });
+};
+exports.createNormalUser = createNormalUser;
+
 /**
  * Creates a normal user and signs them in, creating a user session
  * @param {*} done
  */
 const createNormalUserSession = (agent) => {
-  return models.Member.generatePasswordHash('password').then((passwordHash) => {
-    return models.Member.create({
-      email: 'normal@kurtjlewis.com',
-      password: passwordHash,
-      accend: false,
-      super_user: false,
-      private_user: false,
-    }).then(() => {
-      return agent
-        .post('/login')
-        .send({
-          email: 'normal@kurtjlewis.com',
-          password: 'password',
-        })
-        .redirects(1)
-        .expect(200);
-    });
+  return createNormalUser().then((member) => {
+    return agent
+      .post('/login')
+      .send({
+        email: member.email,
+        password: 'password',
+      })
+      .redirects(1)
+      .expect(200);
   });
 };
 exports.createNormalUserSession = createNormalUserSession;
