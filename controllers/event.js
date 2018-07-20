@@ -330,6 +330,14 @@ const postConfirmAttendance = (req, res) => {
   }
   // TODO: make sure the user is a super user
 
+  // check that a member email was specified
+  if (!req.query.member || !req.query.status) {
+    req.session.status = 400;
+    req.session.alert.errorMessages.push('Member and status must be specified.');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  }
   // constants sent by ui
   const confirmedConstant = 'confirmed';
   const notNeededConstant = 'notNeeded';
