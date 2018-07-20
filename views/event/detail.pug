@@ -43,7 +43,7 @@ block content
                 form(id='notNeededAttendance', action='/event/confirm/' + event.id + '?member=' + member.email + '&status=notNeeded', method='post')
                   input(type='submit', name='NotNeeded', value='Not Needed')
               td
-                form(id='denyAttendance', action='/event/confirm/' + event.id + '?member=' + member.email + '&status=deny', method='post')
+                form(id='denyAttendance', action='/event/confirm/' + event.id + '?member=' + member.email + '&status=denied', method='post')
                   input(type='submit', name='Deny', value='Did Not Attend')
     if confirmedAttendees.length > 0
       h1 Confirmed

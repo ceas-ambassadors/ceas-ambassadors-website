@@ -319,6 +319,16 @@ const postSignup = (req, res) => {
 };
 exports.postSignup = postSignup;
 
+/**
+ * POST endpoint for confirming members for events
+ * Inputs:
+ * parameter id: event id
+ * query member: member email to confirm status of
+ * query status: status to change confirmed meeting to. Allowable values
+ *    ['confirmed', 'notNeeded', 'denied']
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
 const postConfirmAttendance = (req, res) => {
   // Make sure the user is signed in
   if (!req.user) {
@@ -341,7 +351,7 @@ const postConfirmAttendance = (req, res) => {
   // constants sent by ui
   const confirmedConstant = 'confirmed';
   const notNeededConstant = 'notNeeded';
-  const denyConstant = 'deny';
+  const denyConstant = 'denied';
   // Check that the value of the status query is valid
   if (req.query.status !== confirmedConstant && req.query.status !== notNeededConstant
       && req.query.status !== denyConstant) {
@@ -359,7 +369,7 @@ const postConfirmAttendance = (req, res) => {
     },
   }).then((attendance) => {
     if (!attendance) {
-      req.session.status = 400;
+      req.session.status = 404;
       req.session.alert.errorMessages.push('Attendance record not found. Please retry.');
       return req.session.save(() => {
         return res.redirect(`/event/details/${req.params.id}`);
