@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
       beforeDestroy: (attendance /* , options */) => {
         return updateMemberColumns(attendance, true);
       },
+      beforeBulkCreate: (options) => {
+        // call individual hooks for each created record
+        options.individualHooks = true;
+      },
       beforeBulkDestroy: (options) => {
         // call individual hooks for each record destroyed
         options.individualHooks = true;
