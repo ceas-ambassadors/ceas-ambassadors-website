@@ -716,4 +716,33 @@ describe('Attendance Tests', () => {
       });
     });
   });
+
+  describe('Verify behavior of bulk hooks', () => {
+    // bulk hooks should trigger individual hooks
+    // I'm not going to test all of them, but this will verify library behavior
+    it('Test bulk destroy hook', () => {
+      return Promise.all([common.createMeeting(), common.createNormalUser()]).then((output) => {
+        // create an attendance record
+        return models.Attendance.create({
+          member_email: output[1].email,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusConfirmed(),
+        }).then(() => {
+          // calling destroy on the attendance model instead of an instance is a bulk operation
+          // if the model is correctly configured, this should result in the individual hook
+          // being called anyways
+          return models.Attendance.destroy({
+            where: {
+              event_id: output[0].id,
+              member_email: output[1].email,
+            },
+          }).then(() => {
+            return models.Member.findById(output[1].email).then((member) => {
+              assert.equal(member.meetings, 0);
+            });
+          });
+        });
+      });
+    });
+  });
 });
