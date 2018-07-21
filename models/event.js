@@ -43,6 +43,20 @@ module.exports = (sequelize, DataTypes) => {
       beforeUpsert: () => {
         throw Error('Upsert is hard to support for events.');
       },
+      beforeDestroy: (event) => {
+        // Need to manually destroy related attendance records so that the right hooks are called
+        return sequelize.models.Attendance.findAll({
+          where: {
+            event_id: event.id,
+          },
+        }).then((attendances) => {
+          const promises = [];
+          for (let i = 0; i < attendances.length; i += 1) {
+            promises.push(attendances[i].destroy());
+          }
+          return Promise.all(promises);
+        });
+      },
       afterUpdate: (event) => {
         /**
          * if the length of the event changes it needs to be reflected in member accounts who have
@@ -73,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
         }).then((attendances) => {
           const promises = [];
           for (let i = 0; i < attendances.length; i += 1) {
-            promises.push(sequelize.models.findById(attendances[i].member_email));
+            promises.push(sequelize.models.Member.findById(attendances[i].member_email));
           }
           return Promise.all(promises).then((output) => {
             const returns = []; // array of actions for return
@@ -115,7 +129,6 @@ module.exports = (sequelize, DataTypes) => {
     models.Event.belongsToMany(models.Member, {
       as: 'event_id',
       through: models.Attendance,
-      onDelete: 'cascade',
       hooks: true,
     });
     models.Event.belongsTo(models.Member);
