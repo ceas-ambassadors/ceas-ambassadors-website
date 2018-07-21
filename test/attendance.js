@@ -516,13 +516,204 @@ describe('Attendance Tests', () => {
 
   describe('Check Event hooks', () => {
     // test changing event times for unconfirmed attendance
+    it('Test changing times for unconfirmed attendance', () => {
+      return Promise.all([common.createPublicEvent(), common.createNormalUser()]).then((output) => {
+        // create an attendance record
+        return models.Attendance.create({
+          member_email: output[1].email,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          // change event length to 1/2 of what it was
+          return output[0].update({
+            end_time: output[0].start_time.getTime() + (common.getEventLength() / 2),
+          }).then(() => {
+            // it should not have changed the member because it was unconfirmed
+            return models.Member.findById(output[1].email).then((member) => {
+              assert.equal(member.service, 0);
+              assert.equal(member.meetings, 0);
+              assert.equal(member.service_not_needed, 0);
+            });
+          });
+        });
+      });
+    });
 
     // test changing event times for not needed attendance
+    it('Test changing times for not needed attendance', () => {
+      return Promise.all([common.createPublicEvent(), common.createNormalUser()]).then((output) => {
+        // create an attendance record
+        return models.Attendance.create({
+          member_email: output[1].email,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusNotNeeded(),
+        }).then(() => {
+          // change event length to 1/2 of what it was
+          return output[0].update({
+            end_time: output[0].start_time.getTime() + (common.getEventLength() / 2),
+          }).then(() => {
+            // not needed time should have updated to be 1/2 of its previous value
+            return models.Member.findById(output[1].email).then((member) => {
+              assert.equal(member.service, 0);
+              assert.equal(member.meetings, 0);
+              assert.equal(member.service_not_needed, (common.getEventLength() / 2));
+            });
+          });
+        });
+      });
+    });
+
+    // test changing time for confirmed attendance
+    it('Test changing times for confirmed attendance', () => {
+      return Promise.all([common.createPublicEvent(), common.createNormalUser()]).then((output) => {
+        // create an attendance record
+        return models.Attendance.create({
+          member_email: output[1].email,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusConfirmed(),
+        }).then(() => {
+          // change event length to 1/2 of what it was
+          return output[0].update({
+            end_time: output[0].start_time.getTime() + (common.getEventLength() / 2),
+          }).then(() => {
+            // service should now be 1/2 of event length
+            return models.Member.findById(output[1].email).then((member) => {
+              assert.equal(member.service, (common.getEventLength() / 2));
+              assert.equal(member.meetings, 0);
+              assert.equal(member.service_not_needed, 0);
+            });
+          });
+        });
+      });
+    });
 
     // test changing event times for meeting
+    it('Test changing times for confirmed attendance to meeting', () => {
+      return Promise.all([common.createMeeting(), common.createNormalUser()]).then((output) => {
+        // create an attendance record
+        return models.Attendance.create({
+          member_email: output[1].email,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusConfirmed(),
+        }).then(() => {
+          // change event length to 1/2 of what it was
+          return output[0].update({
+            end_time: output[0].start_time.getTime() + (common.getEventLength() / 2),
+          }).then(() => {
+            // changing event times should not impact meetings
+            return models.Member.findById(output[1].email).then((member) => {
+              assert.equal(member.service, 0);
+              assert.equal(member.meetings, 1);
+              assert.equal(member.service_not_needed, 0);
+            });
+          });
+        });
+      });
+    });
 
-    // test deleting event for meeting
+    // test deleting event for unconfirmed event
+    it('Test deleting event for unconfirmed event', () => {
+      return Promise.all([common.createPublicEvent(), common.createNormalUser()]).then((output) => {
+        // create an attendance record
+        return models.Attendance.create({
+          member_email: output[1].email,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          return output[0].destroy().then(() => {
+            // unconfirmed status should see no difference
+            return models.Member.findById(output[1].email).then((member) => {
+              assert.equal(member.service, 0);
+              assert.equal(member.meetings, 0);
+              assert.equal(member.service_not_needed, 0);
+            });
+          });
+        });
+      });
+    });
 
-    // test deleting event for event
+    // test deleting event for confirmed event
+    it('Test deleting event for confirmed event', () => {
+      return Promise.all([common.createPublicEvent(), common.createNormalUser()]).then((output) => {
+        // create an attendance record
+        return models.Attendance.create({
+          member_email: output[1].email,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusConfirmed(),
+        }).then(() => {
+          return output[0].destroy().then(() => {
+            // everything should be 0
+            return models.Member.findById(output[1].email).then((member) => {
+              assert.equal(member.service, 0);
+              assert.equal(member.meetings, 0);
+              assert.equal(member.service_not_needed, 0);
+            });
+          });
+        });
+      });
+    });
+
+    // test deleting event for not needed event
+    it('Test deleting event for not needed event', () => {
+      return Promise.all([common.createPublicEvent(), common.createNormalUser()]).then((output) => {
+        // create an attendance record
+        return models.Attendance.create({
+          member_email: output[1].email,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusNotNeeded(),
+        }).then(() => {
+          return output[0].destroy().then(() => {
+            // everything should be 0
+            return models.Member.findById(output[1].email).then((member) => {
+              assert.equal(member.service, 0);
+              assert.equal(member.meetings, 0);
+              assert.equal(member.service_not_needed, 0);
+            });
+          });
+        });
+      });
+    });
+
+    // test deleting event for confirmed meeting
+    it('Test deleting event for confirmed meeting', () => {
+      return Promise.all([common.createMeeting(), common.createNormalUser()]).then((output) => {
+        // create an attendance record
+        return models.Attendance.create({
+          member_email: output[1].email,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusConfirmed(),
+        }).then(() => {
+          return output[0].destroy().then(() => {
+            // changing event times should not impact meetings
+            return models.Member.findById(output[1].email).then((member) => {
+              assert.equal(member.service, 0);
+              assert.equal(member.meetings, 0);
+              assert.equal(member.service_not_needed, 0);
+            });
+          });
+        });
+      });
+    });
+
+    // test deleting event for unconfirmed meeting
+    it('Test deleting event for unconfirmed meeting', () => {
+      return Promise.all([common.createMeeting(), common.createNormalUser()]).then((output) => {
+        // create an attendance record
+        return models.Attendance.create({
+          member_email: output[1].email,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          return output[0].destroy().then(() => {
+            // changing event times should not impact meetings
+            return models.Member.findById(output[1].email).then((member) => {
+              assert.equal(member.service, 0);
+              assert.equal(member.meetings, 0);
+              assert.equal(member.service_not_needed, 0);
+            });
+          });
+        });
+      });
+    });
   });
 });
