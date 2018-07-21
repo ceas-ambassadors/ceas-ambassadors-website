@@ -20,10 +20,11 @@ const clearDatabase = () => {
     const eventPromise = models.Event.destroy({
       where: {},
     });
-    const attendancePromise = models.Attendance.destroy({
-      where: {},
-    });
-    return Promise.all([memberPromise, sessionPromise, eventPromise, attendancePromise]);
+    // all attendance records are deleted when their corresponding events are deleted
+    // const attendancePromise = models.Attendance.destroy({
+    //   where: {},
+    // });
+    return Promise.all([memberPromise, sessionPromise, eventPromise]);
   });
 };
 exports.clearDatabase = clearDatabase;
