@@ -744,5 +744,85 @@ describe('Attendance Tests', () => {
         });
       });
     });
+
+    it('Test bulk update hook', () => {
+      // we'll need a second member to test bulk updates
+      const member2Email = 'normal2@kurtjlewis.com';
+      const member2Promise = models.Member.create({
+        email: member2Email,
+        password: 'blah', // we won't be logging in, so this doesn't matter
+        accend: false,
+        super_user: false,
+        private_user: false,
+      });
+      return Promise.all([common.createMeeting(), common.createNormalUser(), member2Promise])
+        .then((output) => {
+          // create attendance records
+          const attend1Prom = models.Attendance.create({
+            member_email: output[1].email,
+            event_id: output[0].id,
+            status: models.Attendance.getStatusUnconfirmed(),
+          });
+
+          const attend2Prom = models.Attendance.create({
+            member_email: output[2].email,
+            event_id: output[0].id,
+            status: models.Attendance.getStatusUnconfirmed(),
+          });
+
+          return Promise.all([attend1Prom, attend2Prom]).then(() => {
+            return models.Attendance.update({
+              status: models.Attendance.getStatusConfirmed(),
+            },
+            {
+              where: {
+                event_id: output[0].id,
+              },
+            }).then((rowsModified) => {
+              assert.equal(rowsModified.length, 2);
+              // assert that meetings are now 1 in both cases
+              return models.Member.findAll().then((members) => {
+                assert.equal(members.length, 2);
+                assert.equal(members[0].meetings, 1);
+                assert.equal(members[1].meetings, 1);
+              });
+            });
+          });
+        });
+    });
+
+    // test bulkCreateHook
+    it('Test bulkCreate hook', () => {
+      // we'll need a second member to test bulk updates
+      const member2Email = 'normal2@kurtjlewis.com';
+      const member2Promise = models.Member.create({
+        email: member2Email,
+        password: 'blah', // we won't be logging in, so this doesn't matter
+        accend: false,
+        super_user: false,
+        private_user: false,
+      });
+      return Promise.all([common.createMeeting(), common.createNormalUser(), member2Promise])
+        .then((output) => {
+          // bulk create the attendance records
+          models.Attendance.bulkCreate([
+            {
+              status: models.Attendance.getStatusConfirmed(),
+              event_id: output[0].id,
+              member_email: output[1].email,
+            }, {
+              status: models.Attendance.getStatusConfirmed(),
+              event_id: output[0].id,
+              member_email: output[2].email,
+            }]).then(() => {
+            // assert that meetings are now 1 in both cases
+            return models.Member.findAll().then((members) => {
+              assert.equal(members.length, 2);
+              assert.equal(members[0].meetings, 1);
+              assert.equal(members[1].meetings, 1);
+            });
+          });
+        });
+    });
   });
 });
