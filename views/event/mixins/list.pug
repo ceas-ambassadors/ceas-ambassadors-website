@@ -1,0 +1,26 @@
+//- This file defines the list mixin for events
+//- mixins allow for code reuse by functionizing common html blocks
+//- https://pugjs.org/language/mixins.html
+
+mixin event-list(name, events)
+  .event-box
+    h1=name
+    table.table.table-hover
+      thead
+        tr
+          th Title
+          th Start Time
+          th.disp-col End Time
+          th Location
+          th Details
+      tbody
+        each event in events
+          //- TODO - color code based on if event has happened
+          tr
+            td=event.title
+            td=event.start_time
+            td.disp-col=event.end_time
+            td=event.location
+            td
+              //- Link to event details page
+              a(href='/event/details/' + event.id) View  
