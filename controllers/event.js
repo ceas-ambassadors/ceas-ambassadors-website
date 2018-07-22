@@ -23,6 +23,7 @@ const getDetails = (req, res) => {
       return res.status(res.locals.status).render('index', { title: 'Event not found' });
     }
 
+    // Get a list of members who are signed up with some status for this event
     // It's faster to run a raw sql query than it is to run two queries in a row
     // This is because Sequelize can't do joins
     // http://docs.sequelizejs.com/manual/tutorial/raw-queries.html
@@ -39,7 +40,7 @@ const getDetails = (req, res) => {
       const confirmedAttendees = [];
       const notNeededAttendees = [];
       const unconfirmedAttendees = [];
-      // Separate members into confirmed and unconfirmed
+      // Separate members into confirmed, not needed, and unconfirmed
       for (let i = 0; i < members.length; i += 1) {
         if (members[i].status === models.Attendance.getStatusConfirmed()) {
           confirmedAttendees.push(members[i]);
@@ -269,7 +270,7 @@ const postSignup = (req, res) => {
     // output is in order of array
     const event = output[0];
     const attendance = output[1];
-    // If attendance exists there is no need to continue
+    // If attendance exists there is no need to continue because you can't re-signup
     if (attendance) {
       req.session.status = 400;
       req.session.alert.errorMessages.push(`${memberEmail} is already signed up for this event.`);
@@ -297,14 +298,6 @@ const postSignup = (req, res) => {
       req.session.alert.successMessages.push(`Signed up for ${event.title}`);
       return req.session.save(() => {
         return res.redirect(`/event/details/${event.id}`);
-      });
-    }).catch((err) => {
-      // There was an error
-      console.log(err);
-      req.session.status = 500;
-      req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
-      return req.session.save(() => {
-        return res.redirect(`/event/details/${req.params.id}`);
       });
     });
   }).catch((err) => {
@@ -340,7 +333,7 @@ const postConfirmAttendance = (req, res) => {
   }
   // TODO: make sure the user is a super user
 
-  // check that a member email was specified
+  // check that a member email and status were specified
   if (!req.query.member || !req.query.status) {
     req.session.status = 400;
     req.session.alert.errorMessages.push('Member and status must be specified.');
