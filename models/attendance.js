@@ -161,7 +161,7 @@ module.exports = (sequelize, DataTypes) => {
           throw Error('Something unexpected happened in the attendance afterCreate hook.');
         });
       },
-      beforeBulkCreate: (options) => {
+      beforeBulkCreate: (instances, options) => {
         // call individual hooks for each created record
         options.individualHooks = true;
       },

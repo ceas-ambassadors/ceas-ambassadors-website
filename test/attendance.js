@@ -805,7 +805,7 @@ describe('Attendance Tests', () => {
       return Promise.all([common.createMeeting(), common.createNormalUser(), member2Promise])
         .then((output) => {
           // bulk create the attendance records
-          models.Attendance.bulkCreate([
+          return models.Attendance.bulkCreate([
             {
               status: models.Attendance.getStatusConfirmed(),
               event_id: output[0].id,
