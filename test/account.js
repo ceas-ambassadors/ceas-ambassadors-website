@@ -63,12 +63,8 @@ describe('Account Tests', () => {
       .expect(201);
     // check that test@kurtjlewis.com was  added to the database
     return response.then(() => {
-      return models.Member.findAll({
-        where: {
-          email: 'test@kurtjlewis.com',
-        },
-      }).then((members) => {
-        assert(members[0], 'The member does not exist');
+      return models.Member.findById('test@kurtjlewis.com').then((member) => {
+        assert(member, 'The member does not exist');
       });
     });
   });
@@ -107,12 +103,8 @@ describe('Account Tests', () => {
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
     return response.then(() => {
-      return models.Member.findAll({
-        where: {
-          email: 'bad_email@kurtjlewis.com',
-        },
-      }).then((members) => {
-        assert.equal(members.length, 0);
+      return models.Member.findById('bad_email@kurtjlewis.com').then((member) => {
+        assert(!member);
       });
     });
   });
@@ -129,12 +121,8 @@ describe('Account Tests', () => {
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
     return response.then(() => {
-      return models.Member.findAll({
-        where: {
-          email: 'bad_email@kurtjlewis.com',
-        },
-      }).then((members) => {
-        assert.equal(members.length, 0);
+      return models.Member.findById('bad_email@kurtjlewis.com').then((member) => {
+        assert(!member);
       });
     });
   });
@@ -151,12 +139,8 @@ describe('Account Tests', () => {
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
     return response.then(() => {
-      return models.Member.findAll({
-        where: {
-          email: 'bad_email@kurtjlewis.com',
-        },
-      }).then((members) => {
-        assert.equal(members.length, 0);
+      return models.Member.findById('bad_email@kurtjlewis.com').then((member) => {
+        assert(!member);
       });
     });
   });
@@ -240,12 +224,8 @@ describe('Account Tests', () => {
           .expect(200);
 
         return response.then(() => {
-          return models.Member.findAll({
-            where: {
-              email: 'normal@kurtjlewis.com',
-            },
-          }).then((members) => {
-            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+            return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(res, 'The new password was not applied.');
             });
           });
@@ -263,12 +243,8 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          return models.Member.findAll({
-            where: {
-              email: 'normal@kurtjlewis.com',
-            },
-          }).then((members) => {
-            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+            return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(!res, 'The new password was wrongfully applied.');
             });
           });
@@ -286,12 +262,8 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          return models.Member.findAll({
-            where: {
-              email: 'normal@kurtjlewis.com',
-            },
-          }).then((members) => {
-            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+            return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(!res, 'The new password was wrongfully applied.');
             });
           });
@@ -309,12 +281,8 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          return models.Member.findAll({
-            where: {
-              email: 'normal@kurtjlewis.com',
-            },
-          }).then((members) => {
-            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+            return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(!res, 'The new password was wrongfully applied.');
             });
           });
@@ -333,12 +301,8 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          return models.Member.findAll({
-            where: {
-              email: 'normal@kurtjlewis.com',
-            },
-          }).then((members) => {
-            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+            return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(!res, 'The new password was wrongfully applied.');
             });
           });
@@ -357,12 +321,8 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          return models.Member.findAll({
-            where: {
-              email: 'normal@kurtjlewis.com',
-            },
-          }).then((members) => {
-            return models.Member.comparePassword('newPassword', members[0]).then((res) => {
+          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+            return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(!res, 'The new password was wrongfully applied.');
             });
           });

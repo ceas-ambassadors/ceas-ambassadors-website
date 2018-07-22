@@ -131,13 +131,9 @@ const postSignup = [
       return getSignup(req, res, next);
     };
 
-    return models.Member.findAll({
-      where: {
-        email: req.body.email,
-      },
-    }).then((members) => {
+    return models.Member.findById(req.body.email).then((member) => {
       // if the query returns a member then an account is already registered with that email
-      if (members.length !== 0) {
+      if (member) {
         res.locals.status = 400;
         res.locals.alert.errorMessages.push('An account with that email already exists');
         return getSignup(req, res, next);
@@ -149,9 +145,9 @@ const postSignup = [
           accend: false,
           super_user: false,
           private_user: false,
-        }).then((member) => {
+        }).then((newMember) => {
           // req.logIn requires use of callbacks, doesn't support promises
-          return req.logIn(member, (err) => {
+          return req.logIn(newMember, (err) => {
             if (err) return next(err);
             req.session.status = 201;
             req.session.alert.successMessages.push('Account created!');
@@ -327,12 +323,8 @@ const getProfile = (req, res) => {
     });
   }
 
-  return models.Member.findAll({
-    where: {
-      email: req.params.email,
-    },
-  }).then((members) => {
-    if (members.length !== 1) {
+  return models.Member.findById(req.params.email).then((member) => {
+    if (!member) {
       res.locals.status = 404;
       res.locals.alert.errorMessages.push('Member not found.');
       // TODO - build 404 page
@@ -341,7 +333,6 @@ const getProfile = (req, res) => {
       //   title: 'Not Found',
       // });
     }
-    const member = members[0]; // only one member should be returned anyways
     // render their profile page
     return res.render('member/profile', {
       title: `${member.first_name} ${member.last_name}`,
