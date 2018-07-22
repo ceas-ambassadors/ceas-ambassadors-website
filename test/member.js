@@ -107,13 +107,7 @@ describe('Member tests', () => {
         .expect(200);
 
       return response.then(() => {
-        return models.Member.findAll({
-          where: {
-            email: common.getNormalUserEmail(),
-          },
-        }).then((members) => {
-          // TODO - this won't actually fail the test - see #15
-          const member = members[0]; // for brevity
+        return models.Member.findById(common.getNormalUserEmail()).then((member) => {
           assert(member);
           assert.deepEqual(member.first_name, firstName);
           assert.deepEqual(member.last_name, lastName);

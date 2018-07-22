@@ -1,47 +1,10 @@
 extends ../layout
+//- Include for the list function mixin - +event-list()
+include ./mixins/list.pug
 
 block content
   //- TODO - only if super user
   if user
-    //- TODO - style as a button
-    a(href='/event/create') Create Event
-  h1 Meetings
-  table
-    thead
-      tr
-        th Meeting Title
-        th Start Time
-        th End Time
-        th Location
-        th Details
-    tbody
-      each meeting in meetings
-        //- TODO - color code based on if event has happened
-        tr
-          td=meeting.title
-          td=meeting.start_time
-          td=meeting.end_time
-          td=meeting.location
-          td
-            //- Link to event details page
-            a(href='/event/details/' + meeting.id) View
-  h1 Events
-  table
-    thead
-      tr
-        th Event Title
-        th Start Time
-        th End Time
-        th Location
-        th Details
-    tbody
-      each event in events
-        //- TODO - color code based on if event has happened
-        tr
-          td=event.title
-          td=event.start_time
-          td=event.end_time
-          td=event.location
-          td
-            //- Link to event details page
-            a(href='/event/details/' + event.id) View
+    a.btn.btn-danger(href='/event/create') Create Event
+  +event-list('Meetings', meetings)
+  +event-list('Events', events)
