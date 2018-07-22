@@ -46,25 +46,9 @@ describe('Event Tests', () => {
   // GET event listing page
   it('GET event list page', () => {
     // Create an event and a meeting, so that we may know there aren't any problems with the queries
-    const eventPromise = models.Event.create({
-      title: 'Test event',
-      start_time: Date.now(),
-      end_time: Date.now() + 100,
-      location: 'Your computer',
-      public: true,
-      meeting: false,
-      created_by: 'test@kurtjlewis.com',
-    });
+    const eventPromise = common.createPublicEvent();
 
-    const meetingPromise = models.Event.create({
-      title: 'Test Meeting',
-      start_time: Date.now(),
-      end_time: Date.now() + 100,
-      location: 'Your computer',
-      public: true,
-      meeting: true,
-      created_by: 'test@kurtjlewis.com',
-    });
+    const meetingPromise = common.createMeeting();
 
     // Once both promises resolve, hit the endpoint and ensure we receive a 200
     return Promise.all([eventPromise, meetingPromise]).then(() => {
@@ -84,19 +68,43 @@ describe('Event Tests', () => {
 
   // GET event that has just been created
   it('GET event details page', () => {
-    return models.Event.create({
-      title: 'Test Meeting',
-      start_time: Date.now(),
-      end_time: Date.now() + 100,
-      location: 'Your computer',
-      public: true,
-      meeting: true,
-      created_by: 'test@kurtjlewis.com',
-    }).then((event) => {
-      console.log(`/event/detaisl/${event.id}`);
+    return common.createMeeting().then((event) => {
       return request.agent(app)
         .get(`/event/details/${event.id}`)
         .expect(200);
+    });
+  });
+
+  // POST /event/signup/:id not signed in
+  it('POST signup for event not signed in', () => {
+    return common.createPublicEvent().then((event) => {
+      return request.agent(app)
+        .post(`/event/signup/${event.id}`)
+        .redirects(1)
+        .expect(401);
+    });
+  });
+
+
+  // POST confirm attendance without being signed in
+  it('POST confirm attendance not signed in', () => {
+    const memberPromise = common.createNormalUser();
+    const eventPromise = common.createPublicEvent();
+
+    return Promise.all([memberPromise, eventPromise]).then((output) => {
+      const member = output[0];
+      const event = output[1];
+      // create an attendance record for the signup to confirm
+      return models.Attendance.create({
+        member_email: member.email,
+        event_id: event.id,
+        status: models.Attendance.getStatusUnconfirmed(),
+      }).then(() => {
+        return request.agent(app)
+          .post(`/event/confirm/${event.id}?member=${member.email}&status=confirmed`)
+          .redirects(1)
+          .expect(401);
+      });
     });
   });
 
@@ -117,6 +125,85 @@ describe('Event Tests', () => {
     // GET private event - normal users cannot see a private event if not on attendees list
 
     // GET private event as an attendee
+
+    // POST signup for an event
+    it('POST signup for event', () => {
+      return common.createPublicEvent().then((event) => {
+        const response = agent
+          .post(`/event/signup/${event.id}`)
+          .redirects(1)
+          .expect(201);
+
+        return response.then(() => {
+          const attendancePromise = models.Attendance.findOne({
+            where: {
+              event_id: event.id,
+              member_email: 'normal@kurtjlewis.com',
+            },
+          }).then((attendance) => {
+            assert(attendance);
+            assert.deepEqual(attendance.status, models.Attendance.getStatusUnconfirmed());
+          });
+
+          // events should not increase amount of service attended, added as unconfirmed
+          const memberPromise = models.Member.findById(common.getNormalUserEmail())
+            .then((member) => {
+              assert.equal(member.service, 0);
+            });
+
+          return Promise.all([attendancePromise, memberPromise]);
+        });
+      });
+    });
+
+    // POST signup for a meeting
+    it('POST signup for Meeting', () => {
+      return common.createMeeting().then((event) => {
+        const response = agent
+          .post(`/event/signup/${event.id}`)
+          .redirects(1)
+          .expect(201);
+
+        return response.then(() => {
+          const attendancePromise = models.Attendance.findOne({
+            where: {
+              event_id: event.id,
+              member_email: common.getNormalUserEmail(),
+            },
+          }).then((attendance) => {
+            assert(attendance);
+            assert.deepEqual(attendance.status, models.Attendance.getStatusConfirmed());
+          });
+
+          // Meeting should automatically add to the meeting count
+          const memberPromise = models.Member.findById(common.getNormalUserEmail())
+            .then((member) => {
+              assert.equal(member.meetings, 1);
+            });
+
+          return Promise.all([attendancePromise, memberPromise]);
+        });
+      });
+    });
+
+    // POST signup for an event that has already been signed up for
+    it('POST signup for event that has already been signed up for', () => {
+      return common.createPublicEvent().then((event) => {
+        const response = agent
+          .post(`/event/signup/${event.id}`)
+          .redirects(1)
+          .expect(201);
+
+        return response.then(() => {
+          return agent
+            .post(`/event/signup/${event.id}`)
+            .redirects(1)
+            .expect(400);
+        });
+      });
+    });
+
+    // POST signup for event with specified email as non super user
   });
 
   describe('Event tests which require a signed in super user', () => {
@@ -300,6 +387,158 @@ describe('Event Tests', () => {
         }).then((events) => {
           // assert that event does not exist
           assert.equal(events.length, 0, 'Event should not exist');
+        });
+      });
+    });
+
+    // POST signup with specified email
+
+    // POST signup with not-real email
+
+    // POST confirm attendance with no email
+    it('POST confirm attendance with no email', () => {
+      return common.createPublicEvent().then((event) => {
+        // create an attendance record for the signup to confirm
+        return models.Attendance.create({
+          member_email: common.getNormalUserEmail(),
+          event_id: event.id,
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          return agent
+            .post(`/event/confirm/${event.id}?status=confirmed`)
+            .redirects(1)
+            .expect(400);
+        });
+      });
+    });
+
+    // POST confirm attendance with no status
+    it('POST confirm attendance with no status', () => {
+      return common.createPublicEvent().then((event) => {
+        // create an attendance record for the signup to confirm
+        return models.Attendance.create({
+          member_email: common.getNormalUserEmail(),
+          event_id: event.id,
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          return agent
+            .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}`)
+            .redirects(1)
+            .expect(400);
+        });
+      });
+    });
+
+    // POST confirm attendance with invalid status
+    it('POST confirm attendance with invalid status', () => {
+      return common.createPublicEvent().then((event) => {
+        // create an attendance record for the signup to confirm
+        return models.Attendance.create({
+          member_email: common.getNormalUserEmail(),
+          event_id: event.id,
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          return agent
+            .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}&status=badStatus`)
+            .redirects(1)
+            .expect(400);
+        });
+      });
+    });
+
+    // POST confirm attendance with not signed up email
+    it('POST confirm without corresponding attendance record', () => {
+      return common.createPublicEvent().then((event) => {
+        // create an attendance record for the signup to confirm
+        return agent
+          .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}&status=confirmed`)
+          .redirects(1)
+          .expect(404);
+      });
+    });
+
+    // POST confirm attendance wih status=confirm
+    it('POST confirm attendance with status=confirm', () => {
+      return common.createPublicEvent().then((event) => {
+        // create an attendance record for the signup to confirm
+        return models.Attendance.create({
+          member_email: common.getNormalUserEmail(),
+          event_id: event.id,
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          const requestProm = agent
+            .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}&status=confirmed`)
+            .redirects(1)
+            .expect(200);
+
+          return requestProm.then(() => {
+            return models.Attendance.findOne({
+              where: {
+                member_email: common.getNormalUserEmail(),
+                event_id: event.id,
+              },
+            }).then((attendance) => {
+              assert(attendance);
+              assert.deepEqual(attendance.status, models.Attendance.getStatusConfirmed());
+            });
+          });
+        });
+      });
+    });
+
+    // POST confirm attendance with status=notNeeded
+    it('POST confirm attendance with status=notNeeded', () => {
+      return common.createPublicEvent().then((event) => {
+        // create an attendance record for the signup to confirm
+        return models.Attendance.create({
+          member_email: common.getNormalUserEmail(),
+          event_id: event.id,
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          const requestProm = agent
+            .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}&status=notNeeded`)
+            .redirects(1)
+            .expect(200);
+
+          return requestProm.then(() => {
+            return models.Attendance.findOne({
+              where: {
+                member_email: common.getNormalUserEmail(),
+                event_id: event.id,
+              },
+            }).then((attendance) => {
+              assert(attendance);
+              assert.deepEqual(attendance.status, models.Attendance.getStatusNotNeeded());
+            });
+          });
+        });
+      });
+    });
+
+    // POST confirm attendance with status=denied
+    it('POST confirm attendance with status=denied', () => {
+      return common.createPublicEvent().then((event) => {
+        // create an attendance record for the signup to confirm
+        return models.Attendance.create({
+          member_email: common.getNormalUserEmail(),
+          event_id: event.id,
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          const requestProm = agent
+            .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}&status=denied`)
+            .redirects(1)
+            .expect(200);
+
+          return requestProm.then(() => {
+            return models.Attendance.findOne({
+              where: {
+                member_email: common.getNormalUserEmail(),
+                event_id: event.id,
+              },
+            }).then((attendance) => {
+              assert(!attendance);
+            });
+          });
         });
       });
     });

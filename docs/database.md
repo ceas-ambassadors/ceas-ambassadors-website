@@ -21,14 +21,14 @@ This is the actual structue of the tables and their relationships.
 * last_name
 * major
 * grad_year
-* minutes **summation**
-  * This field is a summation of the minutes of events a user has attended.
+* service **summation**
+  * This field is a summation of the time of events a user has attended.
   * See below for notes on how we'll handle the summation columns
 * meetings **summation**
-  * This field is a summation of the minutes of meetings a user has attended.
+  * This field is a summation of the number of meetings a user has attended.
   * See below for notes on how we'll handle the summation columns
-* minutes_not_needed **summation**
-  * This field is a summation of the minutes of events a user has been sent home from because they were unneeded.
+* service_not_needed **summation**
+  * This field is a summation of the time of events a user has been sent home from because they were unneeded.
   * See below for notes on how we'll handle the summation columns
 * path_to_picture
   * hopefully we will implement bio pictures - this field is there to hold the path to their bio picture
@@ -92,12 +92,12 @@ This is the actual structue of the tables and their relationships.
   * date record was last updated - automatically handled by sequelize
 
 ## On summation columns
-There are a few ways I can approach summation columns (minutes, meetings, etc) on member. There needs to be a way to stop those values from becoming stale - if an event is updated, when a member is confirmed for attending, etc.
-1. I can setup a [SQL trigger](https://dev.mysql.com/doc/refman/8.0/en/triggers.html) on event update, insert, delete to recalculate those numbers. 
-2. Using the above, I can set a [trigger in sequelize](https://dev.mysql.com/doc/refman/8.0/en/triggers.html). This could be implemented through a [sequelize hook](http://docs.sequelizejs.com/manual/tutorial/hooks.html).
-3. I could not store these fields. I could just manually calculate them everytime they are requested. This would be slow though.
-4. I could cache calculated values and recalculate them at regular intervals - every hour, etc. 
-I currently favor option 2 - but I'll need to play around with them some. I'll update this document to indicate the choice I made once I've made it.
+Summation columns are managed using [sequelize hooks](http://docs.sequelizejs.com/manual/tutorial/hooks.html). This means one must take care not to affect these columns when manually running sql update/delete commands on events and attendance records. I intend to eventually add an endpoint for resyncing the database. Hooks for bulk operations should result in hooks for individual events being called, [per this issue on the sequelize repo](https://github.com/sequelize/sequelize/issues/6368). 
+
+**DO NOT UPDATE/DELETE EVENT OR ATTENDANCE RECORDS MANUALLY - THEY WILL DESYNC THE DATABASE**
+
+## Referential Integrity
+Referential integrity means that when a record is deleted/updated and a row in another table references that row, it is also affected. As mentioned elsewhere in this document, the summation columns are managed via application logic hooking into sequelize events. The attendance table is managed dualy via sql itself  and sequelize though. If an event is deleted via the app, sequelize will cascade the delete to the attendance table, so that the appropriate hooks are called. If a member is deleted, the action is handled automatically by sql and no hooks are run. Sequelize only hooks into hook events in the application to manage updating summation columns accordingly.
 
 # Working with Sequelize
 This project will utilize [Sequelize](sequelizejs.com) for our database ORM. I'll make notes here on using it, including it's auto generated migrations and etc. Sequelize does a lot of magic behind the scenes, which is bad for building an understanding of what's going on, so right here I'm going to write up a quick explanation of the basics of Sequelize.

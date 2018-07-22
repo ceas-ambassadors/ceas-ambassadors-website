@@ -11,25 +11,52 @@ const models = require('../models/');
  * @param {*} res - outgoing response
  */
 const getDetails = (req, res) => {
-  models.Event.findAll({
-    where: {
-      id: req.params.id,
-    },
-  }).then((events) => {
+  models.Event.findById(req.params.id).then((event) => {
     /**
      * TODO
      * only render private events for super users or people on the list of attendees
      */
-    if (events.length !== 1) {
+    if (!event) {
       // TODO - make 404 page
       res.locals.status = 404;
       res.locals.alert.errorMessages.push('Event not found.');
       return res.status(res.locals.status).render('index', { title: 'Event not found' });
     }
-    // Event was found - render details
-    return res.status(res.locals.status).render('event/detail', {
-      title: events[0].title,
-      event: events[0],
+
+    // Get a list of members who are signed up with some status for this event
+    // It's faster to run a raw sql query than it is to run two queries in a row
+    // This is because Sequelize can't do joins
+    // http://docs.sequelizejs.com/manual/tutorial/raw-queries.html
+    return models.sequelize.query(`SELECT Members.first_name, Members.last_name, Members.email,
+                                   Attendances.status FROM Members INNER JOIN Attendances
+                                   ON Members.email = Attendances.member_email WHERE
+                                   Attendances.event_id = :event_id`, {
+      replacements: {
+        event_id: req.params.id,
+      },
+      type: models.sequelize.QueryTypes.SELECT,
+    }).then((members) => {
+      // members is not an array of full members - it only has the above selected attrs + status
+      const confirmedAttendees = [];
+      const notNeededAttendees = [];
+      const unconfirmedAttendees = [];
+      // Separate members into confirmed, not needed, and unconfirmed
+      for (let i = 0; i < members.length; i += 1) {
+        if (members[i].status === models.Attendance.getStatusConfirmed()) {
+          confirmedAttendees.push(members[i]);
+        } else if (members[i].status === models.Attendance.getStatusNotNeeded()) {
+          notNeededAttendees.push(members[i]);
+        } else {
+          unconfirmedAttendees.push(members[i]);
+        }
+      }
+      return res.status(res.locals.status).render('event/detail', {
+        title: event.title,
+        event, // shorthand for event: event,
+        unconfirmedAttendees,
+        notNeededAttendees,
+        confirmedAttendees,
+      });
     });
   }).catch((err) => {
     console.log(err);
@@ -201,3 +228,178 @@ const postCreate = [
   },
 ];
 exports.postCreate = postCreate;
+
+/**
+ * POST to a signup page with an event with req.params.id id.
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const postSignup = (req, res) => {
+  // Make sure the user is signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to signup');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  }
+
+  // Get the event
+  const eventPromise = models.Event.findById(req.params.id);
+
+  // Get the member
+  let memberEmail = null;
+  // If the current user is a super user, they can specify a member
+  // Super user tests
+  if (req.user.super_user && req.body.email) {
+    memberEmail = req.body.email;
+  } else {
+    memberEmail = req.user.email;
+  }
+
+  // A member cannot be signed up for an event for which they're already signed up
+  const attendancePromise = models.Attendance.findOne({
+    where: {
+      member_email: memberEmail,
+      event_id: req.params.id,
+    },
+  });
+
+  // Once member and event have been found, continue with creating the attendance entry
+  return Promise.all([eventPromise, attendancePromise]).then((output) => {
+    // output is in order of array
+    const event = output[0];
+    const attendance = output[1];
+    // If attendance exists there is no need to continue because you can't re-signup
+    if (attendance) {
+      req.session.status = 400;
+      req.session.alert.errorMessages.push(`${memberEmail} is already signed up for this event.`);
+      return req.session.save(() => {
+        return res.redirect(`/event/details/${event.id}`);
+      });
+    }
+    let status = models.Attendance.getStatusUnconfirmed();
+    if (event.meeting) {
+      status = models.Attendance.getStatusConfirmed();
+    }
+    if (!event.public) {
+      // Private events are automatically confirmed because they're entered by a super user
+      // TODO - check that user is a super user - only proceed if so
+      status = models.Attendance.getStatusConfirmed();
+    }
+
+    // Create attendance
+    return models.Attendance.create({
+      event_id: req.params.id,
+      member_email: memberEmail,
+      status, // shorthand for status: status,
+    }).then(() => {
+      req.session.status = 201;
+      req.session.alert.successMessages.push(`Signed up for ${event.title}`);
+      return req.session.save(() => {
+        return res.redirect(`/event/details/${event.id}`);
+      });
+    });
+  }).catch((err) => {
+    // There was an error
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  });
+};
+exports.postSignup = postSignup;
+
+/**
+ * POST endpoint for confirming members for events
+ * Inputs:
+ * parameter id: event id
+ * query member: member email to confirm status of
+ * query status: status to change confirmed meeting to. Allowable values
+ *    ['confirmed', 'notNeeded', 'denied']
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const postConfirmAttendance = (req, res) => {
+  // Make sure the user is signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to signup');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  }
+  // TODO: make sure the user is a super user
+
+  // check that a member email and status were specified
+  if (!req.query.member || !req.query.status) {
+    req.session.status = 400;
+    req.session.alert.errorMessages.push('Member and status must be specified.');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  }
+  // constants sent by ui
+  const confirmedConstant = 'confirmed';
+  const notNeededConstant = 'notNeeded';
+  const denyConstant = 'denied';
+  // Check that the value of the status query is valid
+  if (req.query.status !== confirmedConstant && req.query.status !== notNeededConstant
+      && req.query.status !== denyConstant) {
+    req.session.status = 400;
+    req.session.alert.errorMessages.push('Incorrect value for status. Please use UI buttons.');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  }
+  // find the relevant attendance record and update it accordingly
+  return models.Attendance.findOne({
+    where: {
+      member_email: req.query.member,
+      event_id: req.params.id,
+    },
+  }).then((attendance) => {
+    if (!attendance) {
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Attendance record not found. Please retry.');
+      return req.session.save(() => {
+        return res.redirect(`/event/details/${req.params.id}`);
+      });
+    }
+    // attendance record was found
+    // confirmed option
+    if (req.query.status === confirmedConstant) {
+      return attendance.update({
+        status: models.Attendance.getStatusConfirmed(),
+      }).then(() => {
+        return res.redirect(`/event/details/${req.params.id}`);
+      });
+    }
+    // not needed option
+    if (req.query.status === notNeededConstant) {
+      return attendance.update({
+        status: models.Attendance.getStatusNotNeeded(),
+      }).then(() => {
+        return res.redirect(`/event/details/${req.params.id}`);
+      });
+    }
+    // destroy attendance record since it's unneeded
+    if (req.query.status === denyConstant) {
+      return attendance.destroy().then(() => {
+        return res.redirect(`/event/details/${req.params.id}`);
+      });
+    }
+    // code should not get here
+    throw Error('Attendance status wasnt updated.');
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect(`/event/details/${req.params.id}`);
+    });
+  });
+};
+exports.postConfirmAttendance = postConfirmAttendance;

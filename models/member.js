@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     last_name: DataTypes.STRING,
     major: DataTypes.STRING,
     grad_year: DataTypes.INTEGER,
-    minutes: {
+    service: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0,
     },
-    minutes_not_needed: {
+    service_not_needed: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,

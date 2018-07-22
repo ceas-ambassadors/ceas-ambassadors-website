@@ -107,7 +107,7 @@ describe('Member tests', () => {
         .expect(200);
 
       return response.then(() => {
-        return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+        return models.Member.findById(common.getNormalUserEmail()).then((member) => {
           assert(member);
           assert.deepEqual(member.first_name, firstName);
           assert.deepEqual(member.last_name, lastName);

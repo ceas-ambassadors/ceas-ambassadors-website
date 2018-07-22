@@ -1,3 +1,4 @@
+//- @param unconfirmedAttendees - attendees that are unconfirmed
 extends ../layout
 
 block content
@@ -15,4 +16,52 @@ block content
   h4=event.description
   h3=event.meeting
 
-  h1 Sign Up
+  if user
+    h1 Sign Up
+    form(id='signUp', action='/event/signup/' + event.id, method='post')
+      input(type='submit', name='Sign Up', value='Sign Up')
+
+  //- TODO only display if super user
+  if user
+    if !event.meeting && unconfirmedAttendees.length > 0
+      h1 Confirm Attendance
+      table
+        thead
+          tr
+            th Member
+            th Confirm
+            th Not Needed
+            th Did Not Attend
+        tbody
+          each member in unconfirmedAttendees
+            tr
+              td=member.first_name+' '+member.last_name
+              td
+                form(id='confirmAttendance', action='/event/confirm/' + event.id + '?member=' + member.email + '&status=confirmed', method='post')
+                  input(type='submit', name='Confirm', value='Confirm')
+              td
+                form(id='notNeededAttendance', action='/event/confirm/' + event.id + '?member=' + member.email + '&status=notNeeded', method='post')
+                  input(type='submit', name='NotNeeded', value='Not Needed')
+              td
+                form(id='denyAttendance', action='/event/confirm/' + event.id + '?member=' + member.email + '&status=denied', method='post')
+                  input(type='submit', name='Deny', value='Did Not Attend')
+    if confirmedAttendees.length > 0
+      h1 Confirmed
+      table
+        thead
+          tr
+            th Member
+        tbody
+          each member in confirmedAttendees
+            tr
+              td=member.first_name+' '+member.last_name
+    if notNeededAttendees.length > 0
+      h1 Not Needed
+      table
+        thead
+          tr
+            th Member
+        tbody
+          each member in notNeededAttendees
+            tr
+              td=member.first_name+' '+member.last_name

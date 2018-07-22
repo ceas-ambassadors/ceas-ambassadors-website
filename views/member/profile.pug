@@ -1,3 +1,4 @@
+//- @param renderHours - boolean to render the hours section of the profile
 extends ../layout
 
 block content
@@ -16,4 +17,11 @@ block content
     h3 Club
     div=member.clubs
 
-  //- TODO - display hours for super users or the user themselves
+  if renderHours
+    h1 Hours
+    label Completed hours
+    p=service
+    label Meetings
+    p=meetings
+    label Hours not needed
+    p=serviceNotNeeded

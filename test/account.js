@@ -224,7 +224,7 @@ describe('Account Tests', () => {
           .expect(200);
 
         return response.then(() => {
-          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+          return models.Member.findById(common.getNormalUserEmail()).then((member) => {
             return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(res, 'The new password was not applied.');
             });
@@ -243,7 +243,7 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+          return models.Member.findById(common.getNormalUserEmail()).then((member) => {
             return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(!res, 'The new password was wrongfully applied.');
             });
@@ -262,7 +262,7 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+          return models.Member.findById(common.getNormalUserEmail()).then((member) => {
             return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(!res, 'The new password was wrongfully applied.');
             });
@@ -281,7 +281,7 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+          return models.Member.findById(common.getNormalUserEmail()).then((member) => {
             return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(!res, 'The new password was wrongfully applied.');
             });
@@ -301,7 +301,7 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+          return models.Member.findById(common.getNormalUserEmail()).then((member) => {
             return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(!res, 'The new password was wrongfully applied.');
             });
@@ -321,7 +321,7 @@ describe('Account Tests', () => {
           .expect(400);
 
         return response.then(() => {
-          return models.Member.findById('normal@kurtjlewis.com').then((member) => {
+          return models.Member.findById(common.getNormalUserEmail()).then((member) => {
             return models.Member.comparePassword('newPassword', member).then((res) => {
               assert(!res, 'The new password was wrongfully applied.');
             });
