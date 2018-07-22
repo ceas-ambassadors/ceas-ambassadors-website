@@ -169,8 +169,8 @@ module.exports = (sequelize, DataTypes) => {
         // call individual hooks for each record destroyed
         options.individualHooks = true;
       },
-      afterBulkUpdate: (options) => {
-        // call individual hooks for each record udpated
+      beforeBulkUpdate: (options) => {
+        // call individual hooks for each record updated
         options.individualHooks = true;
       },
     },

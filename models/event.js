@@ -118,10 +118,6 @@ module.exports = (sequelize, DataTypes) => {
         // call beforeUpdate for each individual record
         options.individualHooks = true;
       },
-      afterBulkUpdate: (options) => {
-        // call afterUpdate for each individual record
-        options.individualHooks = true;
-      },
     },
   });
   Event.associate = (models) => {
