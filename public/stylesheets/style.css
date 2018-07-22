@@ -137,7 +137,7 @@ nav{
   text-align: center;
 }
 
-.submit:hover{
+.submit:hover, .btn-danger:hover{
   background: #ac0000;
 }
 
@@ -170,4 +170,23 @@ nav{
   .create-title{
     font-size: 24px;
   }
+}
+
+/****************************
+* Styling Event/Meeting List
+******************************/
+
+/* This will make columns invisible when the screen becomes a mobile view */
+@media (max-width: 630px){
+  .disp-col{
+    display: none;
+  }
+}
+
+.btn-danger{
+  background-color: #ec1818;
+}
+
+.meeting-box{
+  margin-top: 10px;
 }
