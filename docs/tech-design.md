@@ -80,7 +80,7 @@ There should be a page that has a link to apply for ambassadors. I can just ifra
 a google doc here. 
 ### [I] Favicon
 Will need an icon for the site
-### [I] Home page
+### [C] Home page
 Need a home page that lists upcoming events, meetings, and maybe a randomly chosen
 featured member?
 ### [I] FAQ
@@ -103,26 +103,26 @@ This should create a real event, and then mark it as private. Only super users s
 Currently, this has a "highlight by service hour requirement" for logged in users. This would be a good idea. Requires frontend javascript code. Only logged in super users should see how many hours a member has.
 
 ## Events
-### [I] Add new events
+### [C] Add new events
 Should verify that the event is valid - that is, it should not let the end time
 be before the start time. Super user only
 ### [I] Delete events
 Hours should be linked - so deleting an event should cause a member's hours to decrease. Super user only
 ### [I] Edit events
 Hours should be linked - editing an event should cause a member's hours to change. Super user only.
-### [I] Detail view
+### [C] Detail view
 Should include signed up members, and confirmed attended members. Confirmed members should be super user only.
-### [I] List View
+### [C] List View
 All members should be able to see all public tours
-### [I] Sign up for tours
+### [C] Sign up for tours
 Members need to be able to sign up for events. Should send a flash message confirming
 sign up.
-### [I] Confirm attendance
+### [C] Confirm attendance
 Super Users need the ability to confirm that a member attended the event
-### [I] Deny attendance
+### [C] Deny attendance
 Need the ability to deny attendance - for when a member signed up and that did not
 attend. Super user only
-### [I] Not needed attendance
+### [C] Not needed attendance
 Need the ability to denote that a member showed up, but was not needed. Super user only
 ### [I] ?Repeating events
 Repeating events would be super cool - but also very hard to implement
@@ -139,7 +139,7 @@ instructions for creating their account. Via this email should be the only way a
 Need to loop into an email service to send password reset tokens
 ### [C] sign in
 ### [C] sign out
-### [I] change password
+### [C] change password
 
 # Maintenance
 Its imperative that the website is easy to maintain. That means there need to be
