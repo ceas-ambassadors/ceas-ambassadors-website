@@ -18,7 +18,7 @@ block content
 
   if user
     h1 Sign Up
-    form(id='signUp', action='/event/signup/' + event.id, method='post')
+    form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
       input(type='submit', name='Sign Up', value='Sign Up')
 
   //- TODO only display if super user
@@ -37,13 +37,13 @@ block content
             tr
               td=member.first_name+' '+member.last_name
               td
-                form(id='confirmAttendance', action='/event/confirm/' + event.id + '?member=' + member.email + '&status=confirmed', method='post')
+                form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.email + '&status=confirmed', method='post')
                   input(type='submit', name='Confirm', value='Confirm')
               td
-                form(id='notNeededAttendance', action='/event/confirm/' + event.id + '?member=' + member.email + '&status=notNeeded', method='post')
+                form(id='notNeededAttendance', action='/event/' + event.id + '/confirm?member=' + member.email + '&status=notNeeded', method='post')
                   input(type='submit', name='NotNeeded', value='Not Needed')
               td
-                form(id='denyAttendance', action='/event/confirm/' + event.id + '?member=' + member.email + '&status=denied', method='post')
+                form(id='denyAttendance', action='/event/' + event.id + '/confirm?member=' + member.email + '&status=denied', method='post')
                   input(type='submit', name='Deny', value='Did Not Attend')
     if confirmedAttendees.length > 0
       h1 Confirmed

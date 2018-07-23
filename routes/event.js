@@ -9,16 +9,16 @@ const router = express.Router();
 
 const eventController = require('../controllers/event');
 
-router.get('/details/:id', eventController.getDetails);
-
 router.get('/', eventController.getList);
 
 router.get('/create', eventController.getCreate);
 
 router.post('/create', eventController.postCreate);
 
-router.post('/signup/:id', eventController.postSignup);
+router.get('/:id/details', eventController.getDetails);
 
-router.post('/confirm/:id', eventController.postConfirmAttendance);
+router.post('/:id/signup', eventController.postSignup);
+
+router.post('/:id/confirm', eventController.postConfirmAttendance);
 
 module.exports = router;

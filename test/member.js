@@ -56,7 +56,7 @@ describe('Member tests', () => {
       super_user: false,
     }).then(() => {
       return request.agent(app)
-        .get('/member/profile/profile@kurtjlewis.com')
+        .get('/member/profile@kurtjlewis.com/profile')
         .expect(200);
     });
   });
@@ -64,7 +64,7 @@ describe('Member tests', () => {
   // GET /member/profile/ of a non-existent emial
   it('GET profile of non-existent member', (done) => {
     request.agent(app)
-      .get('/member/profile/not-real@kurtjlewis.com')
+      .get('/member/not-real@kurtjlewis.com/profile')
       .expect(404, done);
   });
 

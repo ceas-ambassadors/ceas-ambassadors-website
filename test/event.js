@@ -62,7 +62,7 @@ describe('Event Tests', () => {
   // event ids are numerical, so `fake` should not return an event
   it('GET nonexistent event details', (done) => {
     request.agent(app)
-      .get('/event/details/fake')
+      .get('/event/fake/details')
       .expect(404, done);
   });
 
@@ -70,16 +70,16 @@ describe('Event Tests', () => {
   it('GET event details page', () => {
     return common.createMeeting().then((event) => {
       return request.agent(app)
-        .get(`/event/details/${event.id}`)
+        .get(`/event/${event.id}/details`)
         .expect(200);
     });
   });
 
-  // POST /event/signup/:id not signed in
+  // POST /event/:id/signup not signed in
   it('POST signup for event not signed in', () => {
     return common.createPublicEvent().then((event) => {
       return request.agent(app)
-        .post(`/event/signup/${event.id}`)
+        .post(`/event/${event.id}/signup`)
         .redirects(1)
         .expect(401);
     });
@@ -101,7 +101,7 @@ describe('Event Tests', () => {
         status: models.Attendance.getStatusUnconfirmed(),
       }).then(() => {
         return request.agent(app)
-          .post(`/event/confirm/${event.id}?member=${member.email}&status=confirmed`)
+          .post(`/event/${event.id}/confirm?member=${member.email}&status=confirmed`)
           .redirects(1)
           .expect(401);
       });
@@ -130,7 +130,7 @@ describe('Event Tests', () => {
     it('POST signup for event', () => {
       return common.createPublicEvent().then((event) => {
         const response = agent
-          .post(`/event/signup/${event.id}`)
+          .post(`/event/${event.id}/signup`)
           .redirects(1)
           .expect(201);
 
@@ -160,7 +160,7 @@ describe('Event Tests', () => {
     it('POST signup for Meeting', () => {
       return common.createMeeting().then((event) => {
         const response = agent
-          .post(`/event/signup/${event.id}`)
+          .post(`/event/${event.id}/signup`)
           .redirects(1)
           .expect(201);
 
@@ -190,13 +190,13 @@ describe('Event Tests', () => {
     it('POST signup for event that has already been signed up for', () => {
       return common.createPublicEvent().then((event) => {
         const response = agent
-          .post(`/event/signup/${event.id}`)
+          .post(`/event/${event.id}/signup`)
           .redirects(1)
           .expect(201);
 
         return response.then(() => {
           return agent
-            .post(`/event/signup/${event.id}`)
+            .post(`/event/${event.id}/signup`)
             .redirects(1)
             .expect(400);
         });
@@ -405,7 +405,7 @@ describe('Event Tests', () => {
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           return agent
-            .post(`/event/confirm/${event.id}?status=confirmed`)
+            .post(`/event/${event.id}/confirm?status=confirmed`)
             .redirects(1)
             .expect(400);
         });
@@ -422,7 +422,7 @@ describe('Event Tests', () => {
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           return agent
-            .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}`)
+            .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}`)
             .redirects(1)
             .expect(400);
         });
@@ -439,7 +439,7 @@ describe('Event Tests', () => {
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           return agent
-            .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}&status=badStatus`)
+            .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}&status=badStatus`)
             .redirects(1)
             .expect(400);
         });
@@ -451,7 +451,7 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return agent
-          .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}&status=confirmed`)
+          .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}&status=confirmed`)
           .redirects(1)
           .expect(404);
       });
@@ -467,7 +467,7 @@ describe('Event Tests', () => {
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           const requestProm = agent
-            .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}&status=confirmed`)
+            .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}&status=confirmed`)
             .redirects(1)
             .expect(200);
 
@@ -496,7 +496,7 @@ describe('Event Tests', () => {
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           const requestProm = agent
-            .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}&status=notNeeded`)
+            .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}&status=notNeeded`)
             .redirects(1)
             .expect(200);
 
@@ -525,7 +525,7 @@ describe('Event Tests', () => {
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           const requestProm = agent
-            .post(`/event/confirm/${event.id}?member=${common.getNormalUserEmail()}&status=denied`)
+            .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}&status=denied`)
             .redirects(1)
             .expect(200);
 

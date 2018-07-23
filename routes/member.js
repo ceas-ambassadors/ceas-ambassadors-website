@@ -9,7 +9,7 @@ const memberHandler = require('../controllers/member');
 const router = express.Router();
 
 /* GET profile */
-router.get('/profile/:email', memberHandler.getProfile);
+router.get('/:email/profile', memberHandler.getProfile);
 
 /* POST /member/profile/update */
 router.post('/profile/update', memberHandler.postProfileUpdate);

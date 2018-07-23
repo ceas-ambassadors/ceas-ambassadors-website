@@ -216,7 +216,7 @@ const postCreate = [
       req.session.status = 201;
       req.session.alert.successMessages.push('Event created!');
       return req.session.save(() => {
-        return res.redirect(`/event/details/${event.id}`);
+        return res.redirect(`/event/${event.id}/details`);
       });
     }).catch((err) => {
       // There was an error
@@ -240,7 +240,7 @@ const postSignup = (req, res) => {
     req.session.status = 401;
     req.session.alert.errorMessages.push('You must be logged in to signup');
     return req.session.save(() => {
-      return res.redirect(`/event/details/${req.params.id}`);
+      return res.redirect(`/event/${req.params.id}/details`);
     });
   }
 
@@ -275,7 +275,7 @@ const postSignup = (req, res) => {
       req.session.status = 400;
       req.session.alert.errorMessages.push(`${memberEmail} is already signed up for this event.`);
       return req.session.save(() => {
-        return res.redirect(`/event/details/${event.id}`);
+        return res.redirect(`/event/${event.id}/details`);
       });
     }
     let status = models.Attendance.getStatusUnconfirmed();
@@ -297,7 +297,7 @@ const postSignup = (req, res) => {
       req.session.status = 201;
       req.session.alert.successMessages.push(`Signed up for ${event.title}`);
       return req.session.save(() => {
-        return res.redirect(`/event/details/${event.id}`);
+        return res.redirect(`/event/${event.id}/details`);
       });
     });
   }).catch((err) => {
@@ -306,7 +306,7 @@ const postSignup = (req, res) => {
     req.session.status = 500;
     req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
     return req.session.save(() => {
-      return res.redirect(`/event/details/${req.params.id}`);
+      return res.redirect(`/event/${req.params.id}/details`);
     });
   });
 };
@@ -328,7 +328,7 @@ const postConfirmAttendance = (req, res) => {
     req.session.status = 401;
     req.session.alert.errorMessages.push('You must be logged in to signup');
     return req.session.save(() => {
-      return res.redirect(`/event/details/${req.params.id}`);
+      return res.redirect(`/event/${req.params.id}/details`);
     });
   }
   // TODO: make sure the user is a super user
@@ -338,7 +338,7 @@ const postConfirmAttendance = (req, res) => {
     req.session.status = 400;
     req.session.alert.errorMessages.push('Member and status must be specified.');
     return req.session.save(() => {
-      return res.redirect(`/event/details/${req.params.id}`);
+      return res.redirect(`/event/${req.params.id}/details`);
     });
   }
   // constants sent by ui
@@ -351,7 +351,7 @@ const postConfirmAttendance = (req, res) => {
     req.session.status = 400;
     req.session.alert.errorMessages.push('Incorrect value for status. Please use UI buttons.');
     return req.session.save(() => {
-      return res.redirect(`/event/details/${req.params.id}`);
+      return res.redirect(`/event/${req.params.id}/details`);
     });
   }
   // find the relevant attendance record and update it accordingly
@@ -365,7 +365,7 @@ const postConfirmAttendance = (req, res) => {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Attendance record not found. Please retry.');
       return req.session.save(() => {
-        return res.redirect(`/event/details/${req.params.id}`);
+        return res.redirect(`/event/${req.params.id}/details`);
       });
     }
     // attendance record was found
@@ -374,7 +374,7 @@ const postConfirmAttendance = (req, res) => {
       return attendance.update({
         status: models.Attendance.getStatusConfirmed(),
       }).then(() => {
-        return res.redirect(`/event/details/${req.params.id}`);
+        return res.redirect(`/event/${req.params.id}/details`);
       });
     }
     // not needed option
@@ -382,13 +382,13 @@ const postConfirmAttendance = (req, res) => {
       return attendance.update({
         status: models.Attendance.getStatusNotNeeded(),
       }).then(() => {
-        return res.redirect(`/event/details/${req.params.id}`);
+        return res.redirect(`/event/${req.params.id}/details`);
       });
     }
     // destroy attendance record since it's unneeded
     if (req.query.status === denyConstant) {
       return attendance.destroy().then(() => {
-        return res.redirect(`/event/details/${req.params.id}`);
+        return res.redirect(`/event/${req.params.id}/details`);
       });
     }
     // code should not get here
@@ -398,7 +398,7 @@ const postConfirmAttendance = (req, res) => {
     req.session.status = 500;
     req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
     return req.session.save(() => {
-      return res.redirect(`/event/details/${req.params.id}`);
+      return res.redirect(`/event/${req.params.id}/details`);
     });
   });
 };
