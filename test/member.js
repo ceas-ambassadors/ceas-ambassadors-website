@@ -68,6 +68,13 @@ describe('Member tests', () => {
       .expect(404, done);
   });
 
+  // GET /member/ - listing of members
+  it('Get member list', (done) => {
+    request.agent(app)
+      .get('/member')
+      .expect(200, done);
+  });
+
   describe('Member tests which require a logged in normal user', () => {
     let agent = null;
     // Create a normal user session

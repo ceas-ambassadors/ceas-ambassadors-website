@@ -364,3 +364,27 @@ const getProfile = (req, res) => {
   });
 };
 exports.getProfile = getProfile;
+
+/**
+ * GET for '/member' - renders list of members
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing request
+ */
+const getList = (req, res) => {
+  // get all member alphabetically sorted and return them
+  return models.Member.findAll({
+    where: {
+      private_user: false,
+    },
+    order: [
+      ['last_name', 'ASC'],
+      ['first_name', 'ASC'],
+    ],
+  }).then((members) => {
+    return res.status(res.locals.status).render('member/list', {
+      title: 'Members',
+      members, // shorthand for members: members,
+    });
+  });
+};
+exports.getList = getList;

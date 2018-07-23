@@ -8,6 +8,9 @@ const memberHandler = require('../controllers/member');
 
 const router = express.Router();
 
+/* GET list of members */
+router.get('/', memberHandler.getList);
+
 /* GET profile */
 router.get('/:email/profile', memberHandler.getProfile);
 

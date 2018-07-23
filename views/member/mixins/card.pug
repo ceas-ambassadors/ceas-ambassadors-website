@@ -1,0 +1,8 @@
+//- This file defines the card mixin for members
+//- mixins allow for code reuse by functionizing common html blocks
+//- https://pugjs.org/language/mixins.html
+
+mixin member-card(member)
+  div
+    a(href='/member/' + member.email + '/profile') #{member.first_name} #{member.last_name}
+    p #{member.email}
