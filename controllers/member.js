@@ -278,12 +278,19 @@ const postProfileUpdate = (req, res) => {
   if (req.body.accend === 'on') {
     accend = true;
   }
+
+  // Ensure that gradYear is a number
+  // correct syntax for let gradYear = req.body.gradYear;
+  let { gradYear } = req.body;
+  if (gradYear !== null && Number(gradYear) === 0) {
+    gradYear = null;
+  }
   // Take any changes submitted as the whole truth - no verification needed.
   return req.user.update({
     first_name: req.body.firstName,
     last_name: req.body.lastName,
     major: req.body.major,
-    grad_year: req.body.gradYear,
+    grad_year: gradYear,
     clubs: req.body.clubs,
     minors: req.body.minors,
     accend, // shorthand for accend: accend,
@@ -297,7 +304,7 @@ const postProfileUpdate = (req, res) => {
     });
   }).catch((err) => {
     console.log(err);
-    req.session.alert.errorMessages('There was a problem. Please alert the tech chair if it continues.');
+    req.session.alert.errorMessages.push('There was a problem. Please alert the tech chair if it continues.');
     req.session.status = 500;
     return req.session.save(() => {
       return res.redirect('/settings');

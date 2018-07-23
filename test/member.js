@@ -120,5 +120,33 @@ describe('Member tests', () => {
         });
       });
     });
+
+    // POST /member/profile/update with not all values
+    it('POST /member/profile/update with only some values', () => {
+      const firstName = 'Test';
+      const lastName = 'User';
+      const hometown = 'TestVille';
+      const accendFrontend = 'on'; // because it's a checkbox on the frontend
+      const accend = true; // expected end value
+      const response = agent.post('/member/profile/update')
+        .send({
+          firstName,
+          lastName,
+          hometown,
+          accend: accendFrontend,
+        })
+        .redirects(1)
+        .expect(200);
+
+      return response.then(() => {
+        return models.Member.findById(common.getNormalUserEmail()).then((member) => {
+          assert(member);
+          assert.deepEqual(member.first_name, firstName);
+          assert.deepEqual(member.last_name, lastName);
+          assert.deepEqual(member.hometown, hometown);
+          assert.equal(member.accend, accend);
+        });
+      });
+    });
   });
 });
