@@ -148,5 +148,22 @@ describe('Member tests', () => {
         });
       });
     });
+
+    // POST /member/profile/update with grad year = ''
+    it('POST /member/profile/update with gradYear=empty string', () => {
+      const gradYear = '';
+      const response = agent.post('/member/profile/update')
+        .send({
+          gradYear,
+        })
+        .redirects(1)
+        .expect(200);
+      return response.then(() => {
+        return models.Member.findById(common.getNormalUserEmail()).then((member) => {
+          assert(member);
+          assert.deepEqual(member.grad_year, null);
+        });
+      });
+    });
   });
 });
