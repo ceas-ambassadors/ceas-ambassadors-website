@@ -9,6 +9,10 @@ body {
 a {
   color: #00B7FF;
 }
+/* This is to fix footer issue */
+#upper-block{
+  min-height: calc(100vh - 70px);
+}
 
 /*********************
 *  Nav bar styles    *
@@ -57,7 +61,7 @@ nav{
 *********************/
 /* Everything content wise appears within this container */
 #content {
-  margin: 5% 10%;
+  padding: 5% 10%;
 }
 
 /*********************
@@ -72,7 +76,6 @@ nav{
   background-color: #f4f7fc;
   text-align: center;
   height: 70px;
-  margin-top: -50px;
 }
 
 /***************************
