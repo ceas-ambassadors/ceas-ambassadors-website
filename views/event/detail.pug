@@ -17,14 +17,14 @@ block content
   h3=event.meeting
 
   if user
-    h1 Sign Up
+    h2 Sign Up
     form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
       input(type='submit', name='Sign Up', value='Sign Up')
 
   //- TODO only display if super user
   if user
     if !event.meeting && unconfirmedAttendees.length > 0
-      h1 Confirm Attendance
+      h2 Confirm Attendance
       table
         thead
           tr
@@ -46,7 +46,7 @@ block content
                 form(id='denyAttendance', action='/event/' + event.id + '/confirm?member=' + member.email + '&status=denied', method='post')
                   input(type='submit', name='Deny', value='Did Not Attend')
     if confirmedAttendees.length > 0
-      h1 Confirmed
+      h2 Confirmed
       table
         thead
           tr
@@ -56,7 +56,7 @@ block content
             tr
               td=member.first_name+' '+member.last_name
     if notNeededAttendees.length > 0
-      h1 Not Needed
+      h2 Not Needed
       table
         thead
           tr
@@ -65,3 +65,7 @@ block content
           each member in notNeededAttendees
             tr
               td=member.first_name+' '+member.last_name
+    //- edit and delete options
+    h2 Event Options
+    form(id='deleteEvent', action='/event/' + event.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete the event. Proceed?')")
+      input(type='submit', name='delete', value='Delete Event')

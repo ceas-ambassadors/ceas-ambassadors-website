@@ -204,6 +204,16 @@ describe('Event Tests', () => {
     });
 
     // POST signup for event with specified email as non super user
+
+    // // try to delete an event as a normal user
+    // it('POST event delete as a normal user', () => {
+    //   return common.createPublicEvent().then((event) => {
+    //     return agent
+    //       .post(`/event/${event.id}/delete`)
+    //       .redirects(1)
+    //       .expect(401);
+    //   });
+    // });
   });
 
   describe('Event tests which require a signed in super user', () => {
@@ -541,6 +551,24 @@ describe('Event Tests', () => {
           });
         });
       });
+    });
+
+    // POST event delete succesfully
+    it('POST event delete succesfully', () => {
+      return common.createPublicEvent().then((event) => {
+        return agent
+          .post(`/event/${event.id}/delete`)
+          .redirects(1)
+          .expect(200);
+      });
+    });
+
+    // POST event delete for event that doesn't exist
+    it('POST event delete for not real event', (done) => {
+      agent
+        .post('/event/0/delete')
+        .redirects(1)
+        .expect(404, done);
     });
   });
 });

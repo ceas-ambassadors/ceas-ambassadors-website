@@ -21,4 +21,6 @@ router.post('/:id/signup', eventController.postSignup);
 
 router.post('/:id/confirm', eventController.postConfirmAttendance);
 
+router.post('/:id/delete', eventController.postDelete);
+
 module.exports = router;

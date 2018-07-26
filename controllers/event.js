@@ -403,3 +403,48 @@ const postConfirmAttendance = (req, res) => {
   });
 };
 exports.postConfirmAttendance = postConfirmAttendance;
+
+/**
+ * Deletes the event specified by req.params.id
+ * Only accessible by super users
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const postDelete = (req, res) => {
+  // Make sure the user is signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to signup');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
+  // TODO - check if super user
+
+  return models.Event.findById(req.params.id).then((event) => {
+    if (!event) {
+      // event was not found - 404
+      // TODO - have a real 404 page
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Event not found.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
+    }
+    return event.destroy().then(() => {
+      // return to event listings
+      req.session.alert.successMessages.push('Event deleted succesfully.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMesssages.push('Error. Contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  });
+};
+exports.postDelete = postDelete;
