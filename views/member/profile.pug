@@ -1,5 +1,7 @@
 //- @param renderHours - boolean to render the hours section of the profile
 extends ../layout
+//- include event list mixin
+include ../event/mixins/list.pug
 
 block content
   //- TODO - picture
@@ -25,3 +27,8 @@ block content
     p=meetings
     label Hours not needed
     p=serviceNotNeeded
+    +event-list("Unconfirmed Events", unconfirmedEvents)
+    +event-list("Confirmed Events", confirmedEvents)
+    +event-list("Not Needed Events", notNeededEvents)
+    +event-list("Confirmed Meetings", confirmedMeetings)
+    +event-list("Unconfirmed Meetings", unconfirmedMeetings)

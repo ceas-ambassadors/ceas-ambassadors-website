@@ -330,7 +330,24 @@ const getProfile = (req, res) => {
     });
   }
 
-  return models.Member.findById(req.params.email).then((member) => {
+  // Get a list of members who are signed up with some status for this event
+  // It's faster to run a raw sql query than it is to run two queries in a row
+  // This is because Sequelize can't do joins
+  // output will be normal event object + status of said event for this member
+  // http://docs.sequelizejs.com/manual/tutorial/raw-queries.html
+  const eventPromise = models.sequelize.query(`SELECT Events.*, Attendances.status
+                                 FROM Events INNER JOIN Attendances
+                                 ON Events.id = Attendances.event_id WHERE
+                                 Attendances.member_email = :email`, {
+    replacements: {
+      email: req.params.email,
+    },
+    type: models.sequelize.QueryTypes.SELECT,
+  });
+
+  const memberPromise = models.Member.findById(req.params.email);
+
+  return Promise.all([memberPromise, eventPromise]).then(([member, events]) => {
     if (!member) {
       res.locals.status = 404;
       res.locals.alert.errorMessages.push('Member not found.');
@@ -345,6 +362,32 @@ const getProfile = (req, res) => {
     const renderHours = ((req.user) && (req.user.super_user || req.user.email === member.email));
     const service = member.service / 3600000;
     const serviceNotNeeded = member.service_not_needed / 3600000;
+
+    // separate events into buckets
+    const unconfirmedEvents = [];
+    const confirmedEvents = [];
+    const notNeededEvents = [];
+    const unconfirmedMeetings = [];
+    const confirmedMeetings = [];
+    for (let i = 0; i < events.length; i += 1) {
+      if (events[i].status === models.Attendance.getStatusUnconfirmed()) {
+        if (events[i].meeting) {
+          unconfirmedMeetings.push(events[i]);
+        } else {
+          unconfirmedEvents.push(events[i]);
+        }
+      } else if (events[i].status === models.Attendance.getStatusConfirmed()) {
+        if (events[i].meeting) {
+          confirmedMeetings.push(events[i]);
+        } else {
+          confirmedEvents.push(events[i]);
+        }
+      } else if (events[i].status === models.Attendance.getStatusNotNeeded()) {
+        // not a valid status for meetings
+        notNeededEvents.push(events[i]);
+      }
+    }
+
     // render their profile page
     return res.render('member/profile', {
       title: `${member.first_name} ${member.last_name}`,
@@ -353,6 +396,11 @@ const getProfile = (req, res) => {
       service,
       meetings: member.meetings,
       serviceNotNeeded,
+      unconfirmedEvents,
+      confirmedEvents,
+      notNeededEvents,
+      unconfirmedMeetings,
+      confirmedMeetings,
     });
   }).catch((err) => {
     console.log(err);
