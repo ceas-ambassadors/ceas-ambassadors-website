@@ -4,6 +4,7 @@
 
 mixin member-card(member)
   div
+    img(src='/images/default-profile-picture.jpg', style="height:100px;")
     a(href='/member/' + member.email + '/profile') #{member.first_name} #{member.last_name}
     p #{member.email}
     p #{member.major}
