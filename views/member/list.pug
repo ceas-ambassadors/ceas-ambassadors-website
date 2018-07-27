@@ -4,5 +4,6 @@ include ./mixins/card.pug
 
 block content
   h1 Members
-  each member in members
-    +member-card(member)
+  div.member-table
+    each member in members
+      +member-card(member)
