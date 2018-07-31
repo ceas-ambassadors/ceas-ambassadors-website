@@ -443,16 +443,25 @@ const postUpdateAttributes = (req, res) => {
     let superUser = req.query.super_user;
     let privateUser = req.query.private_user;
     // variable to indicate that something was changed
-    let change = false;
-    if (superUser !== true && superUser !== false) {
+    let change = true;
+    if (superUser === 'true') {
+      superUser = true;
+    } else if (superUser === 'false') {
+      superUser = false;
+    } else {
+      // wasn't true or false, set to current value
       superUser = member.super_user;
-    } else {
-      change = true;
+      change = false;
     }
-    if (privateUser !== true && privateUser !== false) {
-      privateUser = member.private_user;
-    } else {
+    if (privateUser === 'true') {
+      privateUser = true;
       change = true;
+    } else if (privateUser === 'false') {
+      privateUser = false;
+      change = true;
+    } else {
+      // wasn't tyure or false, set to current value
+      privateUser = member.private_user;
     }
     return member.update({
       super_user: superUser,
