@@ -34,6 +34,11 @@ const getNormalUserEmail = () => {
 };
 exports.getNormalUserEmail = getNormalUserEmail;
 
+const getSuperUserEmail = () => {
+  return 'super@kurtjlewis.com';
+};
+exports.getSuperUserEmail = getSuperUserEmail;
+
 /**
  * Creates a normal user
  */
@@ -51,8 +56,24 @@ const createNormalUser = () => {
 exports.createNormalUser = createNormalUser;
 
 /**
+ * Creates a super user
+ */
+const createSuperUser = () => {
+  return models.Member.generatePasswordHash('password').then((passwordHash) => {
+    return models.Member.create({
+      email: getSuperUserEmail(),
+      password: passwordHash,
+      accend: false,
+      super_user: true,
+      private_user: false,
+    });
+  });
+};
+exports.createSuperUser = createSuperUser;
+
+/**
  * Creates a normal user and signs them in, creating a user session
- * @param {*} done
+ * @param {*} agent - superagent instance to log in
  */
 const createNormalUserSession = (agent) => {
   return createNormalUser().then((member) => {
@@ -67,6 +88,24 @@ const createNormalUserSession = (agent) => {
   });
 };
 exports.createNormalUserSession = createNormalUserSession;
+
+/**
+ * Creates a super user and signs them in, creating a user session
+ * @param {*} agent - superagent instance to log in
+ */
+const createSuperUserSession = (agent) => {
+  return createSuperUser().then((member) => {
+    return agent
+      .post('/login')
+      .send({
+        email: member.email,
+        password: 'password',
+      })
+      .redirects(1)
+      .expect(200);
+  });
+};
+exports.createSuperUserSession = createSuperUserSession;
 
 /**
  * get standard length of event
