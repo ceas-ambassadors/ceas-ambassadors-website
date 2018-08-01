@@ -389,7 +389,7 @@ const getProfile = (req, res) => {
     }
 
     // render their profile page
-    return res.render('member/profile', {
+    return res.status(res.locals.status).render('member/profile', {
       title: `${member.first_name} ${member.last_name}`,
       member, // shorthand for member: member,
       renderHours,
@@ -422,14 +422,13 @@ const postUpdateAttributes = (req, res) => {
     });
   }
   // assert that the user is a super user
-  if (!req.user.super_user) {
+  if (req.user.super_user !== true) {
     req.session.status = 403;
     req.session.alert.errorMessages.push('You must be a super user to modify attributes.');
     return req.session.save(() => {
       return res.redirect(`/member/${req.params.email}/profile`);
     });
   }
-
   // get the requested member
   return models.Member.findById(req.params.email).then((member) => {
     if (!member) {
@@ -443,7 +442,7 @@ const postUpdateAttributes = (req, res) => {
     let superUser = req.query.super_user;
     let privateUser = req.query.private_user;
     // variable to indicate that something was changed
-    let change = true;
+    let change = false;
     if (superUser === 'true') {
       superUser = true;
     } else if (superUser === 'false') {
@@ -451,30 +450,35 @@ const postUpdateAttributes = (req, res) => {
     } else {
       // wasn't true or false, set to current value
       superUser = member.super_user;
-      change = false;
+    }
+    if (superUser !== member.super_user) {
+      change = true;
     }
     if (privateUser === 'true') {
       privateUser = true;
-      change = true;
     } else if (privateUser === 'false') {
       privateUser = false;
-      change = true;
     } else {
       // wasn't tyure or false, set to current value
       privateUser = member.private_user;
+    }
+    if (change === false && privateUser !== member.private_user) {
+      change = true;
     }
     return member.update({
       super_user: superUser,
       private_user: privateUser,
     }).then(() => {
-      if (change) {
+      if (change === true) {
         req.session.status = 200;
         req.session.alert.successMessages.push('Changes made.');
       } else {
         req.session.status = 304;
         req.session.alert.infoMessages.push('No changes applied.');
       }
-      return res.redirect(`/member/${req.params.email}/profile`);
+      return req.session.save(() => {
+        return res.redirect(`/member/${req.params.email}/profile`);
+      });
     });
   }).catch((err) => {
     console.log(err);
