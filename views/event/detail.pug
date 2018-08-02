@@ -20,6 +20,13 @@ block content
     h2 Sign Up
     form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
       input(type='submit', name='Sign Up', value='Sign Up')
+  if user && user.super_user
+    h2 Sign Up Another Member
+    form(id='signUpMember', action='/event/' + event.id + '/signup' , method='post')
+      label Member Email:
+      input(type='text', name='email', placeholder='bearcat@mail.uc.edu')
+      input(type='submit', name='Sign Up Member', value='Sign Up Member')
+    
 
   //- TODO only display if super user
   if user
