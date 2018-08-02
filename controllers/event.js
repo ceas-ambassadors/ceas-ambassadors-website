@@ -460,7 +460,15 @@ const postDelete = (req, res) => {
       return res.redirect(`/event/${req.params.id}/details`);
     });
   }
-  // TODO - check if super user
+
+  // Check if super user
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to delete events.');
+    return req.session.save(() => {
+      return res.redirect('/event');
+    });
+  }
 
   return models.Event.findById(req.params.id).then((event) => {
     if (!event) {

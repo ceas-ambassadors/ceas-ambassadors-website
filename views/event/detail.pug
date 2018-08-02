@@ -74,6 +74,7 @@ block content
             tr
               td=member.first_name+' '+member.last_name
     //- edit and delete options
-    h2 Event Options
-    form(id='deleteEvent', action='/event/' + event.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete the event. Proceed?')")
-      input(type='submit', name='delete', value='Delete Event')
+    if user && user.super_user
+      h2 Event Options
+      form(id='deleteEvent', action='/event/' + event.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete the event. Proceed?')")
+        input(type='submit', name='delete', value='Delete Event')

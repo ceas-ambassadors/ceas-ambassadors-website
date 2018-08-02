@@ -256,15 +256,15 @@ describe('Event Tests', () => {
       });
     });
 
-    // // try to delete an event as a normal user
-    // it('POST event delete as a normal user', () => {
-    //   return common.createPublicEvent().then((event) => {
-    //     return agent
-    //       .post(`/event/${event.id}/delete`)
-    //       .redirects(1)
-    //       .expect(401);
-    //   });
-    // });
+    // try to delete an event as a normal user
+    it('POST event delete as a normal user', () => {
+      return common.createPublicEvent().then((event) => {
+        return agent
+          .post(`/event/${event.id}/delete`)
+          .redirects(1)
+          .expect(403);
+      });
+    });
   });
 
   describe('Event tests which require a signed in super user', () => {
