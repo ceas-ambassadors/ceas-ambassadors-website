@@ -124,7 +124,15 @@ const getCreate = (req, res) => {
       return res.redirect('/event');
     });
   }
-  // TODO - check that user is a super user
+  // Check for super user status
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to create events.');
+    return req.session.save(() => {
+      return res.redirect('/event');
+    });
+  }
+
   return res.status(res.locals.status).render('event/create', {
     title: 'Create Event',
   });
@@ -145,10 +153,18 @@ const postCreate = [
   check('location').not().isEmpty().withMessage('A location must be set.'),
   (req, res, next) => {
     // Ensure a user is making the request
-    // TODO: make sure it is a super user
     if (!req.user) {
       req.session.status = 401;
       req.session.alert.errorMessages.push('You must be logged in to create an event.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
+    }
+
+    // Check for super user status
+    if (!req.user.super_user) {
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('You must be a super user to create events.');
       return req.session.save(() => {
         return res.redirect('/event');
       });

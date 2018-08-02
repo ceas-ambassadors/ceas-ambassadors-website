@@ -119,8 +119,39 @@ describe('Event Tests', () => {
     });
 
     // GET create event - a normal user cannot access create event page
+    it('GET /event/create as a normal user', (done) => {
+      agent.get('/event/create')
+        .redirects(1)
+        .expect(403, done);
+    });
 
     // POST create event - a normal user cannot post create event page
+    it('POST /event/create as a normal user', () => {
+      response = agent.post('/event/create')
+        .send({
+          title: 'Test Event!',
+          startTime: '2050 January 01 10:00 AM',
+          endTime: '2050 January 01 11:00 AM',
+          location: 'Baldwin Hall',
+          description: 'A test event',
+          isPublic: 'on',
+          isMeeting: 'off',
+        })
+        .redirects(1)
+        .expect(403);
+
+      // verify that an event was not created
+      return response.then(() => {
+        return models.Event.findAll({
+          where: {
+            title: 'Test Event!',
+          },
+        }).then((events) => {
+          // assert that event does not exist
+          assert.equal(events.length, 0, 'Event does not exist');
+        });
+      });
+    });
 
     // GET private event - normal users cannot see a private event if not on attendees list
 
@@ -223,19 +254,19 @@ describe('Event Tests', () => {
     beforeEach((done) => {
       agent = request.agent(app);
       // TODO - use a superuser function
-      common.createNormalUserSession(agent).then(() => {
+      common.createSuperUserSession(agent).then(() => {
         done();
       });
     });
 
-    // GET create page while signed in - should return page (only until super-user is implemented)
-    it('GET create while signed in', (done) => {
+    // GET create page while signed in
+    it('GET create while signed in as a super user', (done) => {
       agent.get('/event/create')
         .expect(200, done);
     });
 
     // Succesfully post to create event page
-    it('POST to create event page', () => {
+    it('POST to create event page as super user', () => {
       response = agent.post('/event/create')
         .send({
           title: 'Test Event!',
@@ -410,7 +441,7 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getNormalUserEmail(),
+          member_email: common.getSuperUserEmail(),
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
@@ -427,7 +458,7 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getNormalUserEmail(),
+          member_email: common.getSuperUserEmail(),
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
@@ -444,7 +475,7 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getNormalUserEmail(),
+          member_email: common.getSuperUserEmail(),
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
@@ -461,7 +492,7 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return agent
-          .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}&status=confirmed`)
+          .post(`/event/${event.id}/confirm?member=${common.getSuperUserEmail()}&status=confirmed`)
           .redirects(1)
           .expect(404);
       });
@@ -472,19 +503,19 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getNormalUserEmail(),
+          member_email: common.getSuperUserEmail(),
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           const requestProm = agent
-            .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}&status=confirmed`)
+            .post(`/event/${event.id}/confirm?member=${common.getSuperUserEmail()}&status=confirmed`)
             .redirects(1)
             .expect(200);
 
           return requestProm.then(() => {
             return models.Attendance.findOne({
               where: {
-                member_email: common.getNormalUserEmail(),
+                member_email: common.getSuperUserEmail(),
                 event_id: event.id,
               },
             }).then((attendance) => {
@@ -501,19 +532,19 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getNormalUserEmail(),
+          member_email: common.getSuperUserEmail(),
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           const requestProm = agent
-            .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}&status=notNeeded`)
+            .post(`/event/${event.id}/confirm?member=${common.getSuperUserEmail()}&status=notNeeded`)
             .redirects(1)
             .expect(200);
 
           return requestProm.then(() => {
             return models.Attendance.findOne({
               where: {
-                member_email: common.getNormalUserEmail(),
+                member_email: common.getSuperUserEmail(),
                 event_id: event.id,
               },
             }).then((attendance) => {
@@ -530,19 +561,19 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getNormalUserEmail(),
+          member_email: common.getSuperUserEmail(),
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           const requestProm = agent
-            .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}&status=denied`)
+            .post(`/event/${event.id}/confirm?member=${common.getSuperUserEmail()}&status=denied`)
             .redirects(1)
             .expect(200);
 
           return requestProm.then(() => {
             return models.Attendance.findOne({
               where: {
-                member_email: common.getNormalUserEmail(),
+                member_email: common.getSuperUserEmail(),
                 event_id: event.id,
               },
             }).then((attendance) => {
