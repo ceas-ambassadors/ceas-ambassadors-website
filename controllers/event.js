@@ -75,22 +75,30 @@ exports.getDetails = getDetails;
  * @param {*} res - outgoing response
  */
 const getList = (req, res) => {
+  // define where part of queries
+  const eventWhere = {
+    public: true,
+    meeting: false,
+  };
+  const meetingWhere = {
+    public: true,
+    meeting: true,
+  };
+  // should private events be shown? yes for super users
+  if (req.user && req.user.super_user) {
+    delete eventWhere.public;
+    delete meetingWhere.public;
+  }
   // query for all events
   const eventPromise = models.Event.findAll({
-    where: {
-      public: true,
-      meeting: false,
-    },
+    where: eventWhere,
     order: [
       ['start_time', 'ASC'],
     ],
   });
 
   const meetingPromise = models.Event.findAll({
-    where: {
-      meeting: true,
-      public: true,
-    },
+    where: meetingWhere,
     order: [
       ['start_time', 'ASC'],
     ],
