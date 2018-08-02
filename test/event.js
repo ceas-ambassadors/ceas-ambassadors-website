@@ -188,12 +188,12 @@ describe('Event Tests', () => {
     });
 
     // POST signup for a meeting
-    it('POST signup for Meeting', () => {
+    it('POST signup for Meeting as a normal user', () => {
       return common.createMeeting().then((event) => {
         const response = agent
           .post(`/event/${event.id}/signup`)
           .redirects(1)
-          .expect(201);
+          .expect(403);
 
         return response.then(() => {
           const attendancePromise = models.Attendance.findOne({
@@ -202,14 +202,13 @@ describe('Event Tests', () => {
               member_email: common.getNormalUserEmail(),
             },
           }).then((attendance) => {
-            assert(attendance);
-            assert.deepEqual(attendance.status, models.Attendance.getStatusConfirmed());
+            assert(!attendance);
           });
 
-          // Meeting should automatically add to the meeting count
+          // Meeting should not be added to the meeting count
           const memberPromise = models.Member.findById(common.getNormalUserEmail())
             .then((member) => {
-              assert.equal(member.meetings, 1);
+              assert.equal(member.meetings, 0);
             });
 
           return Promise.all([attendancePromise, memberPromise]);

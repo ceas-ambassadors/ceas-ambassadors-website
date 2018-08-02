@@ -303,6 +303,14 @@ const postSignup = (req, res) => {
     // output is in order of array
     const event = output[0];
     const attendance = output[1];
+    // If the event is a meeting, only super users can sign up for it
+    if (event.meeting && !req.user.super_user) {
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('Only super users can sign up for meetings');
+      return req.session.save(() => {
+        return res.redirect(`/event/${req.params.id}/details`);
+      });
+    }
     // If attendance exists there is no need to continue because you can't re-signup
     if (attendance) {
       req.session.status = 400;

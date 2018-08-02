@@ -16,7 +16,8 @@ block content
   h4=event.description
   h3=event.meeting
 
-  if user
+  //- show sign up if it's an event and they're logged in, or if its a meeting and they're a super user
+  if user && (!event.meeting || user.super_user)
     h2 Sign Up
     form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
       input(type='submit', name='Sign Up', value='Sign Up')
