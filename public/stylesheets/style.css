@@ -211,10 +211,18 @@ nav{
   border-radius: 4px;
   z-index: 1;
   flex: 1;
+  align-items: center;
+}
+
+.member-card .member-photo{
+  height: 100px;
 }
 
 .member-card-info{
-  margin-left: 5px;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .member-card-info p{
