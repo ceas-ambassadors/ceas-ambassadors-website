@@ -235,6 +235,27 @@ describe('Event Tests', () => {
     });
 
     // POST signup for event with specified email as non super user
+    it('POST signup for event by specifying a user as a normal user', () => {
+      return common.createPublicEvent().then((event) => {
+        const response = agent
+          .post(`/event/${event.id}/signup`)
+          .send({
+            email: common.getNormalUserEmail(),
+          })
+          .redirects(1)
+          .expect(403);
+        return response.then(() => {
+          return models.Attendance.findAll({
+            where: {
+              member_email: common.getNormalUserEmail(),
+              event_id: event.id,
+            },
+          }).then((attendances) => {
+            assert.equal(attendances.length, 0);
+          });
+        });
+      });
+    });
 
     // // try to delete an event as a normal user
     // it('POST event delete as a normal user', () => {

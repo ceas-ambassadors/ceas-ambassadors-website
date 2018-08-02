@@ -275,8 +275,17 @@ const postSignup = (req, res) => {
   let memberEmail = null;
   // If the current user is a super user, they can specify a member
   // Super user tests
-  if (req.user.super_user && req.body.email) {
-    memberEmail = req.body.email;
+  if (req.body.email) {
+    if (req.user.super_user) {
+      memberEmail = req.body.email;
+    } else {
+      // You can't specify email via post and not be a super user
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('You must be a super user to specify a member.');
+      return req.session.save(() => {
+        return res.redirect(`/event/${req.params.id}/details`);
+      });
+    }
   } else {
     memberEmail = req.user.email;
   }
