@@ -50,12 +50,15 @@ const getDetails = (req, res) => {
           unconfirmedAttendees.push(members[i]);
         }
       }
+      // build list of members for showing to non-logged in users
+      const unconfirmedAndConfirmedAttendees = unconfirmedAttendees.concat(confirmedAttendees);
       return res.status(res.locals.status).render('event/detail', {
         title: event.title,
         event, // shorthand for event: event,
         unconfirmedAttendees,
         notNeededAttendees,
         confirmedAttendees,
+        unconfirmedAndConfirmedAttendees,
       });
     });
   }).catch((err) => {
@@ -63,7 +66,7 @@ const getDetails = (req, res) => {
     req.session.status = 500;
     req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
     return req.session.save(() => {
-      req.redirect('/event');
+      return res.redirect('/event');
     });
   });
 };
@@ -367,12 +370,20 @@ const postConfirmAttendance = (req, res) => {
   // Make sure the user is signed in
   if (!req.user) {
     req.session.status = 401;
-    req.session.alert.errorMessages.push('You must be logged in to signup');
+    req.session.alert.errorMessages.push('You must be logged in to confirm attendance.');
     return req.session.save(() => {
       return res.redirect(`/event/${req.params.id}/details`);
     });
   }
-  // TODO: make sure the user is a super user
+
+  // Make sure the user is a super user
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to confirm attendance.');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
 
   // check that a member email and status were specified
   if (!req.query.member || !req.query.status) {

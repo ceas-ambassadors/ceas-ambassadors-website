@@ -265,6 +265,34 @@ describe('Event Tests', () => {
           .expect(403);
       });
     });
+
+    it('POST confirm attendance for event as normal user', () => {
+      return common.createPublicEvent().then((event) => {
+        // create an attendance record for the signup to confirm
+        return models.Attendance.create({
+          member_email: common.getNormalUserEmail(),
+          event_id: event.id,
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          const requestProm = agent
+            .post(`/event/${event.id}/confirm?member=${common.getNormalUserEmail()}&status=confirmed`)
+            .redirects(1)
+            .expect(403);
+
+          return requestProm.then(() => {
+            return models.Attendance.findOne({
+              where: {
+                member_email: common.getNormalUserEmail(),
+                event_id: event.id,
+              },
+            }).then((attendance) => {
+              assert(attendance);
+              assert.deepEqual(attendance.status, models.Attendance.getStatusUnconfirmed());
+            });
+          });
+        });
+      });
+    });
   });
 
   describe('Event tests which require a signed in super user', () => {

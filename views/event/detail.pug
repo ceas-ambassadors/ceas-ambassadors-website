@@ -29,8 +29,8 @@ block content
       input(type='submit', name='Sign Up Member', value='Sign Up Member')
     
 
-  //- TODO only display if super user
-  if user
+  //- Display only for logged in super users
+  if user && user.super_user
     if !event.meeting && unconfirmedAttendees.length > 0
       h2 Confirm Attendance
       table
@@ -73,6 +73,18 @@ block content
           each member in notNeededAttendees
             tr
               td=member.first_name+' '+member.last_name
+  else
+    //- Show normal users a combination of unconfirmed and confirmed members
+    h2 Attendees
+    table
+      thead
+        tr
+          th Member
+      tbody
+        each member in unconfirmedAndConfirmedAttendees
+          tr
+            td=member.first_name+' '+member.last_name
+
     //- edit and delete options
     if user && user.super_user
       h2 Event Options
