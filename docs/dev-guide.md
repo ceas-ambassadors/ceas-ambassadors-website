@@ -12,6 +12,23 @@ Then, install npm modules as specified in our `package.json`, using `npm install
 
 To run the website, type `npm start`. Visit the website at localhost:3000. You're in business!
 
+### Working with "Super User" features
+Privileged actions are limited to users who are "super users", or admins/exec/office workers. A super user has the ability to create/edit/delete events, sign users up for events, and many other actions. Super users can grant other users super user power, or take it away. The first super user must be elevated manually, via a mysql UPDATE command. To work with super user features, you must elevate a user in your database.
+1. Create an account that will be your super user account by using the sign up UI.
+2. Login to mysql
+3. Update the record for the created member to make them a super user.
+These commands should do it:
+```shell
+# connect to the database - for instance (though this varies greatly by platform)
+$ mysql -u root -p
+# connect to the specific database you'd like to modify
+mysql> use <insert-database-name>;
+# elevate specific member
+mysql> UPDATE Members SET super_user=1 WHERE email='<insert-email-of-account>';
+# Verify results
+mysql> SELECT * FROM Members WHERE email='<insert-email-of-account';
+```
+
 ## Frontend / Writing webpages
 We use a template rendering engine for creating webpages called [pug](https://pugjs.org/api/getting-started.html). If you need to write frontend webpages - the first thing you should do is skim through the language reference at that link for an initial understanding of what pug is and how to use it. In a nutshell, pug is a rendering engine that allows us to write shorthand html/css (or full html if you so choose), which is then transformed into html upon request. This lets us do some cool things like [insert arbitrary amounts of data into structured html](https://pugjs.org/language/iteration.html). 
 
