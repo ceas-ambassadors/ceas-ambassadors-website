@@ -154,8 +154,28 @@ describe('Event Tests', () => {
     });
 
     // GET private event - normal users cannot see a private event if not on attendees list
+    it('GET private event details as non-attendee normal user', () => {
+      return common.createPrivateEvent().then((event) => {
+        return agent.get(`/event/${event.id}/details`)
+          .redirects(1)
+          .expect(403);
+      });
+    });
 
     // GET private event as an attendee
+    it('GET private event as normal user, but as an attendee', () => {
+      return common.createPrivateEvent().then((event) => {
+        return models.Attendance.create({
+          event_id: event.id,
+          member_email: common.getNormalUserEmail(),
+          status: models.Attendance.getStatusUnconfirmed(),
+        }).then(() => {
+          return agent.get(`/event/${event.id}/details`)
+            .expect(200);
+        });
+      });
+    });
+
 
     // POST signup for an event
     it('POST signup for event', () => {
@@ -256,6 +276,26 @@ describe('Event Tests', () => {
       });
     });
 
+    // POST signup for a private event as a normal user
+    it('POST signup for private event as a normal user', () => {
+      return common.createPrivateEvent().then((event) => {
+        const response = agent
+          .post(`/event/${event.id}/signup`)
+          .redirects(1)
+          .expect(403);
+        return response.then(() => {
+          return models.Attendance.findAll({
+            where: {
+              member_email: common.getNormalUserEmail(),
+              event_id: event.id,
+            },
+          }).then((attendances) => {
+            assert.equal(attendances.length, 0);
+          });
+        });
+      });
+    });
+
     // try to delete an event as a normal user
     it('POST event delete as a normal user', () => {
       return common.createPublicEvent().then((event) => {
@@ -296,8 +336,6 @@ describe('Event Tests', () => {
   });
 
   describe('Event tests which require a signed in super user', () => {
-    // These aren't actually implemented yet - but eventually some actions will require
-    // super user privileges
     let agent = null;
     beforeEach((done) => {
       agent = request.agent(app);
@@ -481,8 +519,104 @@ describe('Event Tests', () => {
     });
 
     // POST signup with specified email
+    it('POST signup for event with specified email', () => {
+      const memberPromise = common.createNormalUser();
+      const eventPromise = common.createPublicEvent();
+      return Promise.all([memberPromise, eventPromise]).then(([, event]) => {
+        const response = agent
+          .post(`/event/${event.id}/signup`)
+          .send({
+            email: common.getNormalUserEmail(),
+          })
+          .redirects(1)
+          .expect(201);
+        return response.then(() => {
+          return models.Attendance.findAll({
+            where: {
+              member_email: common.getNormalUserEmail(),
+              event_id: event.id,
+            },
+          }).then((attendances) => {
+            assert.equal(attendances.length, 1);
+          });
+        });
+      });
+    });
 
     // POST signup with not-real email
+    it('POST signup for meeting with not real email', () => {
+      const memberPromise = common.createNormalUser();
+      const eventPromise = common.createMeeting();
+      return Promise.all([memberPromise, eventPromise]).then(([, event]) => {
+        const response = agent
+          .post(`/event/${event.id}/signup`)
+          .send({
+            email: 'blah',
+          })
+          .redirects(1)
+          .expect(400);
+        return response.then(() => {
+          return models.Attendance.findAll({
+            where: {
+              member_email: common.getNormalUserEmail(),
+              event_id: event.id,
+            },
+          }).then((attendances) => {
+            assert.equal(attendances.length, 0);
+          });
+        });
+      });
+    });
+
+    // POST signup succesfully on private event for other user
+    it('POST signup for private event with specified email', () => {
+      const memberPromise = common.createNormalUser();
+      const eventPromise = common.createPrivateEvent();
+      return Promise.all([memberPromise, eventPromise]).then(([, event]) => {
+        const response = agent
+          .post(`/event/${event.id}/signup`)
+          .send({
+            email: common.getNormalUserEmail(),
+          })
+          .redirects(1)
+          .expect(201);
+        return response.then(() => {
+          return models.Attendance.findAll({
+            where: {
+              member_email: common.getNormalUserEmail(),
+              event_id: event.id,
+            },
+          }).then((attendances) => {
+            assert.equal(attendances.length, 1);
+          });
+        });
+      });
+    });
+
+    // POST signup succesfully on meeting for other user
+    it('POST signup for meeting with specified email', () => {
+      const memberPromise = common.createNormalUser();
+      const eventPromise = common.createMeeting();
+      return Promise.all([memberPromise, eventPromise]).then(([, event]) => {
+        const response = agent
+          .post(`/event/${event.id}/signup`)
+          .send({
+            email: common.getNormalUserEmail(),
+          })
+          .redirects(1)
+          .expect(201);
+        return response.then(() => {
+          return models.Attendance.findAll({
+            where: {
+              member_email: common.getNormalUserEmail(),
+              event_id: event.id,
+            },
+          }).then((attendances) => {
+            assert.equal(attendances.length, 1);
+          });
+        });
+      });
+    });
 
     // POST confirm attendance with no email
     it('POST confirm attendance with no email', () => {

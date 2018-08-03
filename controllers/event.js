@@ -36,6 +36,26 @@ const getDetails = (req, res) => {
       },
       type: models.sequelize.QueryTypes.SELECT,
     }).then((members) => {
+      // if it is a private event and the current member is not on the attendee list - they cannot
+      // see event details
+      // super users can see all events
+      if (event.public !== true && !req.user.super_user) {
+        let found = false;
+        for (let idx = 0; idx < members.length; idx += 1) {
+          if (members[idx].email === req.user.email) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          // This member can't see this event because they're not a super user and not on list
+          req.session.status = 403;
+          req.session.alert.errorMessages.push('You are not an attendee for the private event.');
+          return req.session.save(() => {
+            return res.redirect('/event');
+          });
+        }
+      }
       // members is not an array of full members - it only has the above selected attrs + status
       const confirmedAttendees = [];
       const notNeededAttendees = [];
@@ -292,6 +312,7 @@ const postSignup = (req, res) => {
   } else {
     memberEmail = req.user.email;
   }
+  const memberPromise = models.Member.findById(memberEmail);
 
   // A member cannot be signed up for an event for which they're already signed up
   const attendancePromise = models.Attendance.findOne({
@@ -302,14 +323,29 @@ const postSignup = (req, res) => {
   });
 
   // Once member and event have been found, continue with creating the attendance entry
-  return Promise.all([eventPromise, attendancePromise]).then((output) => {
+  return Promise.all([eventPromise, memberPromise, attendancePromise]).then((output) => {
     // output is in order of array
     const event = output[0];
-    const attendance = output[1];
+    const member = output[1];
+    const attendance = output[2];
     // If the event is a meeting, only super users can sign up for it
-    if (event.meeting && !req.user.super_user) {
+    if ((event.meeting === true || event.public !== true) && !req.user.super_user) {
       req.session.status = 403;
-      req.session.alert.errorMessages.push('Only super users can sign up for meetings');
+      req.session.alert.errorMessages.push('A super user must sign you up for this event.');
+      return req.session.save(() => {
+        // not safe to redirect to a private event
+        if (event.public !== true) {
+          return res.redirect('/event');
+        }
+        // safe to redirect to details page
+        return res.redirect(`/event/${req.params.id}/details`);
+      });
+    }
+
+    if (!member) {
+      // member not found - return 400 because a bad email was sent
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('Specified member could not be found.');
       return req.session.save(() => {
         return res.redirect(`/event/${req.params.id}/details`);
       });
