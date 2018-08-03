@@ -339,7 +339,6 @@ describe('Event Tests', () => {
     let agent = null;
     beforeEach((done) => {
       agent = request.agent(app);
-      // TODO - use a superuser function
       common.createSuperUserSession(agent).then(() => {
         done();
       });
