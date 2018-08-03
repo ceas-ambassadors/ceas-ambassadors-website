@@ -357,6 +357,20 @@ const getProfile = (req, res) => {
       //   title: 'Not Found',
       // });
     }
+
+    // Don't render private members for anyone but super users or the current user
+    // TODO - this is information leakage - should it 404?
+    if (member.private_user === true
+        && (!req.user || !req.user.super_user || req.user.email === member.email)) {
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('You cannot view this private member.');
+      return req.session.save(() => {
+        console.log('This happens');
+        return res.redirect('/');
+        // TODO - return member list
+        // return res.redirect('/member');
+      });
+    }
     // render hours only if the user is looking at their own page
     // or the current user is a super user
     const renderHours = ((req.user) && (req.user.super_user || req.user.email === member.email));

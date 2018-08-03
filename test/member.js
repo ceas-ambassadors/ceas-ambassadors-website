@@ -91,6 +91,23 @@ describe('Member tests', () => {
     });
   });
 
+  // GET profile of private member
+  it('GET profile of private member not logged in', () => {
+    const email = 'test@kurtjlewis.com';
+    return models.Member.create({
+      email,
+      password: 'blah', // doesn't matter because we won't be logging in
+      accend: false,
+      super_user: false,
+      private_user: true,
+    }).then(() => {
+      return request.agent(app)
+        .get(`/member/${email}/profile`)
+        .redirects(1)
+        .expect(403);
+    });
+  });
+
   describe('Member tests which require a logged in normal user', () => {
     let agent = null;
     // Create a normal user session
@@ -209,6 +226,22 @@ describe('Member tests', () => {
             assert.equal(member.private_user, false);
           });
         });
+      });
+    });
+
+    // GET profile of private member
+    it('GET profile of private member as normal user', () => {
+      const email = 'test@kurtjlewis.com';
+      return models.Member.create({
+        email,
+        password: 'blah', // doesn't matter because we won't be logging in
+        accend: false,
+        super_user: false,
+        private_user: true,
+      }).then(() => {
+        return agent.get(`/member/${email}/profile`)
+          .redirects(1)
+          .expect(403);
       });
     });
   });
@@ -353,6 +386,22 @@ describe('Member tests', () => {
             assert.equal(member.private_user, true);
           });
         });
+      });
+    });
+
+    // GET profile of private member
+    it('GET profile of private member as super user', () => {
+      const email = 'test@kurtjlewis.com';
+      return models.Member.create({
+        email,
+        password: 'blah', // doesn't matter because we won't be logging in
+        accend: false,
+        super_user: false,
+        private_user: true,
+      }).then(() => {
+        return agent.get(`/member/${email}/profile`)
+          .redirects(1)
+          .expect(200);
       });
     });
   });
