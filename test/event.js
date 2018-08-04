@@ -272,6 +272,7 @@ describe('Event Tests', () => {
           isPublic: 'on',
           isMeeting: 'off',
         })
+        .redirects(1)
         .expect(400);
 
       return response.then(() => {
@@ -295,6 +296,7 @@ describe('Event Tests', () => {
           isPublic: 'on',
           isMeeting: 'off',
         })
+        .redirects(1)
         .expect(400);
 
       return response.then(() => {
@@ -318,6 +320,7 @@ describe('Event Tests', () => {
           isPublic: 'on',
           isMeeting: 'off',
         })
+        .redirects(1)
         .expect(400);
 
       return response.then(() => {
@@ -341,6 +344,7 @@ describe('Event Tests', () => {
           isPublic: 'on',
           isMeeting: 'off',
         })
+        .redirects(1)
         .expect(400);
 
       return response.then(() => {
@@ -365,6 +369,7 @@ describe('Event Tests', () => {
           isPublic: 'on',
           isMeeting: 'off',
         })
+        .redirects(1)
         .expect(400);
 
       return response.then(() => {
@@ -389,6 +394,7 @@ describe('Event Tests', () => {
           isPublic: 'on',
           isMeeting: 'off',
         })
+        .redirects(1)
         .expect(400);
 
       return response.then(() => {

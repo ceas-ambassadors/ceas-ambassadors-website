@@ -143,7 +143,7 @@ const postCreate = [
   check('startTime').not().isEmpty().withMessage('A start time must be supplied.'),
   check('endTime').not().isEmpty().withMessage('An end time must be supplied.'),
   check('location').not().isEmpty().withMessage('A location must be set.'),
-  (req, res, next) => {
+  (req, res) => {
     // Ensure a user is making the request
     // TODO: make sure it is a super user
     if (!req.user) {
@@ -157,11 +157,13 @@ const postCreate = [
     const errors = validationResult(req).formatWith(({ msg }) => { return `${msg}`; });
     if (!errors.isEmpty()) {
       // There was a validation error
-      res.locals.status = 400;
+      req.session.status = 400;
       // add errors as individual elements
-      res.locals.alert.errorMessages.push(...errors.array());
+      req.session.alert.errorMessages.push(...errors.array());
       // render create page
-      return getCreate(req, res, next);
+      return req.session.save(() => {
+        return res.redirect('/event/create');
+      });
     }
 
     // Convert string times to Date objects
@@ -171,24 +173,28 @@ const postCreate = [
     // check for invalid start/end times
     if (Number.isNaN(startTime) || Number.isNaN(endTime)) {
       if (Number.isNaN(startTime)) {
-        res.locals.alert.errorMessages.push('The start time is not a valid time.');
+        req.session.alert.errorMessages.push('The start time is not a valid time.');
       }
       if (Number.isNaN(endTime)) {
-        res.locals.alert.errorMessages.push('The end time is not a valid time.');
+        req.session.alert.errorMessages.push('The end time is not a valid time.');
       }
-      res.locals.status = 400;
-      return getCreate(req, res, next);
+      req.session.status = 400;
+      return req.session.save(() => {
+        return res.redirect('/event/create');
+      });
     }
     // Make sure the times are in the future and the end time is after the start time
     if (startTime >= endTime || startTime < Date.now()) {
       if (startTime < Date.now()) {
-        res.locals.alert.errorMessages.push('The start time must be in the future.');
+        req.session.alert.errorMessages.push('The start time must be in the future.');
       }
       if (startTime >= endTime) {
-        res.locals.alert.errorMessages.push('The end time must be after the start time.');
+        req.session.alert.errorMessages.push('The end time must be after the start time.');
       }
-      res.locals.status = 400;
-      return getCreate(req, res, next);
+      req.session.status = 400;
+      return req.session.save(() => {
+        return res.redirect('/event/create');
+      });
     }
 
     // handle isPublic and isMeeting flags
@@ -221,9 +227,11 @@ const postCreate = [
     }).catch((err) => {
       // There was an error
       console.log(err);
-      res.locals.status = 500;
-      res.locals.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
-      return getCreate(req, res, next);
+      req.session.status = 500;
+      req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
+      return req.session.save(() => {
+        return res.redirect('/event/create');
+      });
     });
   },
 ];
