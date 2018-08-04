@@ -138,7 +138,7 @@ exports.getCreate = getCreate;
  * @description Expects the following req.body objects:
  * `title`, `startTime`, `endTime`, `location`, `description`, `isMeeting`, `isPublic`
  */
-const postCreate = [
+const postCreateEdit = [
   check('title').not().isEmpty().withMessage('A title must be set.'),
   check('startTime').not().isEmpty().withMessage('A start time must be supplied.'),
   check('endTime').not().isEmpty().withMessage('An end time must be supplied.'),
@@ -154,6 +154,12 @@ const postCreate = [
       });
     }
 
+    // determine redirect url for errors based on data coming from  UI
+    let redirectUrl = '/event/create';
+    if (req.body.isEdit === 'true') {
+      redirectUrl = `/event/${req.body.eventId}/edit`;
+    }
+
     const errors = validationResult(req).formatWith(({ msg }) => { return `${msg}`; });
     if (!errors.isEmpty()) {
       // There was a validation error
@@ -162,7 +168,7 @@ const postCreate = [
       req.session.alert.errorMessages.push(...errors.array());
       // render create page
       return req.session.save(() => {
-        return res.redirect('/event/create');
+        return res.redirect(redirectUrl);
       });
     }
 
@@ -180,7 +186,7 @@ const postCreate = [
       }
       req.session.status = 400;
       return req.session.save(() => {
-        return res.redirect('/event/create');
+        return res.redirect(redirectUrl);
       });
     }
     // Make sure the times are in the future and the end time is after the start time
@@ -193,7 +199,7 @@ const postCreate = [
       }
       req.session.status = 400;
       return req.session.save(() => {
-        return res.redirect('/event/create');
+        return res.redirect(redirectUrl);
       });
     }
 
@@ -207,7 +213,27 @@ const postCreate = [
       isMeeting = true;
     }
 
-    // create the event
+    if (req.body.isEdit === 'true') {
+      return models.Event.findById(req.body.eventId).then((event) => {
+        return event.update({
+          title: req.body.title,
+          start_time: startTime,
+          end_time: endTime,
+          description: req.body.description,
+          location: req.body.location,
+          public: isPublic,
+          meeting: isMeeting,
+          created_by: req.user.email,
+        }).then(() => {
+          req.session.status = 201;
+          req.session.alert.successMessages.push('Event updated!');
+          return req.session.save(() => {
+            return res.redirect(`/event/${req.body.eventId}/details`);
+          });
+        });
+      });
+    }
+    // not edit - create the event
     return models.Event.create({
       title: req.body.title,
       start_time: startTime,
@@ -230,12 +256,12 @@ const postCreate = [
       req.session.status = 500;
       req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
       return req.session.save(() => {
-        return res.redirect('/event/create');
+        return res.redirect(redirectUrl);
       });
     });
   },
 ];
-exports.postCreate = postCreate;
+exports.postCreateEdit = postCreateEdit;
 
 /**
  * POST to a signup page with an event with req.params.id id.

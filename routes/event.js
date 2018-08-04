@@ -13,7 +13,7 @@ router.get('/', eventController.getList);
 
 router.get('/create', eventController.getCreate);
 
-router.post('/create', eventController.postCreate);
+router.post('/create', eventController.postCreateEdit);
 
 router.get('/:id/details', eventController.getDetails);
 

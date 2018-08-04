@@ -9,6 +9,7 @@ extends ../layout
 block content
   //- if event wasn't defined, define it
   if !event
+    - isEdit = false
     - event = {}
     - event.id = -1
     - event.title = ''
@@ -18,13 +19,17 @@ block content
     - event.description = ''
     - event.public = true
     - event.meeting = false
+  if isEdit
+    - isEdit = 'true'
+  else
+    - isEdit = 'false'
   .container
     .box-border
       if isEdit
         h1.create-title Edit Event
       else
         h1.create-title Create Event
-      form.create-event(id='createEvent', action='create', method='post')
+      form.create-event(id='createEvent', action='/event/create', method='post')
         //- Hidden data for editing
         input(type='hidden', name='isEdit', value=isEdit)
         input(type='hidden', name='eventId', value=event.id)
