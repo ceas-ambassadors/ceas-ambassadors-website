@@ -328,7 +328,8 @@ const postSignup = (req, res) => {
     const event = output[0];
     const member = output[1];
     const attendance = output[2];
-    // If the event is a meeting, only super users can sign up for it
+
+    // If the event is a meeting or private, only super users can sign up for it
     if ((event.meeting === true || event.public !== true) && !req.user.super_user) {
       req.session.status = 403;
       req.session.alert.errorMessages.push('A super user must sign you up for this event.');
