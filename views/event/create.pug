@@ -1,32 +1,58 @@
+//- UI for creating events
+//- this UI is also used for editing events
+//- @param event - the event to be edited
+//- @param isEdit - true or false indicating edit
 extends ../layout
 
+
+
 block content
+  //- if event wasn't defined, define it
+  if !event
+    - event = {}
+    - event.id = -1
+    - event.title = ''
+    - event.start_time = ''
+    - event.end_time = ''
+    - event.location = ''
+    - event.description = ''
+    - event.public = true
+    - event.meeting = false
   .container
     .box-border
-      h1.create-title Create Event
+      if isEdit
+        h1.create-title Edit Event
+      else
+        h1.create-title Create Event
       form.create-event(id='createEvent', action='create', method='post')
+        //- Hidden data for editing
+        input(type='hidden', name='isEdit', value=isEdit)
+        input(type='hidden', name='eventId', value=event.id)
         .form-grid
           .left-grid
             div.form-group
               label Event Title:
-              input.form-control.form-control-sm(type='text', name='title', placeholder='Tuesday Tour', tabindex=1)
+              input.form-control.form-control-sm(type='text', name='title', value=event.title, placeholder='Tuesday Tour', tabindex=1)
             div.form-group
               label Start Time:
-              input.form-control.form-control-sm(type='text', name='startTime', placeholder='2018 January 01 10:00 AM', tabindex=3)
+              input.form-control.form-control-sm(type='text', name='startTime', value=event.start_time, placeholder='2018 January 01 10:00 AM', tabindex=3)
           .right-grid
             div.form-group
               label Location:
-              input.form-control.form-control-sm(type='text', name='location', placeholder='653 Baldwin Hall', tabindex=2)
+              input.form-control.form-control-sm(type='text', name='location', value=event.location, placeholder='653 Baldwin Hall', tabindex=2)
             div.form-group
               label End Time:
-              input.form-control.form-control-sm(type='text', name='endTime', placeholder='2018 January 01 11:00 AM', tabindex=4)
+              input.form-control.form-control-sm(type='text', name='endTime', value=event.end_time, placeholder='2018 January 01 11:00 AM', tabindex=4)
         div.form-group
           label Description:
-          input.form-control.form-control-sm(type='text', name='description', placeholder='This event...', tabindex=5)
+          input.form-control.form-control-sm(type='text', name='description', value=event.description, placeholder='This event...', tabindex=5)
         div.form-group.form-check
-          input.form-check-input(type='checkbox', name='isPublic', checked=true, tabindex=6)
+          input.form-check-input(type='checkbox', name='isPublic', checked=event.public, tabindex=6)
           label.form-check-label Public Event
         div.form-group.form-check
-          input.form-check-input(type='checkbox', name='isMeeting', checked=false, tabindex=7)
+          input.form-check-input(type='checkbox', name='isMeeting', checked=event.meeting, tabindex=7)
           label.form-check-label Meeting
-        input.submit(type='submit', name='create', value='Create Event', tabindex=8)
+        if isEdit
+          input.submit(type='submit', name='create', value='Edit Event', tabindex=8)
+        else
+          input.submit(type='submit', name='create', value='Create Event', tabindex=8)

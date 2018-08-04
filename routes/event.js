@@ -23,4 +23,6 @@ router.post('/:id/confirm', eventController.postConfirmAttendance);
 
 router.post('/:id/delete', eventController.postDelete);
 
+router.get('/:id/edit', eventController.getEdit);
+
 module.exports = router;

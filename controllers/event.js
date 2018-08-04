@@ -448,3 +448,46 @@ const postDelete = (req, res) => {
   });
 };
 exports.postDelete = postDelete;
+
+/**
+ * Get UI for editing events
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const getEdit = (req, res) => {
+  // make sure there is a user
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to edit events.');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
+
+  // only super users can edit events
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user toe dit events.');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
+  // get event
+  return models.Event.findById(req.params.id).then((event) => {
+    if (!event) {
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Event not found.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
+    }
+
+    // render event create page with arguments for making it an event edit page
+    return res.status(res.locals.status).render('event/create', {
+      title: 'Edit Event',
+      event, // shorthand for event: event,
+      isEdit: true,
+    });
+  });
+};
+exports.getEdit = getEdit;
