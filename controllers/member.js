@@ -357,6 +357,20 @@ const getProfile = (req, res) => {
       //   title: 'Not Found',
       // });
     }
+
+    // Don't render private members for anyone but super users or the current user
+    // TODO - this is information leakage - should it 404?
+    if (member.private_user === true
+        && (!req.user || !req.user.super_user || req.user.email === member.email)) {
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('You cannot view this private member.');
+      return req.session.save(() => {
+        console.log('This happens');
+        return res.redirect('/');
+        // TODO - return member list
+        // return res.redirect('/member');
+      });
+    }
     // render hours only if the user is looking at their own page
     // or the current user is a super user
     const renderHours = ((req.user) && (req.user.super_user || req.user.email === member.email));
@@ -389,7 +403,7 @@ const getProfile = (req, res) => {
     }
 
     // render their profile page
-    return res.render('member/profile', {
+    return res.status(res.locals.status).render('member/profile', {
       title: `${member.first_name} ${member.last_name}`,
       member, // shorthand for member: member,
       renderHours,
@@ -412,3 +426,81 @@ const getProfile = (req, res) => {
   });
 };
 exports.getProfile = getProfile;
+
+const postUpdateAttributes = (req, res) => {
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be signed in to modify attributes.');
+    return req.session.save(() => {
+      return res.redirect(`/member/${req.params.email}/profile`);
+    });
+  }
+  // assert that the user is a super user
+  if (req.user.super_user !== true) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to modify attributes.');
+    return req.session.save(() => {
+      return res.redirect(`/member/${req.params.email}/profile`);
+    });
+  }
+  // get the requested member
+  return models.Member.findById(req.params.email).then((member) => {
+    if (!member) {
+      // member not found, 404
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Member not found.');
+      return req.session.save(() => {
+        return res.redirect(`/member/${req.params.email}/profile`);
+      });
+    }
+    let superUser = req.query.super_user;
+    let privateUser = req.query.private_user;
+    // variable to indicate that something was changed
+    let change = false;
+    if (superUser === 'true') {
+      superUser = true;
+    } else if (superUser === 'false') {
+      superUser = false;
+    } else {
+      // wasn't true or false, set to current value
+      superUser = member.super_user;
+    }
+    if (superUser !== member.super_user) {
+      change = true;
+    }
+    if (privateUser === 'true') {
+      privateUser = true;
+    } else if (privateUser === 'false') {
+      privateUser = false;
+    } else {
+      // wasn't tyure or false, set to current value
+      privateUser = member.private_user;
+    }
+    if (change === false && privateUser !== member.private_user) {
+      change = true;
+    }
+    return member.update({
+      super_user: superUser,
+      private_user: privateUser,
+    }).then(() => {
+      if (change === true) {
+        req.session.status = 200;
+        req.session.alert.successMessages.push('Changes made.');
+      } else {
+        req.session.status = 304;
+        req.session.alert.infoMessages.push('No changes applied.');
+      }
+      return req.session.save(() => {
+        return res.redirect(`/member/${req.params.email}/profile`);
+      });
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There was an error. Please contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  });
+};
+exports.postUpdateAttributes = postUpdateAttributes;

@@ -36,6 +36,26 @@ const getDetails = (req, res) => {
       },
       type: models.sequelize.QueryTypes.SELECT,
     }).then((members) => {
+      // if it is a private event and the current member is not on the attendee list - they cannot
+      // see event details
+      // super users can see all events
+      if (event.public !== true && !req.user.super_user) {
+        let found = false;
+        for (let idx = 0; idx < members.length; idx += 1) {
+          if (members[idx].email === req.user.email) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          // This member can't see this event because they're not a super user and not on list
+          req.session.status = 403;
+          req.session.alert.errorMessages.push('You are not an attendee for the private event.');
+          return req.session.save(() => {
+            return res.redirect('/event');
+          });
+        }
+      }
       // members is not an array of full members - it only has the above selected attrs + status
       const confirmedAttendees = [];
       const notNeededAttendees = [];
@@ -50,12 +70,15 @@ const getDetails = (req, res) => {
           unconfirmedAttendees.push(members[i]);
         }
       }
+      // build list of members for showing to non-logged in users
+      const unconfirmedAndConfirmedAttendees = unconfirmedAttendees.concat(confirmedAttendees);
       return res.status(res.locals.status).render('event/detail', {
         title: event.title,
         event, // shorthand for event: event,
         unconfirmedAttendees,
         notNeededAttendees,
         confirmedAttendees,
+        unconfirmedAndConfirmedAttendees,
       });
     });
   }).catch((err) => {
@@ -63,7 +86,7 @@ const getDetails = (req, res) => {
     req.session.status = 500;
     req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
     return req.session.save(() => {
-      req.redirect('/event');
+      return res.redirect('/event');
     });
   });
 };
@@ -75,22 +98,30 @@ exports.getDetails = getDetails;
  * @param {*} res - outgoing response
  */
 const getList = (req, res) => {
+  // define where part of queries
+  const eventWhere = {
+    public: true,
+    meeting: false,
+  };
+  const meetingWhere = {
+    public: true,
+    meeting: true,
+  };
+  // should private events be shown? yes for super users
+  if (req.user && req.user.super_user) {
+    delete eventWhere.public;
+    delete meetingWhere.public;
+  }
   // query for all events
   const eventPromise = models.Event.findAll({
-    where: {
-      public: true,
-      meeting: false,
-    },
+    where: eventWhere,
     order: [
       ['start_time', 'ASC'],
     ],
   });
 
   const meetingPromise = models.Event.findAll({
-    where: {
-      meeting: true,
-      public: true,
-    },
+    where: meetingWhere,
     order: [
       ['start_time', 'ASC'],
     ],
@@ -124,7 +155,15 @@ const getCreate = (req, res) => {
       return res.redirect('/event');
     });
   }
-  // TODO - check that user is a super user
+  // Check for super user status
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to create events.');
+    return req.session.save(() => {
+      return res.redirect('/event');
+    });
+  }
+
   return res.status(res.locals.status).render('event/create', {
     title: 'Create Event',
   });
@@ -145,10 +184,18 @@ const postCreateEdit = [
   check('location').not().isEmpty().withMessage('A location must be set.'),
   (req, res) => {
     // Ensure a user is making the request
-    // TODO: make sure it is a super user
     if (!req.user) {
       req.session.status = 401;
       req.session.alert.errorMessages.push('You must be logged in to create an event.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
+    }
+
+    // Check for super user status
+    if (!req.user.super_user) {
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('You must be a super user to create events.');
       return req.session.save(() => {
         return res.redirect('/event');
       });
@@ -285,11 +332,21 @@ const postSignup = (req, res) => {
   let memberEmail = null;
   // If the current user is a super user, they can specify a member
   // Super user tests
-  if (req.user.super_user && req.body.email) {
-    memberEmail = req.body.email;
+  if (req.body.email) {
+    if (req.user.super_user) {
+      memberEmail = req.body.email;
+    } else {
+      // You can't specify email via post and not be a super user
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('You must be a super user to specify a member.');
+      return req.session.save(() => {
+        return res.redirect(`/event/${req.params.id}/details`);
+      });
+    }
   } else {
     memberEmail = req.user.email;
   }
+  const memberPromise = models.Member.findById(memberEmail);
 
   // A member cannot be signed up for an event for which they're already signed up
   const attendancePromise = models.Attendance.findOne({
@@ -300,10 +357,34 @@ const postSignup = (req, res) => {
   });
 
   // Once member and event have been found, continue with creating the attendance entry
-  return Promise.all([eventPromise, attendancePromise]).then((output) => {
+  return Promise.all([eventPromise, memberPromise, attendancePromise]).then((output) => {
     // output is in order of array
     const event = output[0];
-    const attendance = output[1];
+    const member = output[1];
+    const attendance = output[2];
+
+    // If the event is a meeting or private, only super users can sign up for it
+    if ((event.meeting === true || event.public !== true) && !req.user.super_user) {
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('A super user must sign you up for this event.');
+      return req.session.save(() => {
+        // not safe to redirect to a private event
+        if (event.public !== true) {
+          return res.redirect('/event');
+        }
+        // safe to redirect to details page
+        return res.redirect(`/event/${req.params.id}/details`);
+      });
+    }
+
+    if (!member) {
+      // member not found - return 400 because a bad email was sent
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('Specified member could not be found.');
+      return req.session.save(() => {
+        return res.redirect(`/event/${req.params.id}/details`);
+      });
+    }
     // If attendance exists there is no need to continue because you can't re-signup
     if (attendance) {
       req.session.status = 400;
@@ -360,12 +441,20 @@ const postConfirmAttendance = (req, res) => {
   // Make sure the user is signed in
   if (!req.user) {
     req.session.status = 401;
-    req.session.alert.errorMessages.push('You must be logged in to signup');
+    req.session.alert.errorMessages.push('You must be logged in to confirm attendance.');
     return req.session.save(() => {
       return res.redirect(`/event/${req.params.id}/details`);
     });
   }
-  // TODO: make sure the user is a super user
+
+  // Make sure the user is a super user
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to confirm attendance.');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
 
   // check that a member email and status were specified
   if (!req.query.member || !req.query.status) {
@@ -453,7 +542,15 @@ const postDelete = (req, res) => {
       return res.redirect(`/event/${req.params.id}/details`);
     });
   }
-  // TODO - check if super user
+
+  // Check if super user
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to delete events.');
+    return req.session.save(() => {
+      return res.redirect('/event');
+    });
+  }
 
   return models.Event.findById(req.params.id).then((event) => {
     if (!event) {
