@@ -13,7 +13,7 @@ router.get('/', eventController.getList);
 
 router.get('/create', eventController.getCreate);
 
-router.post('/create', eventController.postCreate);
+router.post('/create', eventController.postCreateEdit);
 
 router.get('/:id/details', eventController.getDetails);
 
@@ -22,5 +22,7 @@ router.post('/:id/signup', eventController.postSignup);
 router.post('/:id/confirm', eventController.postConfirmAttendance);
 
 router.post('/:id/delete', eventController.postDelete);
+
+router.get('/:id/edit', eventController.getEdit);
 
 module.exports = router;

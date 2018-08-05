@@ -177,12 +177,12 @@ exports.getCreate = getCreate;
  * @description Expects the following req.body objects:
  * `title`, `startTime`, `endTime`, `location`, `description`, `isMeeting`, `isPublic`
  */
-const postCreate = [
+const postCreateEdit = [
   check('title').not().isEmpty().withMessage('A title must be set.'),
   check('startTime').not().isEmpty().withMessage('A start time must be supplied.'),
   check('endTime').not().isEmpty().withMessage('An end time must be supplied.'),
   check('location').not().isEmpty().withMessage('A location must be set.'),
-  (req, res, next) => {
+  (req, res) => {
     // Ensure a user is making the request
     if (!req.user) {
       req.session.status = 401;
@@ -201,14 +201,22 @@ const postCreate = [
       });
     }
 
+    // determine redirect url for errors based on data coming from  UI
+    let redirectUrl = '/event/create';
+    if (req.body.isEdit === 'true') {
+      redirectUrl = `/event/${req.body.eventId}/edit`;
+    }
+
     const errors = validationResult(req).formatWith(({ msg }) => { return `${msg}`; });
     if (!errors.isEmpty()) {
       // There was a validation error
-      res.locals.status = 400;
+      req.session.status = 400;
       // add errors as individual elements
-      res.locals.alert.errorMessages.push(...errors.array());
+      req.session.alert.errorMessages.push(...errors.array());
       // render create page
-      return getCreate(req, res, next);
+      return req.session.save(() => {
+        return res.redirect(redirectUrl);
+      });
     }
 
     // Convert string times to Date objects
@@ -218,24 +226,28 @@ const postCreate = [
     // check for invalid start/end times
     if (Number.isNaN(startTime) || Number.isNaN(endTime)) {
       if (Number.isNaN(startTime)) {
-        res.locals.alert.errorMessages.push('The start time is not a valid time.');
+        req.session.alert.errorMessages.push('The start time is not a valid time.');
       }
       if (Number.isNaN(endTime)) {
-        res.locals.alert.errorMessages.push('The end time is not a valid time.');
+        req.session.alert.errorMessages.push('The end time is not a valid time.');
       }
-      res.locals.status = 400;
-      return getCreate(req, res, next);
+      req.session.status = 400;
+      return req.session.save(() => {
+        return res.redirect(redirectUrl);
+      });
     }
     // Make sure the times are in the future and the end time is after the start time
     if (startTime >= endTime || startTime < Date.now()) {
       if (startTime < Date.now()) {
-        res.locals.alert.errorMessages.push('The start time must be in the future.');
+        req.session.alert.errorMessages.push('The start time must be in the future.');
       }
       if (startTime >= endTime) {
-        res.locals.alert.errorMessages.push('The end time must be after the start time.');
+        req.session.alert.errorMessages.push('The end time must be after the start time.');
       }
-      res.locals.status = 400;
-      return getCreate(req, res, next);
+      req.session.status = 400;
+      return req.session.save(() => {
+        return res.redirect(redirectUrl);
+      });
     }
 
     // handle isPublic and isMeeting flags
@@ -248,7 +260,27 @@ const postCreate = [
       isMeeting = true;
     }
 
-    // create the event
+    if (req.body.isEdit === 'true') {
+      return models.Event.findById(req.body.eventId).then((event) => {
+        return event.update({
+          title: req.body.title,
+          start_time: startTime,
+          end_time: endTime,
+          description: req.body.description,
+          location: req.body.location,
+          public: isPublic,
+          meeting: isMeeting,
+          created_by: req.user.email,
+        }).then(() => {
+          req.session.status = 201;
+          req.session.alert.successMessages.push('Event updated!');
+          return req.session.save(() => {
+            return res.redirect(`/event/${req.body.eventId}/details`);
+          });
+        });
+      });
+    }
+    // not edit - create the event
     return models.Event.create({
       title: req.body.title,
       start_time: startTime,
@@ -268,13 +300,15 @@ const postCreate = [
     }).catch((err) => {
       // There was an error
       console.log(err);
-      res.locals.status = 500;
-      res.locals.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
-      return getCreate(req, res, next);
+      req.session.status = 500;
+      req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
+      return req.session.save(() => {
+        return res.redirect(redirectUrl);
+      });
     });
   },
 ];
-exports.postCreate = postCreate;
+exports.postCreateEdit = postCreateEdit;
 
 /**
  * POST to a signup page with an event with req.params.id id.
@@ -545,3 +579,46 @@ const postDelete = (req, res) => {
   });
 };
 exports.postDelete = postDelete;
+
+/**
+ * Get UI for editing events
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const getEdit = (req, res) => {
+  // make sure there is a user
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to edit events.');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
+
+  // only super users can edit events
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user toe dit events.');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
+  // get event
+  return models.Event.findById(req.params.id).then((event) => {
+    if (!event) {
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Event not found.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
+    }
+
+    // render event create page with arguments for making it an event edit page
+    return res.status(res.locals.status).render('event/create', {
+      title: 'Edit Event',
+      event, // shorthand for event: event,
+      isEdit: true,
+    });
+  });
+};
+exports.getEdit = getEdit;
