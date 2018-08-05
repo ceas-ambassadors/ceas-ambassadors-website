@@ -108,6 +108,16 @@ describe('Event Tests', () => {
     });
   });
 
+  // Not allowed to access event edit page
+  it('GET /event/:id/edit not logged in', () => {
+    return common.createPublicEvent().then((event) => {
+      return request.agent(app)
+        .get(`/event/${event.id}/edit`)
+        .redirects(1)
+        .expect(401);
+    });
+  });
+
   describe('Event tests which require a signed in non-super user', () => {
     // need to persist agent across requests to mantain logged in session
     let agent = null;
@@ -331,6 +341,16 @@ describe('Event Tests', () => {
             });
           });
         });
+      });
+    });
+
+    // Not allowed to access event edit page
+    it('GET /event/:id/edit not logged in', () => {
+      return common.createPublicEvent().then((event) => {
+        return agent
+          .get(`/event/${event.id}/edit`)
+          .redirects(1)
+          .expect(403);
       });
     });
   });
@@ -787,6 +807,50 @@ describe('Event Tests', () => {
         .post('/event/0/delete')
         .redirects(1)
         .expect(404, done);
+    });
+
+    // Access event edit page
+    it('GET /event/:id/edit not logged in', () => {
+      return common.createPublicEvent().then((event) => {
+        agent
+          .get(`/event/${event.id}/edit`)
+          .expect(200);
+      });
+    });
+
+    // Succesfully post to postCreate as an edit
+    it('POST /event/create as an event edit', () => {
+      return common.createPublicEvent().then((event) => {
+        const isPublic = 'on'; // event.public converted to 'on'
+        const isMeeting = 'off'; // event.meeting converted to 'off'
+        const response = agent
+          .post('/event/create')
+          .send({
+            eventId: event.id,
+            isEdit: 'true',
+            title: event.title,
+            startTime: event.start_time,
+            endTime: event.end_time,
+            location: 'edited',
+            description: event.description,
+            isPublic,
+            isMeeting,
+          })
+          .redirects(1)
+          .expect(201);
+
+        return response.then(() => {
+          return models.Event.findAll({
+            where: {
+              title: event.title,
+            },
+          }).then((events) => {
+            // there should be only one event - it's location should be edited
+            assert.deepEqual(events.length, 1);
+            assert.deepEqual(events[0].location, 'edited');
+          });
+        });
+      });
     });
   });
 });
