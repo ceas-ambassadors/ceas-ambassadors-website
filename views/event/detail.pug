@@ -85,9 +85,9 @@ block content
           tr
             td=member.first_name+' '+member.last_name
 
-    //- edit and delete options
-    if user && user.super_user
-      h2 Event Options
-      a.btn.btn-danger(href='/event/' + event.id + '/edit') Edit Event
-      form(id='deleteEvent', action='/event/' + event.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete the event. Proceed?')")
-        input(type='submit', name='delete', value='Delete Event')
+  //- edit and delete options
+  if user && user.super_user
+    h2 Event Options
+    a.btn.btn-danger(href='/event/' + event.id + '/edit') Edit Event
+    form(id='deleteEvent', action='/event/' + event.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete the event. Proceed?')")
+      input(type='submit', name='delete', value='Delete Event')
