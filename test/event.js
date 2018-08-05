@@ -852,5 +852,40 @@ describe('Event Tests', () => {
         });
       });
     });
+
+    // Try to edit event meeting attribute
+    it('POST /event/create as an event edit', () => {
+      return common.createPublicEvent().then((event) => {
+        const isPublic = 'on'; // event.public converted to 'on'
+        const isMeeting = 'on'; // event.meeting inverted to 'on'
+        const response = agent
+          .post('/event/create')
+          .send({
+            eventId: event.id,
+            isEdit: 'true',
+            title: event.title,
+            startTime: event.start_time,
+            endTime: event.end_time,
+            location: event.location,
+            description: event.description,
+            isPublic,
+            isMeeting,
+          })
+          .redirects(1)
+          .expect(400);
+
+        return response.then(() => {
+          return models.Event.findAll({
+            where: {
+              title: event.title,
+            },
+          }).then((events) => {
+            // there should be only one event - it's location should be edited
+            assert.deepEqual(events.length, 1);
+            assert.deepEqual(events[0].meeting, false);
+          });
+        });
+      });
+    });
   });
 });

@@ -262,6 +262,16 @@ const postCreateEdit = [
 
     if (req.body.isEdit === 'true') {
       return models.Event.findById(req.body.eventId).then((event) => {
+        // For edits, switching between meetings and non-meetings is disallowed
+        if (isMeeting !== event.meeting) {
+          req.session.status = 400;
+          req.session.alert.errorMessages.push('The meeting attribute cannot be changed.');
+          return req.session.save(() => {
+            return res.redirect(redirectUrl);
+          });
+        }
+
+        // update the event object
         return event.update({
           title: req.body.title,
           start_time: startTime,
