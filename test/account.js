@@ -78,6 +78,7 @@ describe('Account Tests', () => {
         password: 'test_password',
         confirmPassword: 'test_password',
       })
+      .redirects(1)
       .expect(400);
     // check that no accounts were added to the database
     return response.then(() => {
@@ -100,6 +101,7 @@ describe('Account Tests', () => {
         password: '',
         confirmPassword: 'test_password',
       })
+      .redirects(1)
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
     return response.then(() => {
@@ -120,6 +122,7 @@ describe('Account Tests', () => {
         password: 'test_password',
         confirmPassword: '',
       })
+      .redirects(1)
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
     return response.then(() => {
@@ -140,6 +143,7 @@ describe('Account Tests', () => {
         password: 'test_password',
         confirmPassword: 'test_password_bad',
       })
+      .redirects(1)
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
     return response.then(() => {
@@ -159,6 +163,7 @@ describe('Account Tests', () => {
         password: 'test_password',
         confirmPassword: 'test_password',
       })
+      .redirects(1)
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
     return response.then(() => {
@@ -178,6 +183,7 @@ describe('Account Tests', () => {
         password: 'test_password',
         confirmPassword: 'test_password',
       })
+      .redirects(1)
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
     return response.then(() => {
@@ -264,6 +270,7 @@ describe('Account Tests', () => {
           password: 'password',
           confirmPassword: 'password',
         })
+        .redirects(1)
         .expect(400, done);
     });
   });
@@ -326,6 +333,7 @@ describe('Account Tests', () => {
           password: 'password',
           confirmPassword: 'password',
         })
+        .redirects(1)
         .expect(400, done);
     });
 

@@ -37,9 +37,11 @@ const postLogin = (req, res, next) => {
     }
     if (!member) {
       // there was not a succesful login
-      res.locals.status = 401;
-      res.locals.alert.errorMessages.push(`${info.message}`);
-      return getLogin(req, res, next);
+      req.session.status = 401;
+      req.session.alert.errorMessages.push(`${info.message}`);
+      return req.session.save(() => {
+        return res.redirect('/login');
+      });
     }
     return req.logIn(member, (loginErr) => {
       if (loginErr) {
@@ -103,17 +105,21 @@ const postSignup = [
     const errors = validationResult(req).formatWith(({ msg }) => { return `${msg}`; });
     if (!errors.isEmpty()) {
       // There was a validation error
-      res.locals.status = 400;
+      req.session.status = 400;
       // append array items as separate items in array
-      res.locals.alert.errorMessages.push(...errors.array());
+      req.session.alert.errorMessages.push(...errors.array());
       // redirect to getSignup()
-      return getSignup(req, res, next);
+      return req.session.save(() => {
+        return res.redirect('/signup');
+      });
     }
     if (req.body.password !== req.body.confirmPassword) {
       // Passwords don't match - send back to signup page with error
-      res.locals.status = 400;
-      res.locals.alert.errorMessages.push('Passwords must match');
-      return getSignup(req, res, next);
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('Passwords must match');
+      return req.session.save(() => {
+        return res.redirect('/signup');
+      });
     }
     if (req.user) {
       req.session.status = 400;
@@ -128,17 +134,21 @@ const postSignup = [
       // If the code gets this far, there was a problem with one of the sequelize calls
       // Try and send them back to the signup page
       console.log(err);
-      res.locals.status = 500;
-      res.locals.alert.errorMessages.push('There was a problem. If it persists please contact the tech chair.');
-      return getSignup(req, res, next);
+      req.session.status = 500;
+      req.session.alert.errorMessages.push('There was a problem. If it persists please contact the tech chair.');
+      return req.session.save(() => {
+        return res.redirect('/');
+      });
     };
 
     return models.Member.findById(req.body.email).then((member) => {
       // if the query returns a member then an account is already registered with that email
       if (member) {
-        res.locals.status = 400;
-        res.locals.alert.errorMessages.push('An account with that email already exists');
-        return getSignup(req, res, next);
+        req.session.status = 400;
+        req.session.alert.errorMessages.push('An account with that email already exists');
+        return req.session.save(() => {
+          return res.redirect('/signup');
+        });
       }
       return models.Member.generatePasswordHash(req.body.password).then((hash) => {
         return models.Member.create({
