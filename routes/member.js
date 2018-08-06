@@ -11,10 +11,13 @@ const router = express.Router();
 /* GET list of members */
 router.get('/', memberHandler.getList);
 
+/* POST /member/profile/update */
+router.post('/profile/update', memberHandler.postProfileUpdate);
+
 /* GET profile */
 router.get('/:email/profile', memberHandler.getProfile);
 
-/* POST /member/profile/update */
-router.post('/profile/update', memberHandler.postProfileUpdate);
+/* POST /member/:email/update-attributes */
+router.post('/:email/update-attributes', memberHandler.postUpdateAttributes);
 
 module.exports = router;

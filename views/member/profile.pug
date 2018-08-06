@@ -1,5 +1,7 @@
 //- @param renderHours - boolean to render the hours section of the profile
 extends ../layout
+//- include event list mixin
+include ../event/mixins/list.pug
 
 block content
   div
@@ -26,3 +28,27 @@ block content
     p=meetings
     label Hours not needed
     p=serviceNotNeeded
+    +event-list("Unconfirmed Events", unconfirmedEvents)
+    +event-list("Confirmed Events", confirmedEvents)
+    +event-list("Not Needed Events", notNeededEvents)
+    +event-list("Confirmed Meetings", confirmedMeetings)
+    +event-list("Unconfirmed Meetings", unconfirmedMeetings)
+  //- show escalation UI and not current user
+  if user && user.super_user && user.email !== member.email
+    h2 Meta Attributes
+    if member.super_user
+      //- descalate super user
+      form(id='superUserDemote', action='/member/' + member.email + '/update-attributes?super_user=false', method='post')
+        input(type='submit', name='demote', value='Demote Super User')    
+    if !member.super_user
+      //- escalate to super user
+      form(id='superUserElevate', action='/member/' + member.email + '/update-attributes?super_user=true', method='post')
+        input(type='submit', name='elevate', value='Elevate to Super User')
+    if member.private_user
+      //- set to public
+      form(id='publicUser', action='/member/' + member.email + '/update-attributes?private_user=false', method='post')
+        input(type='submit', name='elevate', value='Set profile to public')   
+    if !member.private_user
+      //- set to private
+      form(id='privateUser', action='/member/' + member.email + '/update-attributes?private_user=true', method='post')
+        input(type='submit', name='elevate', value='Set profile to private')

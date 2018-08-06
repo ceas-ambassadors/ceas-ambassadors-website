@@ -37,9 +37,11 @@ const postLogin = (req, res, next) => {
     }
     if (!member) {
       // there was not a succesful login
-      res.locals.status = 401;
-      res.locals.alert.errorMessages.push(`${info.message}`);
-      return getLogin(req, res, next);
+      req.session.status = 401;
+      req.session.alert.errorMessages.push(`${info.message}`);
+      return req.session.save(() => {
+        return res.redirect('/login');
+      });
     }
     return req.logIn(member, (loginErr) => {
       if (loginErr) {
@@ -95,23 +97,29 @@ exports.getSignup = getSignup;
  */
 const postSignup = [
   check('email').isEmail().withMessage('A valid email must be provided.'),
+  check('firstName').not().isEmpty().withMessage('A first name must be provided.'),
+  check('lastName').not().isEmpty().withMessage('A last name must be provided.'),
   check('password').not().isEmpty().withMessage('A password must be provided.'),
   check('confirmPassword').not().isEmpty().withMessage('A confirmation password must be provided.'),
   (req, res, next) => {
     const errors = validationResult(req).formatWith(({ msg }) => { return `${msg}`; });
     if (!errors.isEmpty()) {
       // There was a validation error
-      res.locals.status = 400;
+      req.session.status = 400;
       // append array items as separate items in array
-      res.locals.alert.errorMessages.push(...errors.array());
+      req.session.alert.errorMessages.push(...errors.array());
       // redirect to getSignup()
-      return getSignup(req, res, next);
+      return req.session.save(() => {
+        return res.redirect('/signup');
+      });
     }
     if (req.body.password !== req.body.confirmPassword) {
       // Passwords don't match - send back to signup page with error
-      res.locals.status = 400;
-      res.locals.alert.errorMessages.push('Passwords must match');
-      return getSignup(req, res, next);
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('Passwords must match');
+      return req.session.save(() => {
+        return res.redirect('/signup');
+      });
     }
     if (req.user) {
       req.session.status = 400;
@@ -126,22 +134,28 @@ const postSignup = [
       // If the code gets this far, there was a problem with one of the sequelize calls
       // Try and send them back to the signup page
       console.log(err);
-      res.locals.status = 500;
-      res.locals.alert.errorMessages.push('There was a problem. If it persists please contact the tech chair.');
-      return getSignup(req, res, next);
+      req.session.status = 500;
+      req.session.alert.errorMessages.push('There was a problem. If it persists please contact the tech chair.');
+      return req.session.save(() => {
+        return res.redirect('/');
+      });
     };
 
     return models.Member.findById(req.body.email).then((member) => {
       // if the query returns a member then an account is already registered with that email
       if (member) {
-        res.locals.status = 400;
-        res.locals.alert.errorMessages.push('An account with that email already exists');
-        return getSignup(req, res, next);
+        req.session.status = 400;
+        req.session.alert.errorMessages.push('An account with that email already exists');
+        return req.session.save(() => {
+          return res.redirect('/signup');
+        });
       }
       return models.Member.generatePasswordHash(req.body.password).then((hash) => {
         return models.Member.create({
           email: req.body.email,
           password: hash,
+          first_name: req.body.firstName,
+          last_name: req.body.lastName,
           accend: false,
           super_user: false,
           private_user: false,
@@ -330,7 +344,24 @@ const getProfile = (req, res) => {
     });
   }
 
-  return models.Member.findById(req.params.email).then((member) => {
+  // Get a list of members who are signed up with some status for this event
+  // It's faster to run a raw sql query than it is to run two queries in a row
+  // This is because Sequelize can't do joins
+  // output will be normal event object + status of said event for this member
+  // http://docs.sequelizejs.com/manual/tutorial/raw-queries.html
+  const eventPromise = models.sequelize.query(`SELECT Events.*, Attendances.status
+                                 FROM Events INNER JOIN Attendances
+                                 ON Events.id = Attendances.event_id WHERE
+                                 Attendances.member_email = :email`, {
+    replacements: {
+      email: req.params.email,
+    },
+    type: models.sequelize.QueryTypes.SELECT,
+  });
+
+  const memberPromise = models.Member.findById(req.params.email);
+
+  return Promise.all([memberPromise, eventPromise]).then(([member, events]) => {
     if (!member) {
       res.locals.status = 404;
       res.locals.alert.errorMessages.push('Member not found.');
@@ -340,19 +371,64 @@ const getProfile = (req, res) => {
       //   title: 'Not Found',
       // });
     }
+
+    // Don't render private members for anyone but super users or the current user
+    // TODO - this is information leakage - should it 404?
+    if (member.private_user === true
+        && (!req.user || !req.user.super_user || req.user.email === member.email)) {
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('You cannot view this private member.');
+      return req.session.save(() => {
+        console.log('This happens');
+        return res.redirect('/');
+        // TODO - return member list
+        // return res.redirect('/member');
+      });
+    }
     // render hours only if the user is looking at their own page
     // or the current user is a super user
     const renderHours = ((req.user) && (req.user.super_user || req.user.email === member.email));
     const service = member.service / 3600000;
     const serviceNotNeeded = member.service_not_needed / 3600000;
+
+    // separate events into buckets
+    const unconfirmedEvents = [];
+    const confirmedEvents = [];
+    const notNeededEvents = [];
+    const unconfirmedMeetings = [];
+    const confirmedMeetings = [];
+    for (let i = 0; i < events.length; i += 1) {
+      if (events[i].status === models.Attendance.getStatusUnconfirmed()) {
+        if (events[i].meeting) {
+          unconfirmedMeetings.push(events[i]);
+        } else {
+          unconfirmedEvents.push(events[i]);
+        }
+      } else if (events[i].status === models.Attendance.getStatusConfirmed()) {
+        if (events[i].meeting) {
+          confirmedMeetings.push(events[i]);
+        } else {
+          confirmedEvents.push(events[i]);
+        }
+      } else if (events[i].status === models.Attendance.getStatusNotNeeded()) {
+        // not a valid status for meetings
+        notNeededEvents.push(events[i]);
+      }
+    }
+
     // render their profile page
-    return res.render('member/profile', {
+    return res.status(res.locals.status).render('member/profile', {
       title: `${member.first_name} ${member.last_name}`,
       member, // shorthand for member: member,
       renderHours,
       service,
       meetings: member.meetings,
       serviceNotNeeded,
+      unconfirmedEvents,
+      confirmedEvents,
+      notNeededEvents,
+      unconfirmedMeetings,
+      confirmedMeetings,
     });
   }).catch((err) => {
     console.log(err);
@@ -388,3 +464,86 @@ const getList = (req, res) => {
   });
 };
 exports.getList = getList;
+
+/**
+ * POST for updating member attributes
+ * @param {*} req incoming request
+ * @param {*} res outgoing response
+ */
+const postUpdateAttributes = (req, res) => {
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be signed in to modify attributes.');
+    return req.session.save(() => {
+      return res.redirect(`/member/${req.params.email}/profile`);
+    });
+  }
+  // assert that the user is a super user
+  if (req.user.super_user !== true) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to modify attributes.');
+    return req.session.save(() => {
+      return res.redirect(`/member/${req.params.email}/profile`);
+    });
+  }
+  // get the requested member
+  return models.Member.findById(req.params.email).then((member) => {
+    if (!member) {
+      // member not found, 404
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Member not found.');
+      return req.session.save(() => {
+        return res.redirect(`/member/${req.params.email}/profile`);
+      });
+    }
+    let superUser = req.query.super_user;
+    let privateUser = req.query.private_user;
+    // variable to indicate that something was changed
+    let change = false;
+    if (superUser === 'true') {
+      superUser = true;
+    } else if (superUser === 'false') {
+      superUser = false;
+    } else {
+      // wasn't true or false, set to current value
+      superUser = member.super_user;
+    }
+    if (superUser !== member.super_user) {
+      change = true;
+    }
+    if (privateUser === 'true') {
+      privateUser = true;
+    } else if (privateUser === 'false') {
+      privateUser = false;
+    } else {
+      // wasn't tyure or false, set to current value
+      privateUser = member.private_user;
+    }
+    if (change === false && privateUser !== member.private_user) {
+      change = true;
+    }
+    return member.update({
+      super_user: superUser,
+      private_user: privateUser,
+    }).then(() => {
+      if (change === true) {
+        req.session.status = 200;
+        req.session.alert.successMessages.push('Changes made.');
+      } else {
+        req.session.status = 304;
+        req.session.alert.infoMessages.push('No changes applied.');
+      }
+      return req.session.save(() => {
+        return res.redirect(`/member/${req.params.email}/profile`);
+      });
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There was an error. Please contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  });
+};
+exports.postUpdateAttributes = postUpdateAttributes;

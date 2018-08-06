@@ -12,6 +12,9 @@ mixin event-list(name, events)
           th Start Time
           th.disp-col End Time
           th Location
+          //- Yes or no value for public events - only for super users
+          if user && user.super_user
+            th Public
           th Details
       tbody
         each event in events
@@ -21,6 +24,12 @@ mixin event-list(name, events)
             td=event.start_time
             td.disp-col=event.end_time
             td=event.location
+            //- Yes or no value for public events - only for super users
+            if user && user.super_user
+              if event.public
+                td Yes
+              else
+                td No
             td
               //- Link to event details page
               a(href='/event/' + event.id + '/details') View  

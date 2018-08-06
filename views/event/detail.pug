@@ -16,15 +16,23 @@ block content
   h4=event.description
   h3=event.meeting
 
-  if user
-    h1 Sign Up
+  //- show sign up if it's an event and they're logged in, or if its a meeting and they're a super user
+  if user && (!event.meeting || user.super_user)
+    h2 Sign Up
     form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
       input(type='submit', name='Sign Up', value='Sign Up')
+  if user && user.super_user
+    h2 Sign Up Another Member
+    form(id='signUpMember', action='/event/' + event.id + '/signup' , method='post')
+      label Member Email:
+      input(type='text', name='email', placeholder='bearcat@mail.uc.edu')
+      input(type='submit', name='Sign Up Member', value='Sign Up Member')
+    
 
-  //- TODO only display if super user
-  if user
+  //- Display only for logged in super users
+  if user && user.super_user
     if !event.meeting && unconfirmedAttendees.length > 0
-      h1 Confirm Attendance
+      h2 Confirm Attendance
       table
         thead
           tr
@@ -46,7 +54,7 @@ block content
                 form(id='denyAttendance', action='/event/' + event.id + '/confirm?member=' + member.email + '&status=denied', method='post')
                   input(type='submit', name='Deny', value='Did Not Attend')
     if confirmedAttendees.length > 0
-      h1 Confirmed
+      h2 Confirmed
       table
         thead
           tr
@@ -56,7 +64,7 @@ block content
             tr
               td=member.first_name+' '+member.last_name
     if notNeededAttendees.length > 0
-      h1 Not Needed
+      h2 Not Needed
       table
         thead
           tr
@@ -65,3 +73,21 @@ block content
           each member in notNeededAttendees
             tr
               td=member.first_name+' '+member.last_name
+  else
+    //- Show normal users a combination of unconfirmed and confirmed members
+    h2 Attendees
+    table
+      thead
+        tr
+          th Member
+      tbody
+        each member in unconfirmedAndConfirmedAttendees
+          tr
+            td=member.first_name+' '+member.last_name
+
+  //- edit and delete options
+  if user && user.super_user
+    h2 Event Options
+    a.btn.btn-danger(href='/event/' + event.id + '/edit') Edit Event
+    form(id='deleteEvent', action='/event/' + event.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete the event. Proceed?')")
+      input(type='submit', name='delete', value='Delete Event')

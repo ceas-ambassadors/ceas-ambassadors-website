@@ -3,8 +3,7 @@ extends ../layout
 include ./mixins/list.pug
 
 block content
-  //- TODO - only if super user
-  if user
+  if user && user.super_user
     a.btn.btn-danger(href='/event/create') Create Event
   +event-list('Meetings', meetings)
   +event-list('Events', events)

@@ -36,6 +36,26 @@ const getDetails = (req, res) => {
       },
       type: models.sequelize.QueryTypes.SELECT,
     }).then((members) => {
+      // if it is a private event and the current member is not on the attendee list - they cannot
+      // see event details
+      // super users can see all events
+      if (event.public !== true && !req.user.super_user) {
+        let found = false;
+        for (let idx = 0; idx < members.length; idx += 1) {
+          if (members[idx].email === req.user.email) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          // This member can't see this event because they're not a super user and not on list
+          req.session.status = 403;
+          req.session.alert.errorMessages.push('You are not an attendee for the private event.');
+          return req.session.save(() => {
+            return res.redirect('/event');
+          });
+        }
+      }
       // members is not an array of full members - it only has the above selected attrs + status
       const confirmedAttendees = [];
       const notNeededAttendees = [];
@@ -50,12 +70,15 @@ const getDetails = (req, res) => {
           unconfirmedAttendees.push(members[i]);
         }
       }
+      // build list of members for showing to non-logged in users
+      const unconfirmedAndConfirmedAttendees = unconfirmedAttendees.concat(confirmedAttendees);
       return res.status(res.locals.status).render('event/detail', {
         title: event.title,
         event, // shorthand for event: event,
         unconfirmedAttendees,
         notNeededAttendees,
         confirmedAttendees,
+        unconfirmedAndConfirmedAttendees,
       });
     });
   }).catch((err) => {
@@ -63,7 +86,7 @@ const getDetails = (req, res) => {
     req.session.status = 500;
     req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
     return req.session.save(() => {
-      req.redirect('/event');
+      return res.redirect('/event');
     });
   });
 };
@@ -75,22 +98,30 @@ exports.getDetails = getDetails;
  * @param {*} res - outgoing response
  */
 const getList = (req, res) => {
+  // define where part of queries
+  const eventWhere = {
+    public: true,
+    meeting: false,
+  };
+  const meetingWhere = {
+    public: true,
+    meeting: true,
+  };
+  // should private events be shown? yes for super users
+  if (req.user && req.user.super_user) {
+    delete eventWhere.public;
+    delete meetingWhere.public;
+  }
   // query for all events
   const eventPromise = models.Event.findAll({
-    where: {
-      public: true,
-      meeting: false,
-    },
+    where: eventWhere,
     order: [
       ['start_time', 'ASC'],
     ],
   });
 
   const meetingPromise = models.Event.findAll({
-    where: {
-      meeting: true,
-      public: true,
-    },
+    where: meetingWhere,
     order: [
       ['start_time', 'ASC'],
     ],
@@ -124,7 +155,15 @@ const getCreate = (req, res) => {
       return res.redirect('/event');
     });
   }
-  // TODO - check that user is a super user
+  // Check for super user status
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to create events.');
+    return req.session.save(() => {
+      return res.redirect('/event');
+    });
+  }
+
   return res.status(res.locals.status).render('event/create', {
     title: 'Create Event',
   });
@@ -138,14 +177,13 @@ exports.getCreate = getCreate;
  * @description Expects the following req.body objects:
  * `title`, `startTime`, `endTime`, `location`, `description`, `isMeeting`, `isPublic`
  */
-const postCreate = [
+const postCreateEdit = [
   check('title').not().isEmpty().withMessage('A title must be set.'),
   check('startTime').not().isEmpty().withMessage('A start time must be supplied.'),
   check('endTime').not().isEmpty().withMessage('An end time must be supplied.'),
   check('location').not().isEmpty().withMessage('A location must be set.'),
-  (req, res, next) => {
+  (req, res) => {
     // Ensure a user is making the request
-    // TODO: make sure it is a super user
     if (!req.user) {
       req.session.status = 401;
       req.session.alert.errorMessages.push('You must be logged in to create an event.');
@@ -154,14 +192,31 @@ const postCreate = [
       });
     }
 
+    // Check for super user status
+    if (!req.user.super_user) {
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('You must be a super user to create events.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
+    }
+
+    // determine redirect url for errors based on data coming from  UI
+    let redirectUrl = '/event/create';
+    if (req.body.isEdit === 'true') {
+      redirectUrl = `/event/${req.body.eventId}/edit`;
+    }
+
     const errors = validationResult(req).formatWith(({ msg }) => { return `${msg}`; });
     if (!errors.isEmpty()) {
       // There was a validation error
-      res.locals.status = 400;
+      req.session.status = 400;
       // add errors as individual elements
-      res.locals.alert.errorMessages.push(...errors.array());
+      req.session.alert.errorMessages.push(...errors.array());
       // render create page
-      return getCreate(req, res, next);
+      return req.session.save(() => {
+        return res.redirect(redirectUrl);
+      });
     }
 
     // Convert string times to Date objects
@@ -171,24 +226,28 @@ const postCreate = [
     // check for invalid start/end times
     if (Number.isNaN(startTime) || Number.isNaN(endTime)) {
       if (Number.isNaN(startTime)) {
-        res.locals.alert.errorMessages.push('The start time is not a valid time.');
+        req.session.alert.errorMessages.push('The start time is not a valid time.');
       }
       if (Number.isNaN(endTime)) {
-        res.locals.alert.errorMessages.push('The end time is not a valid time.');
+        req.session.alert.errorMessages.push('The end time is not a valid time.');
       }
-      res.locals.status = 400;
-      return getCreate(req, res, next);
+      req.session.status = 400;
+      return req.session.save(() => {
+        return res.redirect(redirectUrl);
+      });
     }
     // Make sure the times are in the future and the end time is after the start time
     if (startTime >= endTime || startTime < Date.now()) {
       if (startTime < Date.now()) {
-        res.locals.alert.errorMessages.push('The start time must be in the future.');
+        req.session.alert.errorMessages.push('The start time must be in the future.');
       }
       if (startTime >= endTime) {
-        res.locals.alert.errorMessages.push('The end time must be after the start time.');
+        req.session.alert.errorMessages.push('The end time must be after the start time.');
       }
-      res.locals.status = 400;
-      return getCreate(req, res, next);
+      req.session.status = 400;
+      return req.session.save(() => {
+        return res.redirect(redirectUrl);
+      });
     }
 
     // handle isPublic and isMeeting flags
@@ -201,7 +260,37 @@ const postCreate = [
       isMeeting = true;
     }
 
-    // create the event
+    if (req.body.isEdit === 'true') {
+      return models.Event.findById(req.body.eventId).then((event) => {
+        // For edits, switching between meetings and non-meetings is disallowed
+        if (isMeeting !== event.meeting) {
+          req.session.status = 400;
+          req.session.alert.errorMessages.push('The meeting attribute cannot be changed.');
+          return req.session.save(() => {
+            return res.redirect(redirectUrl);
+          });
+        }
+
+        // update the event object
+        return event.update({
+          title: req.body.title,
+          start_time: startTime,
+          end_time: endTime,
+          description: req.body.description,
+          location: req.body.location,
+          public: isPublic,
+          meeting: isMeeting,
+          created_by: req.user.email,
+        }).then(() => {
+          req.session.status = 201;
+          req.session.alert.successMessages.push('Event updated!');
+          return req.session.save(() => {
+            return res.redirect(`/event/${req.body.eventId}/details`);
+          });
+        });
+      });
+    }
+    // not edit - create the event
     return models.Event.create({
       title: req.body.title,
       start_time: startTime,
@@ -221,13 +310,15 @@ const postCreate = [
     }).catch((err) => {
       // There was an error
       console.log(err);
-      res.locals.status = 500;
-      res.locals.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
-      return getCreate(req, res, next);
+      req.session.status = 500;
+      req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
+      return req.session.save(() => {
+        return res.redirect(redirectUrl);
+      });
     });
   },
 ];
-exports.postCreate = postCreate;
+exports.postCreateEdit = postCreateEdit;
 
 /**
  * POST to a signup page with an event with req.params.id id.
@@ -251,11 +342,21 @@ const postSignup = (req, res) => {
   let memberEmail = null;
   // If the current user is a super user, they can specify a member
   // Super user tests
-  if (req.user.super_user && req.body.email) {
-    memberEmail = req.body.email;
+  if (req.body.email) {
+    if (req.user.super_user) {
+      memberEmail = req.body.email;
+    } else {
+      // You can't specify email via post and not be a super user
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('You must be a super user to specify a member.');
+      return req.session.save(() => {
+        return res.redirect(`/event/${req.params.id}/details`);
+      });
+    }
   } else {
     memberEmail = req.user.email;
   }
+  const memberPromise = models.Member.findById(memberEmail);
 
   // A member cannot be signed up for an event for which they're already signed up
   const attendancePromise = models.Attendance.findOne({
@@ -266,10 +367,34 @@ const postSignup = (req, res) => {
   });
 
   // Once member and event have been found, continue with creating the attendance entry
-  return Promise.all([eventPromise, attendancePromise]).then((output) => {
+  return Promise.all([eventPromise, memberPromise, attendancePromise]).then((output) => {
     // output is in order of array
     const event = output[0];
-    const attendance = output[1];
+    const member = output[1];
+    const attendance = output[2];
+
+    // If the event is a meeting or private, only super users can sign up for it
+    if ((event.meeting === true || event.public !== true) && !req.user.super_user) {
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('A super user must sign you up for this event.');
+      return req.session.save(() => {
+        // not safe to redirect to a private event
+        if (event.public !== true) {
+          return res.redirect('/event');
+        }
+        // safe to redirect to details page
+        return res.redirect(`/event/${req.params.id}/details`);
+      });
+    }
+
+    if (!member) {
+      // member not found - return 400 because a bad email was sent
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('Specified member could not be found.');
+      return req.session.save(() => {
+        return res.redirect(`/event/${req.params.id}/details`);
+      });
+    }
     // If attendance exists there is no need to continue because you can't re-signup
     if (attendance) {
       req.session.status = 400;
@@ -326,12 +451,20 @@ const postConfirmAttendance = (req, res) => {
   // Make sure the user is signed in
   if (!req.user) {
     req.session.status = 401;
-    req.session.alert.errorMessages.push('You must be logged in to signup');
+    req.session.alert.errorMessages.push('You must be logged in to confirm attendance.');
     return req.session.save(() => {
       return res.redirect(`/event/${req.params.id}/details`);
     });
   }
-  // TODO: make sure the user is a super user
+
+  // Make sure the user is a super user
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to confirm attendance.');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
 
   // check that a member email and status were specified
   if (!req.query.member || !req.query.status) {
@@ -403,3 +536,99 @@ const postConfirmAttendance = (req, res) => {
   });
 };
 exports.postConfirmAttendance = postConfirmAttendance;
+
+/**
+ * Deletes the event specified by req.params.id
+ * Only accessible by super users
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const postDelete = (req, res) => {
+  // Make sure the user is signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to signup');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
+
+  // Check if super user
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to delete events.');
+    return req.session.save(() => {
+      return res.redirect('/event');
+    });
+  }
+
+  return models.Event.findById(req.params.id).then((event) => {
+    if (!event) {
+      // event was not found - 404
+      // TODO - have a real 404 page
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Event not found.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
+    }
+    return event.destroy().then(() => {
+      // return to event listings
+      req.session.alert.successMessages.push('Event deleted succesfully.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMesssages.push('Error. Contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  });
+};
+exports.postDelete = postDelete;
+
+/**
+ * Get UI for editing events
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const getEdit = (req, res) => {
+  // make sure there is a user
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to edit events.');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
+
+  // only super users can edit events
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user toe dit events.');
+    return req.session.save(() => {
+      return res.redirect(`/event/${req.params.id}/details`);
+    });
+  }
+  // get event
+  return models.Event.findById(req.params.id).then((event) => {
+    if (!event) {
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Event not found.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
+    }
+
+    // render event create page with arguments for making it an event edit page
+    return res.status(res.locals.status).render('event/create', {
+      title: 'Edit Event',
+      event, // shorthand for event: event,
+      isEdit: true,
+    });
+  });
+};
+exports.getEdit = getEdit;
