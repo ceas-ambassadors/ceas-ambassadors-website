@@ -56,6 +56,8 @@ describe('Account Tests', () => {
       .post('/signup')
       .send({
         email: 'test@kurtjlewis.com',
+        firstName: 'Test',
+        lastName: 'Testerson',
         password: 'password',
         confirmPassword: 'password',
       })
@@ -77,6 +79,8 @@ describe('Account Tests', () => {
       .post('/signup')
       .send({
         email: '',
+        firstName: 'Test',
+        lastName: 'Testerson',
         password: 'test_password',
         confirmPassword: 'test_password',
       })
@@ -97,6 +101,8 @@ describe('Account Tests', () => {
       .post('/signup')
       .send({
         email: 'bad_email@kurtjlewis.com',
+        firstName: 'Test',
+        lastName: 'Testerson',
         password: '',
         confirmPassword: 'test_password',
       })
@@ -115,6 +121,8 @@ describe('Account Tests', () => {
       .post('/signup')
       .send({
         email: 'bad_email@kurtjlewis.com',
+        firstName: 'Test',
+        lastName: 'Testerson',
         password: 'test_password',
         confirmPassword: '',
       })
@@ -133,8 +141,48 @@ describe('Account Tests', () => {
       .post('/signup')
       .send({
         email: 'bad_email@kurtjlewis.com',
+        firstName: 'Test',
+        lastName: 'Testerson',
         password: 'test_password',
         confirmPassword: 'test_password_bad',
+      })
+      .expect(400);
+    // check that bad_email@kurtjlewis.com was not added to the database
+    return response.then(() => {
+      return models.Member.findById('bad_email@kurtjlewis.com').then((member) => {
+        assert(!member);
+      });
+    });
+  });
+
+  // POST signup with no first name
+  it('POST signup wtih no fist name', () => {
+    response = request.agent(app)
+      .post('/signup')
+      .send({
+        email: 'bad_email@kurtjlewis.com',
+        lastName: 'Testerson',
+        password: 'test_password',
+        confirmPassword: 'test_password',
+      })
+      .expect(400);
+    // check that bad_email@kurtjlewis.com was not added to the database
+    return response.then(() => {
+      return models.Member.findById('bad_email@kurtjlewis.com').then((member) => {
+        assert(!member);
+      });
+    });
+  });
+
+  // POST signup with no last name
+  it('POST signup wtih no last name', () => {
+    response = request.agent(app)
+      .post('/signup')
+      .send({
+        email: 'bad_email@kurtjlewis.com',
+        firstName: 'Test',
+        password: 'test_password',
+        confirmPassword: 'test_password',
       })
       .expect(400);
     // check that bad_email@kurtjlewis.com was not added to the database
@@ -150,6 +198,8 @@ describe('Account Tests', () => {
     request.agent(app)
       .post('/change-password')
       .send({
+        firstName: 'Test',
+        lastName: 'Testerson',
         currentPassword: 'password',
         newPassword: 'newPassword',
         repeatNewPassword: 'newPassword',
@@ -181,6 +231,8 @@ describe('Account Tests', () => {
         .post('/signup')
         .send({
           email: 'test@kurtjlewis.com',
+          firstName: 'Test',
+          lastName: 'Testerson',
           password: 'password',
           confirmPassword: 'password',
         })
@@ -189,7 +241,7 @@ describe('Account Tests', () => {
 
     // Try to login - should also hit logout after verifying - need not test logout's success
 
-    describe('Tests which require being signed inj', () => {
+    describe('Tests which require being signed in', () => {
       let agent = null;
       beforeEach((done) => {
         agent = request.agent(app);

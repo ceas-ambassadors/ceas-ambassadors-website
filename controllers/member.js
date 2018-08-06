@@ -95,6 +95,8 @@ exports.getSignup = getSignup;
  */
 const postSignup = [
   check('email').isEmail().withMessage('A valid email must be provided.'),
+  check('firstName').not().isEmpty().withMessage('A first name must be provided.'),
+  check('lastName').not().isEmpty().withMessage('A last name must be provided.'),
   check('password').not().isEmpty().withMessage('A password must be provided.'),
   check('confirmPassword').not().isEmpty().withMessage('A confirmation password must be provided.'),
   (req, res, next) => {
@@ -142,6 +144,8 @@ const postSignup = [
         return models.Member.create({
           email: req.body.email,
           password: hash,
+          first_name: req.body.firstName,
+          last_name: req.body.lastName,
           accend: false,
           super_user: false,
           private_user: false,
