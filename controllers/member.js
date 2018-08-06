@@ -447,11 +447,17 @@ exports.getProfile = getProfile;
  * @param {*} res - outgoing request
  */
 const getList = (req, res) => {
+  // create as variable to allow for modifying of search
+  const memberWhere = {
+    private_user: false,
+  };
+  if (req.user && req.user.super_user) {
+    // super users can see private users
+    delete memberWhere.private_user;
+  }
   // get all member alphabetically sorted and return them
   return models.Member.findAll({
-    where: {
-      private_user: false,
-    },
+    where: memberWhere,
     order: [
       ['last_name', 'ASC'],
       ['first_name', 'ASC'],
