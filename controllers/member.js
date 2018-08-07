@@ -121,6 +121,16 @@ const postSignup = [
         return res.redirect('/signup');
       });
     }
+
+    // assert that it is a UC email
+    if (!req.body.email.endsWith('uc.edu')) {
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('Please sign up with a uc.edu email address.');
+      return req.session.save(() => {
+        return res.redirect('/signup');
+      });
+    }
+
     if (req.user) {
       req.session.status = 400;
       req.session.alert.errorMessages.push('You are already logged in.');

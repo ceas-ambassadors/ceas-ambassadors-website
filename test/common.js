@@ -30,12 +30,12 @@ const clearDatabase = () => {
 exports.clearDatabase = clearDatabase;
 
 const getNormalUserEmail = () => {
-  return 'normal@kurtjlewis.com';
+  return 'normal@mail.uc.edu';
 };
 exports.getNormalUserEmail = getNormalUserEmail;
 
 const getSuperUserEmail = () => {
-  return 'super@kurtjlewis.com';
+  return 'super@mail.uc.edu';
 };
 exports.getSuperUserEmail = getSuperUserEmail;
 
@@ -130,7 +130,7 @@ const createPublicEvent = () => {
     location: 'Your computer',
     public: true,
     meeting: false,
-    created_by: 'test@kurtjlewis.com',
+    created_by: 'test@mail.uc.edu',
   });
 };
 exports.createPublicEvent = createPublicEvent;
@@ -148,7 +148,7 @@ const createPrivateEvent = () => {
     location: 'Your computer',
     public: false,
     meeting: false,
-    created_by: 'test@kurtjlewis.com',
+    created_by: 'test@mail.uc.edu',
   });
 };
 exports.createPrivateEvent = createPrivateEvent;
@@ -166,7 +166,7 @@ const createMeeting = () => {
     location: 'Your computer',
     public: true,
     meeting: true,
-    created_by: 'test@kurtjlewis.com',
+    created_by: 'test@mail.uc.edu',
   });
 };
 exports.createMeeting = createMeeting;

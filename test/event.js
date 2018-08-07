@@ -199,7 +199,7 @@ describe('Event Tests', () => {
           const attendancePromise = models.Attendance.findOne({
             where: {
               event_id: event.id,
-              member_email: 'normal@kurtjlewis.com',
+              member_email: 'normal@mail.uc.edu',
             },
           }).then((attendance) => {
             assert(attendance);
