@@ -32,9 +32,7 @@ The steps I followed are:
 ```shell
 $ dokku apps:create amb-site
 $ dokku mysql:create amb-db
-# the mysql container creates DATABSE_URL env var in the amb-site - we need PROD_DB_URL
-$ dokku config:set amb-site PROD_DB_URL=\$DATABASE_URL
-$ dokku config:set amb-site NODE_ENV=production
+$ dokku config:set amb-site NODE_ENV='production'
 ```
 On your personal computer, you'll need to setup a remote for sending code to
 ```shell
@@ -42,7 +40,18 @@ git remote add dokku-prod dokku@<ip>:amb-site
 # You can only send the master branch
 git push dokku-prod master 
 ```
+If this is the first deployment of the site, you need to make a user a super user, so go to the website
+and create an account. Then, on the server, run the following commands.
+```shell
+$ dokku mysql:connect amb-db
+mysql> UPDATE Members SET super_user=1 WHERE email=<your-email>;
+# Press CTRL-D to exit
+```
 ### Setting up domains
+This will be updated once we've setup the domain name.
+
+### Securing the server
+You need to disable root ssh access.
 
 # Maintenance
 **THESE COMMANDS ARE FOR THE ABOVE DESCRIBED SERVER - UBUNTU 18.04 WITH THE DOKKU DEPLOYMENT SYSTEM**
