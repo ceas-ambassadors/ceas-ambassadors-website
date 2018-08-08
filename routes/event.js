@@ -15,7 +15,7 @@ router.get('/create', eventController.getCreate);
 
 router.post('/create', eventController.postCreateEdit);
 
-router.get('/:id/details', eventController.getDetails);
+router.get('/:id', eventController.getDetails);
 
 router.post('/:id/signup', eventController.postSignup);
 

@@ -51,7 +51,7 @@ describe('Account Tests', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
-        email: 'test@kurtjlewis.com',
+        email: 'test@mail.uc.edu',
         firstName: 'Test',
         lastName: 'Testerson',
         password: 'password',
@@ -59,9 +59,9 @@ describe('Account Tests', () => {
       })
       .redirects(1)
       .expect(201);
-    // check that test@kurtjlewis.com was  added to the database
+    // check that test@mail.uc.edu was  added to the database
     return response.then(() => {
-      return models.Member.findById('test@kurtjlewis.com').then((member) => {
+      return models.Member.findById('test@mail.uc.edu').then((member) => {
         assert(member, 'The member does not exist');
       });
     });
@@ -95,7 +95,7 @@ describe('Account Tests', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
-        email: 'bad_email@kurtjlewis.com',
+        email: 'bad_email@mail.uc.edu',
         firstName: 'Test',
         lastName: 'Testerson',
         password: '',
@@ -103,9 +103,9 @@ describe('Account Tests', () => {
       })
       .redirects(1)
       .expect(400);
-    // check that bad_email@kurtjlewis.com was not added to the database
+    // check that bad_email@mail.uc.edu was not added to the database
     return response.then(() => {
-      return models.Member.findById('bad_email@kurtjlewis.com').then((member) => {
+      return models.Member.findById('bad_email@mail.uc.edu').then((member) => {
         assert(!member);
       });
     });
@@ -116,7 +116,7 @@ describe('Account Tests', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
-        email: 'bad_email@kurtjlewis.com',
+        email: 'bad_email@mail.uc.edu',
         firstName: 'Test',
         lastName: 'Testerson',
         password: 'test_password',
@@ -124,9 +124,9 @@ describe('Account Tests', () => {
       })
       .redirects(1)
       .expect(400);
-    // check that bad_email@kurtjlewis.com was not added to the database
+    // check that bad_email@mail.uc.edu was not added to the database
     return response.then(() => {
-      return models.Member.findById('bad_email@kurtjlewis.com').then((member) => {
+      return models.Member.findById('bad_email@mail.uc.edu').then((member) => {
         assert(!member);
       });
     });
@@ -137,7 +137,7 @@ describe('Account Tests', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
-        email: 'bad_email@kurtjlewis.com',
+        email: 'bad_email@mail.uc.edu',
         firstName: 'Test',
         lastName: 'Testerson',
         password: 'test_password',
@@ -145,9 +145,9 @@ describe('Account Tests', () => {
       })
       .redirects(1)
       .expect(400);
-    // check that bad_email@kurtjlewis.com was not added to the database
+    // check that bad_email@mail.uc.edu was not added to the database
     return response.then(() => {
-      return models.Member.findById('bad_email@kurtjlewis.com').then((member) => {
+      return models.Member.findById('bad_email@mail.uc.edu').then((member) => {
         assert(!member);
       });
     });
@@ -158,16 +158,16 @@ describe('Account Tests', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
-        email: 'bad_email@kurtjlewis.com',
+        email: 'bad_email@mail.uc.edu',
         lastName: 'Testerson',
         password: 'test_password',
         confirmPassword: 'test_password',
       })
       .redirects(1)
       .expect(400);
-    // check that bad_email@kurtjlewis.com was not added to the database
+    // check that bad_email@mail.uc.edu was not added to the database
     return response.then(() => {
-      return models.Member.findById('bad_email@kurtjlewis.com').then((member) => {
+      return models.Member.findById('bad_email@mail.uc.edu').then((member) => {
         assert(!member);
       });
     });
@@ -178,14 +178,34 @@ describe('Account Tests', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
-        email: 'bad_email@kurtjlewis.com',
+        email: 'bad_email@mail.uc.edu',
         firstName: 'Test',
         password: 'test_password',
         confirmPassword: 'test_password',
       })
       .redirects(1)
       .expect(400);
-    // check that bad_email@kurtjlewis.com was not added to the database
+    // check that bad_email@mail.uc.edu was not added to the database
+    return response.then(() => {
+      return models.Member.findById('bad_email@mail.uc.edu').then((member) => {
+        assert(!member);
+      });
+    });
+  });
+
+  it('POST signup with non-uc.edu email address', () => {
+    response = request.agent(app)
+      .post('/signup')
+      .send({
+        email: 'bad_email@kurtjlewis.com',
+        firstName: 'Test',
+        lastName: 'Testerson',
+        password: 'test_password',
+        confirmPassword: 'test_password',
+      })
+      .redirects(1)
+      .expect(400);
+    // c heck that bad_email@kurtjlewis.com was not added to the database
     return response.then(() => {
       return models.Member.findById('bad_email@kurtjlewis.com').then((member) => {
         assert(!member);
@@ -252,7 +272,7 @@ describe('Account Tests', () => {
       request.agent(app)
         .post('/login')
         .send({
-          email: 'fake@kurtjlewis.com',
+          email: 'fake@mail.uc.edu',
           password: 'password',
         })
         .redirects(1)

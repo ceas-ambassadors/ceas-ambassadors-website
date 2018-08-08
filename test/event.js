@@ -62,7 +62,7 @@ describe('Event Tests', () => {
   // event ids are numerical, so `fake` should not return an event
   it('GET nonexistent event details', (done) => {
     request.agent(app)
-      .get('/event/fake/details')
+      .get('/event/-1')
       .expect(404, done);
   });
 
@@ -70,7 +70,7 @@ describe('Event Tests', () => {
   it('GET event details page', () => {
     return common.createMeeting().then((event) => {
       return request.agent(app)
-        .get(`/event/${event.id}/details`)
+        .get(`/event/${event.id}`)
         .expect(200);
     });
   });
@@ -166,7 +166,7 @@ describe('Event Tests', () => {
     // GET private event - normal users cannot see a private event if not on attendees list
     it('GET private event details as non-attendee normal user', () => {
       return common.createPrivateEvent().then((event) => {
-        return agent.get(`/event/${event.id}/details`)
+        return agent.get(`/event/${event.id}`)
           .redirects(1)
           .expect(403);
       });
@@ -180,7 +180,7 @@ describe('Event Tests', () => {
           member_email: common.getNormalUserEmail(),
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
-          return agent.get(`/event/${event.id}/details`)
+          return agent.get(`/event/${event.id}`)
             .expect(200);
         });
       });
@@ -199,7 +199,7 @@ describe('Event Tests', () => {
           const attendancePromise = models.Attendance.findOne({
             where: {
               event_id: event.id,
-              member_email: 'normal@kurtjlewis.com',
+              member_email: 'normal@mail.uc.edu',
             },
           }).then((attendance) => {
             assert(attendance);

@@ -747,7 +747,7 @@ describe('Attendance Tests', () => {
 
     it('Test bulk update hook', () => {
       // we'll need a second member to test bulk updates
-      const member2Email = 'normal2@kurtjlewis.com';
+      const member2Email = 'normal2@mail.uc.edu';
       const member2Promise = models.Member.create({
         email: member2Email,
         password: 'blah', // we won't be logging in, so this doesn't matter
@@ -794,7 +794,7 @@ describe('Attendance Tests', () => {
     // test bulkCreateHook
     it('Test bulkCreate hook', () => {
       // we'll need a second member to test bulk updates
-      const member2Email = 'normal2@kurtjlewis.com';
+      const member2Email = 'normal2@mail.uc.edu';
       const member2Promise = models.Member.create({
         email: member2Email,
         password: 'blah', // we won't be logging in, so this doesn't matter

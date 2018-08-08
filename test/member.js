@@ -47,7 +47,7 @@ describe('Member tests', () => {
   // GET /member/profile of created member
   it('GET profile of existing member', () => {
     return models.Member.create({
-      email: 'profile@kurtjlewis.com',
+      email: 'profile@mail.uc.edu',
       first_name: 'Profile',
       last_name: 'mcProfile',
       password: 'This isnt a hash!', // okay because we won't be logging in
@@ -56,7 +56,7 @@ describe('Member tests', () => {
       super_user: false,
     }).then(() => {
       return request.agent(app)
-        .get('/member/profile@kurtjlewis.com/profile')
+        .get('/member/profile@mail.uc.edu')
         .expect(200);
     });
   });
@@ -64,7 +64,7 @@ describe('Member tests', () => {
   // GET /member/profile/ of a non-existent emial
   it('GET profile of non-existent member', (done) => {
     request.agent(app)
-      .get('/member/not-real@kurtjlewis.com/profile')
+      .get('/member/not-real@mail.uc.edu')
       .expect(404, done);
   });
 
@@ -76,8 +76,8 @@ describe('Member tests', () => {
   });
 
   // POST to /member/:email/update-attributes not signed in
-  it('POST /member/test@kurtjlewis.com/update-attributes not signed in', () => {
-    const email = 'test@kurtjlewis.com';
+  it('POST /member/test@mail.uc.edu/update-attributes not signed in', () => {
+    const email = 'test@mail.uc.edu';
     return models.Member.create({
       email,
       password: 'blah', // doesn't matter because we won't be logging in
@@ -100,7 +100,7 @@ describe('Member tests', () => {
 
   // GET profile of private member
   it('GET profile of private member not logged in', () => {
-    const email = 'test@kurtjlewis.com';
+    const email = 'test@mail.uc.edu';
     return models.Member.create({
       email,
       password: 'blah', // doesn't matter because we won't be logging in
@@ -109,7 +109,7 @@ describe('Member tests', () => {
       private_user: true,
     }).then(() => {
       return request.agent(app)
-        .get(`/member/${email}/profile`)
+        .get(`/member/${email}`)
         .redirects(1)
         .expect(403);
     });
@@ -214,8 +214,8 @@ describe('Member tests', () => {
     });
 
     // POST to /member/:email/update-attributes as normal user and fail
-    it('POST /member/test@kurtjlewis.com/update-attributes as normal user', () => {
-      const email = 'test@kurtjlewis.com';
+    it('POST /member/test@mail.uc.edu/update-attributes as normal user', () => {
+      const email = 'test@mail.uc.edu';
       return models.Member.create({
         email,
         password: 'blah', // doesn't matter because we won't be logging in
@@ -238,7 +238,7 @@ describe('Member tests', () => {
 
     // GET profile of private member
     it('GET profile of private member as normal user', () => {
-      const email = 'test@kurtjlewis.com';
+      const email = 'test@mail.uc.edu';
       return models.Member.create({
         email,
         password: 'blah', // doesn't matter because we won't be logging in
@@ -246,7 +246,7 @@ describe('Member tests', () => {
         super_user: false,
         private_user: true,
       }).then(() => {
-        return agent.get(`/member/${email}/profile`)
+        return agent.get(`/member/${email}`)
           .redirects(1)
           .expect(403);
       });
@@ -398,7 +398,7 @@ describe('Member tests', () => {
 
     // GET profile of private member
     it('GET profile of private member as super user', () => {
-      const email = 'test@kurtjlewis.com';
+      const email = 'test@mail.uc.edu';
       return models.Member.create({
         email,
         password: 'blah', // doesn't matter because we won't be logging in
@@ -406,7 +406,7 @@ describe('Member tests', () => {
         super_user: false,
         private_user: true,
       }).then(() => {
-        return agent.get(`/member/${email}/profile`)
+        return agent.get(`/member/${email}`)
           .redirects(1)
           .expect(200);
       });

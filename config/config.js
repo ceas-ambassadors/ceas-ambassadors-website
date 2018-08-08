@@ -9,7 +9,7 @@ module.exports = {
     logging: false,
   },
   production: {
-    url: process.env.PROD_DB_URL,
+    url: process.env.DATABASE_URL,
     dialect: 'mysql',
   },
 };

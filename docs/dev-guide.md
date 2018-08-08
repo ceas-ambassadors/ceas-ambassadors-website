@@ -81,8 +81,8 @@ All of the database URLs take the following format: `mysql://<user>:<password>@<
 The development database URL - this database holds data with some consistency, in that there is probably test values in it usually.
 #### TEST_DB_URL
 This database is wiped entirely clean at the start and end of every test - so don't use the same URL as your DEV_DB_URL unless you want that.
-#### PROD_DB_URL
-This should hold production data.
+#### DATABASE_URL
+This should hold production data. It uses this environment variable because it's what is used by the dokku plugin.
 
 ## Tests
 There will be a comprehensive test suite for this codebase. To run tests, first configure the website using the above instructions - tests won't work until you've gotten the website to run yourself. Then, just run `npm test`. Our tests are written using [mocha](https://mochajs.org/) as the runner, and [supertest](https://github.com/visionmedia/supertest) as a method of mocking a user on the website. In combination, they allow us to test the endpoints as if a user was using them. Ideally, all behavior on the website will have a test. This way, if we break that behavior with a code change or upgrading npm modules breaks behavior, it will be easy to determine.

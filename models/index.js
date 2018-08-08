@@ -24,8 +24,8 @@ if (typeof env === 'undefined'){
 }
 
 // Checks if config.url is defined
-if (typeof config.url == 'undefined') {
-  throw "Invalid config.url in /../models/index.js";
+if (typeof config.url === 'undefined') {
+  throw "Invalid config.url in /models/index.js";
 }
 
 var sequelize = new Sequelize(config.url, config);

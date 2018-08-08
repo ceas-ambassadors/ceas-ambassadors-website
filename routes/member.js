@@ -15,7 +15,7 @@ router.get('/', memberHandler.getList);
 router.post('/profile/update', memberHandler.postProfileUpdate);
 
 /* GET profile */
-router.get('/:email/profile', memberHandler.getProfile);
+router.get('/:email', memberHandler.getProfile);
 
 /* POST /member/:email/update-attributes */
 router.post('/:email/update-attributes', memberHandler.postUpdateAttributes);

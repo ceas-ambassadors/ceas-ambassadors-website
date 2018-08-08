@@ -6,7 +6,7 @@ mixin member-card(member)
   div.member-card
     img.member-photo(src='/images/default-profile-picture.jpg')
     div.member-card-info
-      a.member-name(href='/member/' + member.email + '/profile') #{member.first_name} #{member.last_name}
+      a.member-name(href='/member/' + member.email) #{member.first_name} #{member.last_name}
       p #{member.email}
       p.major #{member.major}
       if member.grad_year
