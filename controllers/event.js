@@ -356,73 +356,78 @@ const postSignup = (req, res) => {
   } else {
     memberEmail = req.user.email;
   }
-  const memberPromise = models.Member.findById(memberEmail);
 
-  // A member cannot be signed up for an event for which they're already signed up
-  const attendancePromise = models.Attendance.findOne({
+  const memberPromise = models.Member.findOne({
     where: {
-      member_email: memberEmail,
-      event_id: req.params.id,
+      email: memberEmail,
     },
   });
 
   // Once member and event have been found, continue with creating the attendance entry
-  return Promise.all([eventPromise, memberPromise, attendancePromise]).then((output) => {
+  return Promise.all([eventPromise, memberPromise]).then((output) => {
     // output is in order of array
     const event = output[0];
     const member = output[1];
-    const attendance = output[2];
 
-    // If the event is a meeting or private, only super users can sign up for it
-    if ((event.meeting === true || event.public !== true) && !req.user.super_user) {
-      req.session.status = 403;
-      req.session.alert.errorMessages.push('A super user must sign you up for this event.');
-      return req.session.save(() => {
-        // not safe to redirect to a private event
-        if (event.public !== true) {
-          return res.redirect('/event');
-        }
-        // safe to redirect to details page
-        return res.redirect(`/event/${req.params.id}`);
-      });
-    }
+    // Need to pull attendance record - a member cannot be signed up for an event for which they're already signed up
+    return models.Attendance.findOne({
+      where: {
+        member_id: member.id,
+        event_id: event.id,
+      },
+    }).then((attendance) => {
 
-    if (!member) {
-      // member not found - return 400 because a bad email was sent
-      req.session.status = 400;
-      req.session.alert.errorMessages.push('Specified member could not be found.');
-      return req.session.save(() => {
-        return res.redirect(`/event/${req.params.id}`);
-      });
-    }
-    // If attendance exists there is no need to continue because you can't re-signup
-    if (attendance) {
-      req.session.status = 400;
-      req.session.alert.errorMessages.push(`${memberEmail} is already signed up for this event.`);
-      return req.session.save(() => {
-        return res.redirect(`/event/${event.id}`);
-      });
-    }
-    let status = models.Attendance.getStatusUnconfirmed();
-    if (event.meeting) {
-      status = models.Attendance.getStatusConfirmed();
-    }
-    if (!event.public) {
-      // Private events are automatically confirmed because they're entered by a super user
-      // TODO - check that user is a super user - only proceed if so
-      status = models.Attendance.getStatusConfirmed();
-    }
+      // If the event is a meeting or private, only super users can sign up for it
+      if ((event.meeting === true || event.public !== true) && !req.user.super_user) {
+        req.session.status = 403;
+        req.session.alert.errorMessages.push('A super user must sign you up for this event.');
+        return req.session.save(() => {
+          // not safe to redirect to a private event
+          if (event.public !== true) {
+            return res.redirect('/event');
+          }
+          // safe to redirect to details page
+          return res.redirect(`/event/${req.params.id}`);
+        });
+      }
 
-    // Create attendance
-    return models.Attendance.create({
-      event_id: req.params.id,
-      member_email: memberEmail,
-      status, // shorthand for status: status,
-    }).then(() => {
-      req.session.status = 201;
-      req.session.alert.successMessages.push(`Signed up for ${event.title}`);
-      return req.session.save(() => {
-        return res.redirect(`/event/${event.id}`);
+      if (!member) {
+        // member not found - return 400 because a bad email was sent
+        req.session.status = 400;
+        req.session.alert.errorMessages.push('Specified member could not be found.');
+        return req.session.save(() => {
+          return res.redirect(`/event/${req.params.id}`);
+        });
+      }
+      // If attendance exists there is no need to continue because you can't re-signup
+      if (attendance) {
+        req.session.status = 400;
+        req.session.alert.errorMessages.push(`${memberEmail} is already signed up for this event.`);
+        return req.session.save(() => {
+          return res.redirect(`/event/${event.id}`);
+        });
+      }
+      let status = models.Attendance.getStatusUnconfirmed();
+      if (event.meeting) {
+        status = models.Attendance.getStatusConfirmed();
+      }
+      if (!event.public) {
+        // Private events are automatically confirmed because they're entered by a super user
+        // TODO - check that user is a super user - only proceed if so
+        status = models.Attendance.getStatusConfirmed();
+      }
+
+      // Create attendance
+      return models.Attendance.create({
+        event_id: req.params.id,
+        member_email: memberEmail,
+        status, // shorthand for status: status,
+      }).then(() => {
+        req.session.status = 201;
+        req.session.alert.successMessages.push(`Signed up for ${event.title}`);
+        return req.session.save(() => {
+          return res.redirect(`/event/${event.id}`);
+        });
       });
     });
   }).catch((err) => {

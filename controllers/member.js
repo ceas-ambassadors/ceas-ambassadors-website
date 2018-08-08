@@ -151,7 +151,11 @@ const postSignup = [
       });
     };
 
-    return models.Member.findById(req.body.email).then((member) => {
+    return models.Member.findOne({
+      where: {
+        email: req.body.email,
+      },
+    }).then((member) => {
       // if the query returns a member then an account is already registered with that email
       if (member) {
         req.session.status = 400;
