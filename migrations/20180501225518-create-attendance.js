@@ -12,13 +12,13 @@ module.exports = {
           key: 'id',
         },
       },
-      member_email: {
-        type: Sequelize.STRING,
+      member_id: {
+        type: Sequelize.INT,
         primaryKey: true,
         allowNull: false,
         references: {
           model: 'Members',
-          key: 'email',
+          key: 'id',
         },
       },
       status: {

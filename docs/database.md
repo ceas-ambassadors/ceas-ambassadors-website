@@ -81,7 +81,7 @@ This is the actual structue of the tables and their relationships.
 
 
 ### Attendance - Join table of Member and Event
-* member_email - foreign key to member
+* member_id - foreign key to member
 * event_id -  foreign key to event
 * status - unconfirmed, confirmed, not-needed, meeting
   * Enum field representing the status of the attendance
