@@ -456,7 +456,7 @@ const postUpdateAttributes = (req, res) => {
     req.session.status = 401;
     req.session.alert.errorMessages.push('You must be signed in to modify attributes.');
     return req.session.save(() => {
-      return res.redirect(`/member/${req.params.email}/profile`);
+      return res.redirect(`/member/${req.params.email}`);
     });
   }
   // assert that the user is a super user
@@ -464,7 +464,7 @@ const postUpdateAttributes = (req, res) => {
     req.session.status = 403;
     req.session.alert.errorMessages.push('You must be a super user to modify attributes.');
     return req.session.save(() => {
-      return res.redirect(`/member/${req.params.email}/profile`);
+      return res.redirect(`/member/${req.params.email}`);
     });
   }
   // get the requested member
@@ -474,7 +474,7 @@ const postUpdateAttributes = (req, res) => {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Member not found.');
       return req.session.save(() => {
-        return res.redirect(`/member/${req.params.email}/profile`);
+        return res.redirect(`/member/${req.params.email}`);
       });
     }
     let superUser = req.query.super_user;
@@ -515,7 +515,7 @@ const postUpdateAttributes = (req, res) => {
         req.session.alert.infoMessages.push('No changes applied.');
       }
       return req.session.save(() => {
-        return res.redirect(`/member/${req.params.email}/profile`);
+        return res.redirect(`/member/${req.params.email}`);
       });
     });
   }).catch((err) => {

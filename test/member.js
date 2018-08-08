@@ -56,7 +56,7 @@ describe('Member tests', () => {
       super_user: false,
     }).then(() => {
       return request.agent(app)
-        .get('/member/profile@mail.uc.edu/profile')
+        .get('/member/profile@mail.uc.edu')
         .expect(200);
     });
   });
@@ -64,7 +64,7 @@ describe('Member tests', () => {
   // GET /member/profile/ of a non-existent emial
   it('GET profile of non-existent member', (done) => {
     request.agent(app)
-      .get('/member/not-real@mail.uc.edu/profile')
+      .get('/member/not-real@mail.uc.edu')
       .expect(404, done);
   });
 
@@ -102,7 +102,7 @@ describe('Member tests', () => {
       private_user: true,
     }).then(() => {
       return request.agent(app)
-        .get(`/member/${email}/profile`)
+        .get(`/member/${email}`)
         .redirects(1)
         .expect(403);
     });
@@ -239,7 +239,7 @@ describe('Member tests', () => {
         super_user: false,
         private_user: true,
       }).then(() => {
-        return agent.get(`/member/${email}/profile`)
+        return agent.get(`/member/${email}`)
           .redirects(1)
           .expect(403);
       });
@@ -399,7 +399,7 @@ describe('Member tests', () => {
         super_user: false,
         private_user: true,
       }).then(() => {
-        return agent.get(`/member/${email}/profile`)
+        return agent.get(`/member/${email}`)
           .redirects(1)
           .expect(200);
       });
