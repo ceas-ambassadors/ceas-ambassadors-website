@@ -15,8 +15,10 @@ Models names should be nouns - `Member`, `Event`, `Attendance`, etc. Sequelize a
 # Database Design
 This is the actual structue of the tables and their relationships. 
 ### Member
-* email - primary key
-  * the user's email. Treated as the primary key because it is unique
+* id
+  * unique auto incrementing id for member - primary key
+* email 
+  * the user's email. Should have unique key
 * first_name
 * last_name
 * major
@@ -56,7 +58,7 @@ This is the actual structue of the tables and their relationships.
 
 ### Event
 * id - primary key
-  * randomly generated id key used to identify an event
+  * incrementally generated id key used to identify an event
 * title
   * string representing the name of the event
 * start_time
@@ -73,7 +75,7 @@ This is the actual structue of the tables and their relationships.
 * meeting
   * boolean field representing if an event is a meeting
 * created_by
-  * string - email address of user who created event. foreign key to Member
+  * int - id of user who created event. foreign key to Member
 * created_at
   * Date record was created - automatically handled by sequelize
 * updated_at
