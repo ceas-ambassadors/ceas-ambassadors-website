@@ -29,7 +29,7 @@ const getDetails = (req, res) => {
     // http://docs.sequelizejs.com/manual/tutorial/raw-queries.html
     return models.sequelize.query(`SELECT Members.first_name, Members.last_name, Members.email,
                                    Attendances.status FROM Members INNER JOIN Attendances
-                                   ON Members.email = Attendances.member_email WHERE
+                                   ON Members.id = Attendances.member_id WHERE
                                    Attendances.event_id = :event_id`, {
       replacements: {
         event_id: req.params.id,
@@ -420,7 +420,7 @@ const postSignup = (req, res) => {
       // Create attendance
       return models.Attendance.create({
         event_id: req.params.id,
-        member_email: memberEmail,
+        member_id: member.id,
         status, // shorthand for status: status,
       }).then(() => {
         req.session.status = 201;
@@ -495,7 +495,7 @@ const postConfirmAttendance = (req, res) => {
   // find the relevant attendance record and update it accordingly
   return models.Attendance.findOne({
     where: {
-      member_email: req.query.member,
+      member_id: req.query.member,
       event_id: req.params.id,
     },
   }).then((attendance) => {
