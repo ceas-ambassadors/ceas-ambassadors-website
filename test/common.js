@@ -73,39 +73,20 @@ exports.createSuperUser = createSuperUser;
 
 /**
  * Creates a normal user and signs them in, creating a user session
+ * @param {*} member - the member to create a session for
  * @param {*} agent - superagent instance to log in
  */
-const createNormalUserSession = (agent) => {
-  return createNormalUser().then((member) => {
-    return agent
-      .post('/login')
-      .send({
-        email: member.email,
-        password: 'password',
-      })
-      .redirects(1)
-      .expect(200);
-  });
+const createUserSession = (member, agent) => {
+  return agent
+    .post('/login')
+    .send({
+      email: member.email,
+      password: 'password',
+    })
+    .redirects(1) 
+    .expect(200);
 };
-exports.createNormalUserSession = createNormalUserSession;
-
-/**
- * Creates a super user and signs them in, creating a user session
- * @param {*} agent - superagent instance to log in
- */
-const createSuperUserSession = (agent) => {
-  return createSuperUser().then((member) => {
-    return agent
-      .post('/login')
-      .send({
-        email: member.email,
-        password: 'password',
-      })
-      .redirects(1)
-      .expect(200);
-  });
-};
-exports.createSuperUserSession = createSuperUserSession;
+exports.createUserSession = createUserSession;
 
 /**
  * get standard length of event
@@ -130,7 +111,6 @@ const createPublicEvent = () => {
     location: 'Your computer',
     public: true,
     meeting: false,
-    created_by: 'test@mail.uc.edu',
   });
 };
 exports.createPublicEvent = createPublicEvent;
@@ -148,7 +128,6 @@ const createPrivateEvent = () => {
     location: 'Your computer',
     public: false,
     meeting: false,
-    created_by: 'test@mail.uc.edu',
   });
 };
 exports.createPrivateEvent = createPrivateEvent;
@@ -166,7 +145,6 @@ const createMeeting = () => {
     location: 'Your computer',
     public: true,
     meeting: true,
-    created_by: 'test@mail.uc.edu',
   });
 };
 exports.createMeeting = createMeeting;
