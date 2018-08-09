@@ -347,17 +347,6 @@ exports.postProfileUpdate = postProfileUpdate;
  * @param {*} res - outgoing repsonse
  */
 const getProfile = (req, res) => {
-  if (!req.params.id) {
-    // If the req.params.id isn't specified, this endpoint isn't hit.
-    // Leaving this just in case
-    req.session.status = 400;
-    req.session.alert.errorMessages.push('Incomplete URL');
-    // TODO - redirect to members list
-    return req.session.save(() => {
-      res.redirect('/');
-    });
-  }
-
   // Get a list of members who are signed up with some status for this event
   // It's faster to run a raw sql query than it is to run two queries in a row
   // This is because Sequelize can't do joins
