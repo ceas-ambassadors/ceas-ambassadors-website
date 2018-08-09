@@ -151,7 +151,11 @@ const postSignup = [
       });
     };
 
-    return models.Member.findById(req.body.email).then((member) => {
+    return models.Member.findOne({
+      where: {
+        email: req.body.email,
+      },
+    }).then((member) => {
       // if the query returns a member then an account is already registered with that email
       if (member) {
         req.session.status = 400;
@@ -343,17 +347,6 @@ exports.postProfileUpdate = postProfileUpdate;
  * @param {*} res - outgoing repsonse
  */
 const getProfile = (req, res) => {
-  if (!req.params.email) {
-    // If the req.params.email isn't specified, this endpoint isn't hit.
-    // Leaving this just in case
-    req.session.status = 400;
-    req.session.alert.errorMessages.push('Incomplete URL');
-    // TODO - redirect to members list
-    return req.session.save(() => {
-      res.redirect('/');
-    });
-  }
-
   // Get a list of members who are signed up with some status for this event
   // It's faster to run a raw sql query than it is to run two queries in a row
   // This is because Sequelize can't do joins
@@ -362,14 +355,14 @@ const getProfile = (req, res) => {
   const eventPromise = models.sequelize.query(`SELECT Events.*, Attendances.status
                                  FROM Events INNER JOIN Attendances
                                  ON Events.id = Attendances.event_id WHERE
-                                 Attendances.member_email = :email`, {
+                                 Attendances.member_id = :memberId`, {
     replacements: {
-      email: req.params.email,
+      memberId: req.params.id,
     },
     type: models.sequelize.QueryTypes.SELECT,
   });
 
-  const memberPromise = models.Member.findById(req.params.email);
+  const memberPromise = models.Member.findById(req.params.id);
 
   return Promise.all([memberPromise, eventPromise]).then(([member, events]) => {
     if (!member) {
@@ -491,7 +484,7 @@ const postUpdateAttributes = (req, res) => {
     req.session.status = 401;
     req.session.alert.errorMessages.push('You must be signed in to modify attributes.');
     return req.session.save(() => {
-      return res.redirect(`/member/${req.params.email}`);
+      return res.redirect(`/member/${req.params.id}`);
     });
   }
   // assert that the user is a super user
@@ -499,17 +492,17 @@ const postUpdateAttributes = (req, res) => {
     req.session.status = 403;
     req.session.alert.errorMessages.push('You must be a super user to modify attributes.');
     return req.session.save(() => {
-      return res.redirect(`/member/${req.params.email}`);
+      return res.redirect(`/member/${req.params.id}`);
     });
   }
   // get the requested member
-  return models.Member.findById(req.params.email).then((member) => {
+  return models.Member.findById(req.params.id).then((member) => {
     if (!member) {
       // member not found, 404
       req.session.status = 404;
       req.session.alert.errorMessages.push('Member not found.');
       return req.session.save(() => {
-        return res.redirect(`/member/${req.params.email}`);
+        return res.redirect(`/member/${req.params.id}`);
       });
     }
     let superUser = req.query.super_user;
@@ -550,7 +543,7 @@ const postUpdateAttributes = (req, res) => {
         req.session.alert.infoMessages.push('No changes applied.');
       }
       return req.session.save(() => {
-        return res.redirect(`/member/${req.params.email}`);
+        return res.redirect(`/member/${req.params.id}`);
       });
     });
   }).catch((err) => {

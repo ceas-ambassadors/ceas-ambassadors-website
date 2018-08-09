@@ -60,14 +60,14 @@ block content
     h1 Account Meta Attributes
     if user.super_user
       //- descalate super user
-      form(id='superUserDemote', action='/member/' + user.email + '/update-attributes?super_user=false', method='post')
+      form(id='superUserDemote', action='/member/' + user.id + '/update-attributes?super_user=false', method='post')
         input(type='submit', name='demote', value='Demote yourself from super user')    
     if user.private_user
       //- set to public
-      form(id='publicUser', action='/member/' + user.email + '/update-attributes?private_user=false', method='post')
+      form(id='publicUser', action='/member/' + user.id + '/update-attributes?private_user=false', method='post')
         input(type='submit', name='elevate', value='Set profile to public')   
     if !user.private_user
       //- set to private
-      form(id='privateUser', action='/member/' + user.email + '/update-attributes?private_user=true', method='post')
+      form(id='privateUser', action='/member/' + user.id + '/update-attributes?private_user=true', method='post')
         input(type='submit', name='elevate', value='Set profile to private')
   

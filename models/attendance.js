@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     // the association process in the event and member model definitions
     // They are:
     // event_id - int(11)
-    // member_email - varchar(255)
+    // member_id - int(11)
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         }
         const eventPromise = sequelize.models.Event.findById(attendance.event_id);
 
-        const memberPromise = sequelize.models.Member.findById(attendance.member_email);
+        const memberPromise = sequelize.models.Member.findById(attendance.member_id);
 
         return Promise.all([eventPromise, memberPromise]).then((output) => {
           const event = output[0];
@@ -74,7 +74,7 @@ module.exports = (sequelize, DataTypes) => {
 
         const eventPromise = sequelize.models.Event.findById(attendance.event_id);
 
-        const memberPromise = sequelize.models.Member.findById(attendance.member_email);
+        const memberPromise = sequelize.models.Member.findById(attendance.member_id);
 
         return Promise.all([eventPromise, memberPromise]).then((output) => {
           const event = output[0];
@@ -132,7 +132,7 @@ module.exports = (sequelize, DataTypes) => {
         }
         const eventPromise = sequelize.models.Event.findById(attendance.event_id);
 
-        const memberPromise = sequelize.models.Member.findById(attendance.member_email);
+        const memberPromise = sequelize.models.Member.findById(attendance.member_id);
 
         return Promise.all([eventPromise, memberPromise]).then((output) => {
           const event = output[0];

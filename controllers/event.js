@@ -29,7 +29,7 @@ const getDetails = (req, res) => {
     // http://docs.sequelizejs.com/manual/tutorial/raw-queries.html
     return models.sequelize.query(`SELECT Members.first_name, Members.last_name, Members.email,
                                    Attendances.status FROM Members INNER JOIN Attendances
-                                   ON Members.email = Attendances.member_email WHERE
+                                   ON Members.id = Attendances.member_id WHERE
                                    Attendances.event_id = :event_id`, {
       replacements: {
         event_id: req.params.id,
@@ -280,7 +280,7 @@ const postCreateEdit = [
           location: req.body.location,
           public: isPublic,
           meeting: isMeeting,
-          created_by: req.user.email,
+          created_by: req.user.id,
         }).then(() => {
           req.session.status = 201;
           req.session.alert.successMessages.push('Event updated!');
@@ -299,7 +299,7 @@ const postCreateEdit = [
       location: req.body.location,
       public: isPublic,
       meeting: isMeeting,
-      created_by: req.user.email,
+      created_by: req.user.id,
     }).then((event) => {
       // the event was succesfully created!
       req.session.status = 201;
@@ -356,36 +356,18 @@ const postSignup = (req, res) => {
   } else {
     memberEmail = req.user.email;
   }
-  const memberPromise = models.Member.findById(memberEmail);
 
-  // A member cannot be signed up for an event for which they're already signed up
-  const attendancePromise = models.Attendance.findOne({
+  const memberPromise = models.Member.findOne({
     where: {
-      member_email: memberEmail,
-      event_id: req.params.id,
+      email: memberEmail,
     },
   });
 
   // Once member and event have been found, continue with creating the attendance entry
-  return Promise.all([eventPromise, memberPromise, attendancePromise]).then((output) => {
+  return Promise.all([eventPromise, memberPromise]).then((output) => {
     // output is in order of array
     const event = output[0];
     const member = output[1];
-    const attendance = output[2];
-
-    // If the event is a meeting or private, only super users can sign up for it
-    if ((event.meeting === true || event.public !== true) && !req.user.super_user) {
-      req.session.status = 403;
-      req.session.alert.errorMessages.push('A super user must sign you up for this event.');
-      return req.session.save(() => {
-        // not safe to redirect to a private event
-        if (event.public !== true) {
-          return res.redirect('/event');
-        }
-        // safe to redirect to details page
-        return res.redirect(`/event/${req.params.id}`);
-      });
-    }
 
     if (!member) {
       // member not found - return 400 because a bad email was sent
@@ -395,34 +377,58 @@ const postSignup = (req, res) => {
         return res.redirect(`/event/${req.params.id}`);
       });
     }
-    // If attendance exists there is no need to continue because you can't re-signup
-    if (attendance) {
-      req.session.status = 400;
-      req.session.alert.errorMessages.push(`${memberEmail} is already signed up for this event.`);
-      return req.session.save(() => {
-        return res.redirect(`/event/${event.id}`);
-      });
-    }
-    let status = models.Attendance.getStatusUnconfirmed();
-    if (event.meeting) {
-      status = models.Attendance.getStatusConfirmed();
-    }
-    if (!event.public) {
-      // Private events are automatically confirmed because they're entered by a super user
-      // TODO - check that user is a super user - only proceed if so
-      status = models.Attendance.getStatusConfirmed();
-    }
 
-    // Create attendance
-    return models.Attendance.create({
-      event_id: req.params.id,
-      member_email: memberEmail,
-      status, // shorthand for status: status,
-    }).then(() => {
-      req.session.status = 201;
-      req.session.alert.successMessages.push(`Signed up for ${event.title}`);
-      return req.session.save(() => {
-        return res.redirect(`/event/${event.id}`);
+    // Need to pull attendance record - a member cannot be signed up for an event for which
+    // they're already signed up
+    return models.Attendance.findOne({
+      where: {
+        member_id: member.id,
+        event_id: event.id,
+      },
+    }).then((attendance) => {
+      // If the event is a meeting or private, only super users can sign up for it
+      if ((event.meeting === true || event.public !== true) && !req.user.super_user) {
+        req.session.status = 403;
+        req.session.alert.errorMessages.push('A super user must sign you up for this event.');
+        return req.session.save(() => {
+          // not safe to redirect to a private event
+          if (event.public !== true) {
+            return res.redirect('/event');
+          }
+          // safe to redirect to details page
+          return res.redirect(`/event/${req.params.id}`);
+        });
+      }
+
+      // If attendance exists there is no need to continue because you can't re-signup
+      if (attendance) {
+        req.session.status = 400;
+        req.session.alert.errorMessages.push(`${memberEmail} is already signed up for this event.`);
+        return req.session.save(() => {
+          return res.redirect(`/event/${event.id}`);
+        });
+      }
+      let status = models.Attendance.getStatusUnconfirmed();
+      if (event.meeting) {
+        status = models.Attendance.getStatusConfirmed();
+      }
+      if (!event.public) {
+        // Private events are automatically confirmed because they're entered by a super user
+        // TODO - check that user is a super user - only proceed if so
+        status = models.Attendance.getStatusConfirmed();
+      }
+
+      // Create attendance
+      return models.Attendance.create({
+        event_id: req.params.id,
+        member_id: member.id,
+        status, // shorthand for status: status,
+      }).then(() => {
+        req.session.status = 201;
+        req.session.alert.successMessages.push(`Signed up for ${event.title}`);
+        return req.session.save(() => {
+          return res.redirect(`/event/${event.id}`);
+        });
       });
     });
   }).catch((err) => {
@@ -490,7 +496,7 @@ const postConfirmAttendance = (req, res) => {
   // find the relevant attendance record and update it accordingly
   return models.Attendance.findOne({
     where: {
-      member_email: req.query.member,
+      member_id: req.query.member,
       event_id: req.params.id,
     },
   }).then((attendance) => {

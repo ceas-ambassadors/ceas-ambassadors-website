@@ -15,9 +15,9 @@ router.get('/', memberHandler.getList);
 router.post('/profile/update', memberHandler.postProfileUpdate);
 
 /* GET profile */
-router.get('/:email', memberHandler.getProfile);
+router.get('/:id', memberHandler.getProfile);
 
-/* POST /member/:email/update-attributes */
-router.post('/:email/update-attributes', memberHandler.postUpdateAttributes);
+/* POST /member/:id/update-attributes */
+router.post('/:id/update-attributes', memberHandler.postUpdateAttributes);
 
 module.exports = router;

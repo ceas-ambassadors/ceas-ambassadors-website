@@ -31,10 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
-    created_by: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+    // also created_by - defined below in associations
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
@@ -87,7 +84,7 @@ module.exports = (sequelize, DataTypes) => {
         }).then((attendances) => {
           const promises = [];
           for (let i = 0; i < attendances.length; i += 1) {
-            promises.push(sequelize.models.Member.findById(attendances[i].member_email));
+            promises.push(sequelize.models.Member.findById(attendances[i].member_id));
           }
           return Promise.all(promises).then((output) => {
             const returns = []; // array of actions for return
@@ -127,7 +124,8 @@ module.exports = (sequelize, DataTypes) => {
       through: models.Attendance,
       hooks: true,
     });
-    models.Event.belongsTo(models.Member);
+    // created_by - id of member who created event
+    models.Event.belongsTo(models.Member, { foreignKey: 'created_by' });
   };
 
   return Event;
