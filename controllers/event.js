@@ -280,7 +280,7 @@ const postCreateEdit = [
           location: req.body.location,
           public: isPublic,
           meeting: isMeeting,
-          created_by: req.user.email,
+          created_by: req.user.id,
         }).then(() => {
           req.session.status = 201;
           req.session.alert.successMessages.push('Event updated!');
@@ -299,7 +299,7 @@ const postCreateEdit = [
       location: req.body.location,
       public: isPublic,
       meeting: isMeeting,
-      created_by: req.user.email,
+      created_by: req.user.id,
     }).then((event) => {
       // the event was succesfully created!
       req.session.status = 201;
@@ -369,14 +369,23 @@ const postSignup = (req, res) => {
     const event = output[0];
     const member = output[1];
 
-    // Need to pull attendance record - a member cannot be signed up for an event for which they're already signed up
+    if (!member) {
+      // member not found - return 400 because a bad email was sent
+      req.session.status = 400;
+      req.session.alert.errorMessages.push('Specified member could not be found.');
+      return req.session.save(() => {
+        return res.redirect(`/event/${req.params.id}`);
+      });
+    }
+
+    // Need to pull attendance record - a member cannot be signed up for an event for which
+    // they're already signed up
     return models.Attendance.findOne({
       where: {
         member_id: member.id,
         event_id: event.id,
       },
     }).then((attendance) => {
-
       // If the event is a meeting or private, only super users can sign up for it
       if ((event.meeting === true || event.public !== true) && !req.user.super_user) {
         req.session.status = 403;
@@ -391,14 +400,6 @@ const postSignup = (req, res) => {
         });
       }
 
-      if (!member) {
-        // member not found - return 400 because a bad email was sent
-        req.session.status = 400;
-        req.session.alert.errorMessages.push('Specified member could not be found.');
-        return req.session.save(() => {
-          return res.redirect(`/event/${req.params.id}`);
-        });
-      }
       // If attendance exists there is no need to continue because you can't re-signup
       if (attendance) {
         req.session.status = 400;
