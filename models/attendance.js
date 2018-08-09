@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     // the association process in the event and member model definitions
     // They are:
     // event_id - int(11)
-    // member_id - varchar(255)
+    // member_id - int(11)
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,

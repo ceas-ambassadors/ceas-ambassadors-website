@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
+    // also created_by - defined below in associations
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
@@ -123,6 +124,7 @@ module.exports = (sequelize, DataTypes) => {
       through: models.Attendance,
       hooks: true,
     });
+    // created_by - id of member who created event
     models.Event.belongsTo(models.Member, { foreignKey: 'created_by' });
   };
 
