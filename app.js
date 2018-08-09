@@ -155,16 +155,12 @@ passport.use(new LocalStrategy(
 
 // takes the user(Member) and converts it to just an id for the client session cookie
 passport.serializeUser((user, done) => {
-  done(null, user.email);
+  done(null, user.id);
 });
 
 // converts the cookie from the client into an instance of Member upon a request
 passport.deserializeUser((id, done) => {
-  models.Member.findOne({
-    where: {
-      email: id,
-    },
-  }).then((member) => {
+  models.Member.findById(id).then((member) => {
     return done(null, member);
   }).catch((err) => {
     return done(err, null);

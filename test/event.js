@@ -96,7 +96,7 @@ describe('Event Tests', () => {
       const event = output[1];
       // create an attendance record for the signup to confirm
       return models.Attendance.create({
-        member_email: member.email,
+        member_id: member.id,
         event_id: event.id,
         status: models.Attendance.getStatusUnconfirmed(),
       }).then(() => {
@@ -121,10 +121,12 @@ describe('Event Tests', () => {
   describe('Event tests which require a signed in non-super user', () => {
     // need to persist agent across requests to mantain logged in session
     let agent = null;
-    beforeEach((done) => {
+    let loginMember = null;
+    beforeEach(() => {
       agent = request.agent(app);
-      common.createNormalUserSession(agent).then(() => {
-        done();
+      return common.createNormalUser().then((member) => {
+        loginMember = member;
+        return common.createUserSession(member, agent);
       });
     });
 
@@ -177,7 +179,7 @@ describe('Event Tests', () => {
       return common.createPrivateEvent().then((event) => {
         return models.Attendance.create({
           event_id: event.id,
-          member_email: common.getNormalUserEmail(),
+          member_id: loginMember.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           return agent.get(`/event/${event.id}`)
@@ -199,7 +201,7 @@ describe('Event Tests', () => {
           const attendancePromise = models.Attendance.findOne({
             where: {
               event_id: event.id,
-              member_email: 'normal@mail.uc.edu',
+              member_id: loginMember.id,
             },
           }).then((attendance) => {
             assert(attendance);
@@ -207,7 +209,7 @@ describe('Event Tests', () => {
           });
 
           // events should not increase amount of service attended, added as unconfirmed
-          const memberPromise = models.Member.findById(common.getNormalUserEmail())
+          const memberPromise = models.Member.findById(loginMember.id)
             .then((member) => {
               assert.equal(member.service, 0);
             });
@@ -229,14 +231,14 @@ describe('Event Tests', () => {
           const attendancePromise = models.Attendance.findOne({
             where: {
               event_id: event.id,
-              member_email: common.getNormalUserEmail(),
+              member_id: loginMember.id,
             },
           }).then((attendance) => {
             assert(!attendance);
           });
 
           // Meeting should not be added to the meeting count
-          const memberPromise = models.Member.findById(common.getNormalUserEmail())
+          const memberPromise = models.Member.findById(loginMember.id)
             .then((member) => {
               assert.equal(member.meetings, 0);
             });
@@ -276,7 +278,7 @@ describe('Event Tests', () => {
         return response.then(() => {
           return models.Attendance.findAll({
             where: {
-              member_email: common.getNormalUserEmail(),
+              member_id: loginMember.id,
               event_id: event.id,
             },
           }).then((attendances) => {
@@ -296,7 +298,7 @@ describe('Event Tests', () => {
         return response.then(() => {
           return models.Attendance.findAll({
             where: {
-              member_email: common.getNormalUserEmail(),
+              member_id: loginMember.id,
               event_id: event.id,
             },
           }).then((attendances) => {
@@ -320,7 +322,7 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getNormalUserEmail(),
+          member_id: loginMember.id,
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
@@ -332,7 +334,7 @@ describe('Event Tests', () => {
           return requestProm.then(() => {
             return models.Attendance.findOne({
               where: {
-                member_email: common.getNormalUserEmail(),
+                member_id: loginMember.id,
                 event_id: event.id,
               },
             }).then((attendance) => {
@@ -357,10 +359,13 @@ describe('Event Tests', () => {
 
   describe('Event tests which require a signed in super user', () => {
     let agent = null;
-    beforeEach((done) => {
+    let loginMember = null;
+    beforeEach(() => {
       agent = request.agent(app);
-      common.createSuperUserSession(agent).then(() => {
-        done();
+
+      return common.createSuperUser().then((member) => {
+        loginMember = member;
+        return common.createUserSession(member, agent);
       });
     });
 
@@ -547,7 +552,7 @@ describe('Event Tests', () => {
     it('POST signup for event with specified email', () => {
       const memberPromise = common.createNormalUser();
       const eventPromise = common.createPublicEvent();
-      return Promise.all([memberPromise, eventPromise]).then(([, event]) => {
+      return Promise.all([memberPromise, eventPromise]).then(([member, event]) => {
         const response = agent
           .post(`/event/${event.id}/signup`)
           .send({
@@ -558,7 +563,7 @@ describe('Event Tests', () => {
         return response.then(() => {
           return models.Attendance.findAll({
             where: {
-              member_email: common.getNormalUserEmail(),
+              member_id: member.id,
               event_id: event.id,
             },
           }).then((attendances) => {
@@ -572,7 +577,7 @@ describe('Event Tests', () => {
     it('POST signup for meeting with not real email', () => {
       const memberPromise = common.createNormalUser();
       const eventPromise = common.createMeeting();
-      return Promise.all([memberPromise, eventPromise]).then(([, event]) => {
+      return Promise.all([memberPromise, eventPromise]).then(([member, event]) => {
         const response = agent
           .post(`/event/${event.id}/signup`)
           .send({
@@ -583,7 +588,7 @@ describe('Event Tests', () => {
         return response.then(() => {
           return models.Attendance.findAll({
             where: {
-              member_email: common.getNormalUserEmail(),
+              member_id: member.id,
               event_id: event.id,
             },
           }).then((attendances) => {
@@ -597,7 +602,7 @@ describe('Event Tests', () => {
     it('POST signup for private event with specified email', () => {
       const memberPromise = common.createNormalUser();
       const eventPromise = common.createPrivateEvent();
-      return Promise.all([memberPromise, eventPromise]).then(([, event]) => {
+      return Promise.all([memberPromise, eventPromise]).then(([member, event]) => {
         const response = agent
           .post(`/event/${event.id}/signup`)
           .send({
@@ -608,7 +613,7 @@ describe('Event Tests', () => {
         return response.then(() => {
           return models.Attendance.findAll({
             where: {
-              member_email: common.getNormalUserEmail(),
+              member_id: member.id,
               event_id: event.id,
             },
           }).then((attendances) => {
@@ -622,7 +627,7 @@ describe('Event Tests', () => {
     it('POST signup for meeting with specified email', () => {
       const memberPromise = common.createNormalUser();
       const eventPromise = common.createMeeting();
-      return Promise.all([memberPromise, eventPromise]).then(([, event]) => {
+      return Promise.all([memberPromise, eventPromise]).then(([member, event]) => {
         const response = agent
           .post(`/event/${event.id}/signup`)
           .send({
@@ -633,7 +638,7 @@ describe('Event Tests', () => {
         return response.then(() => {
           return models.Attendance.findAll({
             where: {
-              member_email: common.getNormalUserEmail(),
+              member_id: member.id,
               event_id: event.id,
             },
           }).then((attendances) => {
@@ -648,7 +653,7 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getSuperUserEmail(),
+          member_id: loginMember.id,
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
@@ -665,7 +670,7 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getSuperUserEmail(),
+          member_id: loginMember.id,
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
@@ -682,7 +687,7 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getSuperUserEmail(),
+          member_id: loginMember.id,
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
@@ -710,19 +715,19 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getSuperUserEmail(),
+          member_id: loginMember.id,
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           const requestProm = agent
-            .post(`/event/${event.id}/confirm?member=${common.getSuperUserEmail()}&status=confirmed`)
+            .post(`/event/${event.id}/confirm?member=${loginMember.id}&status=confirmed`)
             .redirects(1)
             .expect(200);
 
           return requestProm.then(() => {
             return models.Attendance.findOne({
               where: {
-                member_email: common.getSuperUserEmail(),
+                member_id: loginMember.id,
                 event_id: event.id,
               },
             }).then((attendance) => {
@@ -739,19 +744,19 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getSuperUserEmail(),
+          member_id: loginMember.id,
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           const requestProm = agent
-            .post(`/event/${event.id}/confirm?member=${common.getSuperUserEmail()}&status=notNeeded`)
+            .post(`/event/${event.id}/confirm?member=${loginMember.id}&status=notNeeded`)
             .redirects(1)
             .expect(200);
 
           return requestProm.then(() => {
             return models.Attendance.findOne({
               where: {
-                member_email: common.getSuperUserEmail(),
+                member_id: loginMember.id,
                 event_id: event.id,
               },
             }).then((attendance) => {
@@ -768,19 +773,19 @@ describe('Event Tests', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
-          member_email: common.getSuperUserEmail(),
+          member_id: loginMember.id,
           event_id: event.id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           const requestProm = agent
-            .post(`/event/${event.id}/confirm?member=${common.getSuperUserEmail()}&status=denied`)
+            .post(`/event/${event.id}/confirm?member=${loginMember.id}&status=denied`)
             .redirects(1)
             .expect(200);
 
           return requestProm.then(() => {
             return models.Attendance.findOne({
               where: {
-                member_email: common.getSuperUserEmail(),
+                member_id: loginMember.id,
                 event_id: event.id,
               },
             }).then((attendance) => {

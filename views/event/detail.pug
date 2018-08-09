@@ -45,13 +45,13 @@ block content
             tr
               td=member.first_name+' '+member.last_name
               td
-                form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.email + '&status=confirmed', method='post')
+                form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=confirmed', method='post')
                   input(type='submit', name='Confirm', value='Confirm')
               td
-                form(id='notNeededAttendance', action='/event/' + event.id + '/confirm?member=' + member.email + '&status=notNeeded', method='post')
+                form(id='notNeededAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=notNeeded', method='post')
                   input(type='submit', name='NotNeeded', value='Not Needed')
               td
-                form(id='denyAttendance', action='/event/' + event.id + '/confirm?member=' + member.email + '&status=denied', method='post')
+                form(id='denyAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=denied', method='post')
                   input(type='submit', name='Deny', value='Did Not Attend')
     if confirmedAttendees.length > 0
       h2 Confirmed

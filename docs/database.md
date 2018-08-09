@@ -15,8 +15,10 @@ Models names should be nouns - `Member`, `Event`, `Attendance`, etc. Sequelize a
 # Database Design
 This is the actual structue of the tables and their relationships. 
 ### Member
-* email - primary key
-  * the user's email. Treated as the primary key because it is unique
+* id
+  * unique auto incrementing id for member - primary key
+* email 
+  * the user's email. Should have unique key
 * first_name
 * last_name
 * major
@@ -56,7 +58,7 @@ This is the actual structue of the tables and their relationships.
 
 ### Event
 * id - primary key
-  * randomly generated id key used to identify an event
+  * incrementally generated id key used to identify an event
 * title
   * string representing the name of the event
 * start_time
@@ -73,7 +75,7 @@ This is the actual structue of the tables and their relationships.
 * meeting
   * boolean field representing if an event is a meeting
 * created_by
-  * string - email address of user who created event. foreign key to Member
+  * int - id of user who created event. foreign key to Member
 * created_at
   * Date record was created - automatically handled by sequelize
 * updated_at
@@ -81,7 +83,7 @@ This is the actual structue of the tables and their relationships.
 
 
 ### Attendance - Join table of Member and Event
-* member_email - foreign key to member
+* member_id - foreign key to member
 * event_id -  foreign key to event
 * status - unconfirmed, confirmed, not-needed, meeting
   * Enum field representing the status of the attendance
@@ -102,7 +104,7 @@ Referential integrity means that when a record is deleted/updated and a row in a
 # Working with Sequelize
 This project will utilize [Sequelize](sequelizejs.com) for our database ORM. I'll make notes here on using it, including it's auto generated migrations and etc. Sequelize does a lot of magic behind the scenes, which is bad for building an understanding of what's going on, so right here I'm going to write up a quick explanation of the basics of Sequelize.
 
-Sequelize takes the model definitions found in the `models` folder (with the exception of `models/index.js`) and turns them into SQL tables. It appends a handful of attributes - `updated_at`, `created_at` and if no primary key is defined, `id`. Sequelize allows you to set associations between tables, in our case this is the relationship between a member and events (a member attends events, bails on events, etc). The relationship currently used in this project is a [m:n belongs-to-many association](http://docs.sequelizejs.com/manual/tutorial/associations.html#belongs-to-many-associations). This type of join requires a `join-table`, basically a table that's sole purpose is to define the relationship. This is our `Attendance` table. It holds the keys of the two entities, a member and event, and the status of that relationship, in our case - was it a meeting, and have they been confirmed yet?. Because Sequelize handles the creation of this relationship behind the scenes, it can be confusing. The table itself is defined in the `models/attendance.js` file, but the Member and Event entities are associated in their associations portion of their files in the `models` folder. This automatically adds a `member_email` and `event_id` column to the `Attendance` table (I customized the inputted names).
+Sequelize takes the model definitions found in the `models` folder (with the exception of `models/index.js`) and turns them into SQL tables. It appends a handful of attributes - `updated_at`, `created_at` and if no primary key is defined, `id`. Sequelize allows you to set associations between tables, in our case this is the relationship between a member and events (a member attends events, bails on events, etc). The relationship currently used in this project is a [m:n belongs-to-many association](http://docs.sequelizejs.com/manual/tutorial/associations.html#belongs-to-many-associations). This type of join requires a `join-table`, basically a table that's sole purpose is to define the relationship. This is our `Attendance` table. It holds the keys of the two entities, a member and event, and the status of that relationship, in our case - was it a meeting, and have they been confirmed yet?. Because Sequelize handles the creation of this relationship behind the scenes, it can be confusing. The table itself is defined in the `models/attendance.js` file, but the Member and Event entities are associated in their associations portion of their files in the `models` folder. This automatically adds a `member_id` and `event_id` column to the `Attendance` table (I customized the inputted names).
 
 The actual point in time where Sequelize executes its code is when the `models` folder is imported by  `require(../models)`. This executes the code in `models/index.js`. Upon the start of the app in `app.js`, the models are synced useing `sequelize.sync()`, which syncs all defined models to the database. SEQUELIZE WILL NOT NOTICE IF THE DATABASE DOESN'T MATCH THE DEFINED MODELS UNTIL IT TRIES TO ADD SOMETHING. This is why the migrations mentioned in this document are so important.
 

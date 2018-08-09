@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
   const Member = sequelize.define('Member', {
     email: {
       type: DataTypes.STRING,
-      primaryKey: true,
       allowNull: false,
+      unique: true,
     },
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
   Member.associate = (models) => {
     // associations can be defined here
     models.Member.belongsToMany(models.Event, {
-      as: 'member_email',
+      as: 'member_id',
       through: models.Attendance,
     });
   };
