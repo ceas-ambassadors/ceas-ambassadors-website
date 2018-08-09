@@ -250,15 +250,15 @@ describe('Member tests', () => {
 
   describe('Tests which require a signed in super user', () => {
     let agent = null;
-    let loginMember = null;
+    // let loginMember = null; // currently ununused
     // Create a normal user session
     beforeEach(() => {
       agent = request.agent(app);
       // create and log in the user
       return common.createSuperUser().then((member) => {
-        loginMember = member;
+        // loginMember = member;
         return common.createUserSession(member, agent);
-      })
+      });
     });
 
     // POST /member/:email/update-attributes with no query params

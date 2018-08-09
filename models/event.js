@@ -123,7 +123,7 @@ module.exports = (sequelize, DataTypes) => {
       through: models.Attendance,
       hooks: true,
     });
-    models.Event.belongsTo(models.Member, {foreignKey: 'created_by'});
+    models.Event.belongsTo(models.Member, { foreignKey: 'created_by' });
   };
 
   return Event;

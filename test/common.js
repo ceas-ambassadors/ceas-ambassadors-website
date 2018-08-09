@@ -83,7 +83,7 @@ const createUserSession = (member, agent) => {
       email: member.email,
       password: 'password',
     })
-    .redirects(1) 
+    .redirects(1)
     .expect(200);
 };
 exports.createUserSession = createUserSession;
