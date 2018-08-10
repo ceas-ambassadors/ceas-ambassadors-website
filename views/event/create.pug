@@ -25,7 +25,7 @@ block content
     - isEdit = 'false'
   .container
     .box-border
-      if isEdit
+      if isEdit === 'true'
         h1.create-title Edit Event
       else
         h1.create-title Create Event
@@ -59,7 +59,7 @@ block content
           div.form-group.form-check
             input.form-check-input(type='checkbox', name='isMeeting', checked=event.meeting, tabindex=7)
             label.form-check-label Meeting
-        if isEdit
+        if isEdit === 'true'
           input.submit(type='submit', name='create', value='Edit Event', tabindex=8)
         else
           input.submit(type='submit', name='create', value='Create Event', tabindex=8)
