@@ -32,4 +32,7 @@ router.post('/change-password', memberHandler.postChangePassword);
 /* GET apply page */
 router.get('/apply', indexHandler.getApply);
 
+/* GET virtual tour page */
+router.get('/virtual-tour', indexHandler.getVirtualTour);
+
 module.exports = router;

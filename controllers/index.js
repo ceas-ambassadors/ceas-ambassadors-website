@@ -102,3 +102,10 @@ const getApply = (req, res) => {
   });
 };
 exports.getApply = getApply;
+
+const getVirtualTour = (req, res) => {
+  return res.status(res.locals.status).render('virtual-tour', {
+    title: 'CEAS Virtual Tour',
+  });
+};
+exports.getVirtualTour = getVirtualTour;
