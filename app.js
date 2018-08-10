@@ -11,6 +11,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const csurf = require('csurf');
+const helmet = require('helmet');
 
 // Load models directory (which loads ./models/index)
 const models = require('./models');
@@ -20,6 +21,9 @@ const eventRouter = require('./routes/event');
 const memberRouter = require('./routes/member');
 
 const app = express();
+
+// add helmet protections from various attacks
+app.use(helmet());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
