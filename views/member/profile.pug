@@ -38,16 +38,20 @@ block content
     if member.super_user
       //- descalate super user
       form(id='superUserDemote', action='/member/' + member.id + '/update-attributes?super_user=false', method='post')
+        input(type='hidden', name='_csrf', value=csrfToken)
         input(type='submit', name='demote', value='Demote Super User')    
     if !member.super_user
       //- escalate to super user
       form(id='superUserElevate', action='/member/' + member.id + '/update-attributes?super_user=true', method='post')
+        input(type='hidden', name='_csrf', value=csrfToken)
         input(type='submit', name='elevate', value='Elevate to Super User')
     if member.private_user
       //- set to public
       form(id='publicUser', action='/member/' + member.id + '/update-attributes?private_user=false', method='post')
+        input(type='hidden', name='_csrf', value=csrfToken)
         input(type='submit', name='elevate', value='Set profile to public')   
     if !member.private_user
       //- set to private
       form(id='privateUser', action='/member/' + member.id + '/update-attributes?private_user=true', method='post')
+        input(type='hidden', name='_csrf', value=csrfToken)
         input(type='submit', name='elevate', value='Set profile to private')

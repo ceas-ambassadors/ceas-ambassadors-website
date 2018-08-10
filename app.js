@@ -10,6 +10,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const csurf = require('csurf');
 
 // Load models directory (which loads ./models/index)
 const models = require('./models');
@@ -44,6 +45,14 @@ app.use(session({
   resave: false,
   // proxy: true // if you do SSL outside of node
 }));
+// cross site request forgery protection
+// disable csurf for testing
+if (process.env.NODE_ENV === 'test') {
+  app.use(csurf({ cookie: true, ignoreMethods: ['GET', 'POST'] }));
+} else {
+  app.use(csurf({ cookie: true }));
+}
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -95,6 +104,8 @@ function createVariablesMiddleware(req, res, next) {
   req.session.alert.successMessages = [];
   // set res.locals variables so that the views have access to them
   res.locals.user = req.user;
+  // set csrfToken to token
+  res.locals.csrfToken = req.csrfToken();
   // continue execution to next middleware handler
   next();
 }

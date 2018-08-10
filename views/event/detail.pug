@@ -20,10 +20,12 @@ block content
   if user && (!event.meeting || user.super_user)
     h2 Sign Up
     form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
+      input(type='hidden', name='_csrf', value=csrfToken)
       input(type='submit', name='Sign Up', value='Sign Up')
   if user && user.super_user
     h2 Sign Up Another Member
     form(id='signUpMember', action='/event/' + event.id + '/signup' , method='post')
+      input(type='hidden', name='_csrf', value=csrfToken)
       label Member Email:
       input(type='text', name='email', placeholder='bearcat@mail.uc.edu')
       input(type='submit', name='Sign Up Member', value='Sign Up Member')
@@ -46,12 +48,15 @@ block content
               td=member.first_name+' '+member.last_name
               td
                 form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=confirmed', method='post')
+                  input(type='hidden', name='_csrf', value=csrfToken)
                   input(type='submit', name='Confirm', value='Confirm')
               td
                 form(id='notNeededAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=notNeeded', method='post')
+                  input(type='hidden', name='_csrf', value=csrfToken)
                   input(type='submit', name='NotNeeded', value='Not Needed')
               td
                 form(id='denyAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=denied', method='post')
+                  input(type='hidden', name='_csrf', value=csrfToken)
                   input(type='submit', name='Deny', value='Did Not Attend')
     if confirmedAttendees.length > 0
       h2 Confirmed
@@ -90,4 +95,5 @@ block content
     h2 Event Options
     a.btn.btn-danger(href='/event/' + event.id + '/edit') Edit Event
     form(id='deleteEvent', action='/event/' + event.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete the event. Proceed?')")
+      input(type='hidden', name='_csrf', value=csrfToken)
       input(type='submit', name='delete', value='Delete Event')

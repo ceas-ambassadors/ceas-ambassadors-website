@@ -72,6 +72,12 @@ These variables can be used on every render command that uses the view `views/la
     },
 }
 ```
+### npm Modules to know about
+#### csurf
+[csurf](https://github.com/expressjs/csurf) provides protection from cross site request forgery. Basically maliciously using 
+existing session cookies to hit endpoints of another website. While we likely wouldn't come under attack like that - we don't
+want to even leave the option. As part of this, a hidden input needs included on every form with the name `_csrf` - the value token for this
+input is automatically available at `csrfToken` in views.
 
 ## .env
 This will be home to details on the different .env values. .env refers to the `.env` file used for development. Because we use docker to deploy the website and we use git to track version control, it's insecure to store production credentials in the git repo. We manage these on the server through the use of environment variables. But, on a development machine, you don't want to be changing environment variables all the time. So, we use the `dotenv` package for NPM to emulate environment variables - they're loaded from the file `.env` and treated as if they were environment variables. As mentioned elsewhere, copy `.env.example` and rename it `.env` to get started.
