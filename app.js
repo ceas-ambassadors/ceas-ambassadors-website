@@ -41,10 +41,13 @@ const sequelizeSessionStore = new SequelizeStore({
   db: models.sequelize,
   table: 'Session',
 });
-// TODO - use a better secret before we go to prod
+// if cookie secret isn't defined - throw an error
+if (!process.env.COOKIE_SECRET) {
+  throw Error('COOKIE_SECRET environment variable is undefined');
+}
 // TODO - see notes on cookie.secure here https://github.com/expressjs/session#compatible-session-stores
 app.use(session({
-  secret: 'keyboard cat',
+  secret: process.env.COOKIE_SECRET,
   store: sequelizeSessionStore,
   resave: false,
   // proxy: true // if you do SSL outside of node
