@@ -95,3 +95,10 @@ const getIndex = (req, res) => {
   });
 };
 exports.getIndex = getIndex;
+
+const getApply = (req, res) => {
+  return res.status(res.locals.status).render('apply', {
+    title: 'Apply to CEAS Ambassadors',
+  });
+};
+exports.getApply = getApply;

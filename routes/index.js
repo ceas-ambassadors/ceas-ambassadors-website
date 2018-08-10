@@ -29,4 +29,7 @@ router.get('/settings', memberHandler.getSettings);
 /* POST change-password */
 router.post('/change-password', memberHandler.postChangePassword);
 
+/* GET apply page */
+router.get('/apply', indexHandler.getApply);
+
 module.exports = router;

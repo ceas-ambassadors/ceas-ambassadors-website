@@ -32,6 +32,13 @@ describe('Basic Tests', () => {
       .expect(200, done);
   });
 
+  // GET /apply
+  it('GET apply', (done) => {
+    request.agent(app)
+      .get('/apply')
+      .expect(200, done);
+  });
+
   // Test 404
   it('GET 404', (done) => {
     request.agent(app)
