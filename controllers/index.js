@@ -75,15 +75,15 @@ const getIndex = (req, res) => {
     const events = output[0];
     const meetings = output[1];
     const members = output[2];
-    let member = null;
+    const featuredMembers = [];
     if (members.length > 0) {
-      member = members[Math.floor(Math.random() * members.length)];
+      featuredMembers.push(members[Math.floor(Math.random() * members.length)]);
     }
     return res.status(res.locals.status).render('index', {
       title: 'CEAS Ambassadors',
       events, // shorthand for events: events
       meetings,
-      member,
+      featuredMembers,
     });
   }).catch((err) => {
     console.log(err);

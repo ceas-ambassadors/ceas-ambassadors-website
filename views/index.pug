@@ -1,19 +1,12 @@
 extends layout
 //- mixin for list of events
 include ./event/mixins/list.pug
+include ./member/mixins/list.pug
 
 block content
   //- Only insert featured member if there is a member to feature
-  if member
-      h1 Featured Member
-      span 
-        img(src='/images/default-profile-picture.jpg', style="height:100px;")
-        span
-          |  #{member.first_name} #{member.last_name}
-          |  #{member.major}-#{member.grad_year}
-        div
-          | #{member.hometown}
-          | #{member.coops}
+  if featuredMembers
+    +member-list(featuredMembers, "Featured Member")
 
   +event-list('Upcoming Events', events)
   +event-list('Next Meeting', meetings)
