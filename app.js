@@ -12,6 +12,7 @@ const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const csurf = require('csurf');
 const helmet = require('helmet');
+const favicon = require('serve-favicon');
 
 // Load models directory (which loads ./models/index)
 const models = require('./models');
@@ -29,6 +30,8 @@ app.use(helmet());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
+console.log(path.join(__dirname, 'public', 'images', 'favicon.ico'));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
