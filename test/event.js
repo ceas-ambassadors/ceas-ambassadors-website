@@ -859,7 +859,7 @@ describe('Event Tests', () => {
     });
 
     // Try to edit event meeting attribute
-    it('POST /event/create as an event edit', () => {
+    it('POST /event/create as edit to change meeting status', () => {
       return common.createPublicEvent().then((event) => {
         const isPublic = 'on'; // event.public converted to 'on'
         const isMeeting = 'on'; // event.meeting inverted to 'on'
@@ -877,7 +877,7 @@ describe('Event Tests', () => {
             isMeeting,
           })
           .redirects(1)
-          .expect(400);
+          .expect(201);
 
         return response.then(() => {
           return models.Event.findAll({

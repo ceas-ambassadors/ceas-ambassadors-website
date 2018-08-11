@@ -264,11 +264,9 @@ const postCreateEdit = [
       return models.Event.findById(req.body.eventId).then((event) => {
         // For edits, switching between meetings and non-meetings is disallowed
         if (isMeeting !== event.meeting) {
-          req.session.status = 400;
-          req.session.alert.errorMessages.push('The meeting attribute cannot be changed.');
-          return req.session.save(() => {
-            return res.redirect(redirectUrl);
-          });
+          // The UI doesn't even display meeting check box, so just set it back to the default
+          // value quietly
+          isMeeting = event.meeting;
         }
 
         // update the event object
