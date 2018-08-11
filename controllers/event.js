@@ -27,8 +27,8 @@ const getDetails = (req, res) => {
     // It's faster to run a raw sql query than it is to run two queries in a row
     // This is because Sequelize can't do joins
     // http://docs.sequelizejs.com/manual/tutorial/raw-queries.html
-    return models.sequelize.query(`SELECT Members.first_name, Members.last_name, Members.email,
-                                   Attendances.status FROM Members INNER JOIN Attendances
+    return models.sequelize.query(`SELECT Members.*, Attendances.status
+                                   FROM Members INNER JOIN Attendances
                                    ON Members.id = Attendances.member_id WHERE
                                    Attendances.event_id = :event_id`, {
       replacements: {
