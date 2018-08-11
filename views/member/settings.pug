@@ -4,6 +4,7 @@ block content
   h1 Profile
   | View your profile - MAKE LINK
   form(id='updateProfile', action='member/profile/update', method='post')
+    input(type='hidden', name='_csrf', value=csrfToken)
     h2 Personal Information
     div
       label First Name:
@@ -43,6 +44,7 @@ block content
   //- Profile edit details
   h1 Account
   form(id='changePassword', action='change-password', method='post')
+    input(type='hidden', name='_csrf', value=csrfToken)
     h2 Change Password
     div 
       label Current Password: 
@@ -61,13 +63,16 @@ block content
     if user.super_user
       //- descalate super user
       form(id='superUserDemote', action='/member/' + user.id + '/update-attributes?super_user=false', method='post')
+        input(type='hidden', name='_csrf', value=csrfToken)
         input(type='submit', name='demote', value='Demote yourself from super user')    
     if user.private_user
       //- set to public
       form(id='publicUser', action='/member/' + user.id + '/update-attributes?private_user=false', method='post')
+        input(type='hidden', name='_csrf', value=csrfToken)
         input(type='submit', name='elevate', value='Set profile to public')   
     if !user.private_user
       //- set to private
       form(id='privateUser', action='/member/' + user.id + '/update-attributes?private_user=true', method='post')
+        input(type='hidden', name='_csrf', value=csrfToken)
         input(type='submit', name='elevate', value='Set profile to private')
   

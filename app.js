@@ -10,6 +10,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const csurf = require('csurf');
+const helmet = require('helmet');
 
 // Load models directory (which loads ./models/index)
 const models = require('./models');
@@ -19,6 +21,9 @@ const eventRouter = require('./routes/event');
 const memberRouter = require('./routes/member');
 
 const app = express();
+
+// add helmet protections from various attacks
+app.use(helmet());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -36,14 +41,25 @@ const sequelizeSessionStore = new SequelizeStore({
   db: models.sequelize,
   table: 'Session',
 });
-// TODO - use a better secret before we go to prod
+// if cookie secret isn't defined - throw an error
+if (!process.env.COOKIE_SECRET) {
+  throw Error('COOKIE_SECRET environment variable is undefined');
+}
 // TODO - see notes on cookie.secure here https://github.com/expressjs/session#compatible-session-stores
 app.use(session({
-  secret: 'keyboard cat',
+  secret: process.env.COOKIE_SECRET,
   store: sequelizeSessionStore,
   resave: false,
   // proxy: true // if you do SSL outside of node
 }));
+// cross site request forgery protection
+// disable csurf for testing
+if (process.env.NODE_ENV === 'test') {
+  app.use(csurf({ cookie: true, ignoreMethods: ['GET', 'POST'] }));
+} else {
+  app.use(csurf({ cookie: true }));
+}
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -95,6 +111,8 @@ function createVariablesMiddleware(req, res, next) {
   req.session.alert.successMessages = [];
   // set res.locals variables so that the views have access to them
   res.locals.user = req.user;
+  // set csrfToken to token
+  res.locals.csrfToken = req.csrfToken();
   // continue execution to next middleware handler
   next();
 }

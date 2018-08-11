@@ -72,6 +72,12 @@ These variables can be used on every render command that uses the view `views/la
     },
 }
 ```
+### npm Modules to know about
+#### csurf
+[csurf](https://github.com/expressjs/csurf) provides protection from cross site request forgery. Basically maliciously using 
+existing session cookies to hit endpoints of another website. While we likely wouldn't come under attack like that - we don't
+want to even leave the option. As part of this, a hidden input needs included on every form with the name `_csrf` - the value token for this
+input is automatically available at `csrfToken` in views.
 
 ## .env
 This will be home to details on the different .env values. .env refers to the `.env` file used for development. Because we use docker to deploy the website and we use git to track version control, it's insecure to store production credentials in the git repo. We manage these on the server through the use of environment variables. But, on a development machine, you don't want to be changing environment variables all the time. So, we use the `dotenv` package for NPM to emulate environment variables - they're loaded from the file `.env` and treated as if they were environment variables. As mentioned elsewhere, copy `.env.example` and rename it `.env` to get started.
@@ -83,6 +89,8 @@ The development database URL - this database holds data with some consistency, i
 This database is wiped entirely clean at the start and end of every test - so don't use the same URL as your DEV_DB_URL unless you want that.
 #### DATABASE_URL
 This should hold production data. It uses this environment variable because it's what is used by the dokku plugin.
+### COOKIE_SECRET
+This is the secret used to secure session cookies. This should be a randomly generated password in production, but it can be anything in PROD.
 
 ## Tests
 There will be a comprehensive test suite for this codebase. To run tests, first configure the website using the above instructions - tests won't work until you've gotten the website to run yourself. Then, just run `npm test`. Our tests are written using [mocha](https://mochajs.org/) as the runner, and [supertest](https://github.com/visionmedia/supertest) as a method of mocking a user on the website. In combination, they allow us to test the endpoints as if a user was using them. Ideally, all behavior on the website will have a test. This way, if we break that behavior with a code change or upgrading npm modules breaks behavior, it will be easy to determine.

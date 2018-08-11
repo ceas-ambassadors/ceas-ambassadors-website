@@ -14,8 +14,9 @@ preferably with at least 1 GB of RAM. Our initial deployment is on Linode, with 
 image. I created a user for the administrator following the steps listed later.
 ## Install dokku
 Install dokku using the instructions found on [their github](https://github.com/dokku/dokku).
-Sit back and relax, this takes a while. I setup dokku to use virtualhost naming, but it doesn't matter
-a whole lot, you'll configure domains later.
+Sit back and relax, this takes a while. Once it finishes, you'll be presented with a web-ui. Make sure to enter your public key.
+I setup dokku to use virtualhost naming, but it doesn't matter
+a whole lot, you'll configure domains later. 
 ### Dokku plugins we will need
 Dokku uses plugins to manage common operations - we can actually run everything we need to in dokku
 containers!
@@ -33,6 +34,7 @@ The steps I followed are:
 $ dokku apps:create amb-site
 $ dokku mysql:create amb-db
 $ dokku config:set amb-site NODE_ENV='production'
+$ dokku config:set amb-site COOKIE_SECRET='<randomly-generated-password-here>'
 ```
 On your personal computer, you'll need to setup a remote for sending code to
 ```shell
@@ -84,6 +86,34 @@ $ sudo usermod -aG docker <username>
 ```
 
 ## Updating the code running on the server
+In order to update the code running on the server, you need to have dokku push access. This is managed with ssh keys.
+If you're not using ssh keys with git, [now is a great time to start](https://help.github.com/articles/connecting-to-github-with-ssh/).
+On the server, with your ssh-key stored in your user directory as `~/my-key.pub` (look up scp to get things onto the server).
+```shell
+$ dokku ssh-keys:add <my-name-<computer>> ~/my-key.pub
+```
+On your machine, you need to setup git to push to the remote machine
+```shell
+$ git remote add dokku-prod dokku@<ip>:amb-site
+# now you can push code to the server and watch it build
+$ git push dokku-prod master
+```
 ## Checking the logs
+You can check logs on the server for errors by using [the dokku logs command](http://dokku.viewdocs.io/dokku/deployment/logs/).
+On the server:
+```shell
+$ dokku logs amb-site
+# or, to see logs as they come in real time,
+$ dokku logs amb-site -t
+```
+Logs do not persist forever - if you restart the container, logs could be lost!
 ## Backing up the database
 ## Restarting the website
+If you need to restart the server, it can be triggered through dokku. If you're restarted to recover from an error,
+you should heavily consider piping logs to a file so that they can be inspected and debugged.
+On the server:
+```shell
+# optional, but recommended for later diagnosis
+$ dokku logs amb-site > ~/logs/year-month-day-log-error.log
+$ dokku ps:restart amb-site
+```

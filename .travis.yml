@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - "8.11"
 env:
-  - TEST_DB_URL='mysql://travis:@localhost/amb_site_test'
+  - TEST_DB_URL='mysql://travis:@localhost/amb_site_test' COOKIE_SECRET='keyboard_cat'
 services:
   - mysql
 before_install:
