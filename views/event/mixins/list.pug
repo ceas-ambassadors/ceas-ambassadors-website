@@ -19,10 +19,14 @@ mixin event-list(name, events)
       tbody
         each event in events
           //- TODO - color code based on if event has happened
+          //- Convert dates to nicer looking values
+          //- date to string adds time zone information we want to remove - split on spaces and remove, then rejoin
+          - start_time = String(event.start_time).split(' ').slice(0, 5).join(' ')
+          - end_time = String(event.end_time).split(' ').slice(0, 5).join(' ')
           tr
             td=event.title
-            td=event.start_time
-            td.disp-col=event.end_time
+            td=start_time
+            td.disp-col=end_time
             td=event.location
             //- Yes or no value for public events - only for super users
             if user && user.super_user
