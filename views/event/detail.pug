@@ -1,5 +1,7 @@
 //- @param unconfirmedAttendees - attendees that are unconfirmed
 extends ../layout
+//- import the member-card mixin
+include ../member/mixins/list.pug
 
 block content
   h1
@@ -59,37 +61,12 @@ block content
                   input(type='hidden', name='_csrf', value=csrfToken)
                   input(type='submit', name='Deny', value='Did Not Attend')
     if confirmedAttendees.length > 0
-      h2 Confirmed
-      table
-        thead
-          tr
-            th Member
-        tbody
-          each member in confirmedAttendees
-            tr
-              td=member.first_name+' '+member.last_name
+      +member-list(confirmedAttendees, "Confirmed")
     if notNeededAttendees.length > 0
-      h2 Not Needed
-      table
-        thead
-          tr
-            th Member
-        tbody
-          each member in notNeededAttendees
-            tr
-              td=member.first_name+' '+member.last_name
+      +member-list(notNeededAttendees, "Not needed")
   else
     //- Show normal users a combination of unconfirmed and confirmed members
-    h2 Attendees
-    table
-      thead
-        tr
-          th Member
-      tbody
-        each member in unconfirmedAndConfirmedAttendees
-          tr
-            td=member.first_name+' '+member.last_name
-
+    +member-list(unconfirmedAndConfirmedAttendees, "Attendees")
   //- edit and delete options
   if user && user.super_user
     h2 Event Options

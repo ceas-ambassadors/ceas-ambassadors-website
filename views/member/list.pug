@@ -1,9 +1,6 @@
 extends ../layout
-//- load member card style
-include ./mixins/card.pug
+//- load member list style
+include ./mixins/list.pug
 
 block content
-  h1 Members
-  div.member-table
-    each member in members
-      +member-card(member)
+  +member-list(members, "Members")
