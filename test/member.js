@@ -115,6 +115,41 @@ describe('Member tests', () => {
     });
   });
 
+  // Try to POST member delete not logged in
+  it('Try to POST /member/:id/delete not logged in', () => {
+    return common.createNormalUser().then((member) => {
+      const response = request.agent(app)
+        .post(`/member/${member.id}/delete`)
+        .redirects(1)
+        .expect(401);
+      return response.then(() => {
+        return models.Member.findById(member.id).then((assertMember) => {
+          assert(assertMember);
+        });
+      });
+    });
+  });
+
+  // Try to reset member password not logged in
+  // This should be moved to account.js once reset password is rewritten
+  it('POST /member/:id/reset-password not logged in', () => {
+    return common.createNormalUser().then((member) => {
+      const response = request.agent(app)
+        .post(`/member/${member.id}/reset-password`)
+        .redirects(1)
+        .expect(401);
+
+      return response.then(() => {
+        return models.Member.findById(member.id).then((assertMember) => {
+          // assumes that the normal user password is 'password'
+          return models.Member.comparePassword('password', assertMember).then((truth) => {
+            assert(truth);
+          });
+        });
+      });
+    });
+  });
+
   describe('Member tests which require a logged in normal user', () => {
     let agent = null;
     let loginMember = null;
@@ -251,6 +286,38 @@ describe('Member tests', () => {
         return agent.get(`/member/${member.id}`)
           .redirects(1)
           .expect(403);
+      });
+    });
+
+    it('Try to POST /member/:id/delete as a normal user', () => {
+      return common.createSuperUser().then((member) => {
+        const response = agent
+          .post(`/member/${member.id}/delete`)
+          .redirects(1)
+          .expect(403);
+        return response.then(() => {
+          return models.Member.findById(member.id).then((assertMember) => {
+            assert(assertMember);
+          });
+        });
+      });
+    });
+
+    it('POST /member/:id/reset-password as a normal user', () => {
+      return common.createSuperUser().then((member) => {
+        const response = agent
+          .post(`/member/${member.id}/reset-password`)
+          .redirects(1)
+          .expect(403);
+
+        return response.then(() => {
+          return models.Member.findById(member.id).then((assertMember) => {
+            // assumes that the super user password is 'password'
+            return models.Member.comparePassword('password', assertMember).then((truth) => {
+              assert(truth);
+            });
+          });
+        });
       });
     });
   });
@@ -413,6 +480,40 @@ describe('Member tests', () => {
         return agent.get(`/member/${member.id}`)
           .redirects(1)
           .expect(200);
+      });
+    });
+
+    it('POST /member/:id/delete succesfully', () => {
+      return common.createNormalUser().then((member) => {
+        const response = agent
+          .post(`/member/${member.id}/delete`)
+          .redirects(1)
+          .expect(200);
+        return response.then(() => {
+          return models.Member.findById(member.id).then((assertMember) => {
+            assert(!assertMember);
+          });
+        });
+      });
+    });
+
+    it('POST /member/:id/reset-password succesfully', () => {
+      return common.createNormalUser().then((member) => {
+        const response = agent
+          .post(`/member/${member.id}/reset-password`)
+          .redirects(1)
+          .expect(200);
+
+        return response.then(() => {
+          return models.Member.findById(member.id).then((assertMember) => {
+            // assumes that the normal user password is 'password'
+            // it's hard to get the new password from the UI, so let's just asser that
+            // the password isn't 'password' anymore
+            return models.Member.comparePassword('password', assertMember).then((truth) => {
+              assert(!truth);
+            });
+          });
+        });
       });
     });
   });

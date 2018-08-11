@@ -551,7 +551,7 @@ const postDelete = (req, res) => {
   // Make sure the user is signed in
   if (!req.user) {
     req.session.status = 401;
-    req.session.alert.errorMessages.push('You must be logged in to signup');
+    req.session.alert.errorMessages.push('You must be logged in to delete events.');
     return req.session.save(() => {
       return res.redirect(`/event/${req.params.id}`);
     });

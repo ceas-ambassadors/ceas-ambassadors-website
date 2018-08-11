@@ -556,3 +556,123 @@ const postUpdateAttributes = (req, res) => {
   });
 };
 exports.postUpdateAttributes = postUpdateAttributes;
+
+const postDelete = (req, res) => {
+  // Make sure the user is signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to delete a member.');
+    return req.session.save(() => {
+      return res.redirect(`/member/${req.params.id}`);
+    });
+  }
+
+  // Make sure the user is a super user
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to delete a member.');
+    return req.session.save(() => {
+      return res.redirect(`/member/${req.params.id}`);
+    });
+  }
+
+  // Get the member
+  return models.Member.findById(req.params.id).then((member) => {
+    if (!member) {
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Member not found.');
+      return req.session.save(() => {
+        return res.redirect('/member');
+      });
+    }
+
+    // Delete all relevant attendance records
+    return models.Attendance.destroy({
+      where: {
+        member_id: req.params.id,
+      },
+    }).then(() => {
+      return member.destroy().then(() => {
+        req.session.alert.successMessages.push('Member succesfully deleted.');
+        return req.session.save(() => {
+          return res.redirect('/member');
+        });
+      });
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMesssages.push('Error. Contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  });
+};
+exports.postDelete = postDelete;
+
+/**
+ * This is a temporary fix to the problem of password resetting.
+ * Password reseting is difficult, because it requires email integration
+ * At the time of writing, I'm in a rush to move this website to production, so the temporary
+ * solution is as follows:
+ * This endpoint is accessbile only by super users, who can reset member passwords to a random
+ * string. Members can then login using that password, and update their password themselves.
+ * Almost all of the logic here will need rewritten for actual password resetting
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing response
+ */
+const postResetPassword = (req, res) => {
+  // Must be logged in to post reset password
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be a logged in to trigger a password reset.');
+    return req.session.save(() => {
+      return res.redirect(`/member/${req.params.id}`);
+    });
+  }
+
+  // Must be a super user to trigger a password reset
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to trigger a password reset.');
+    return req.session.save(() => {
+      return res.redirect(`/member/${req.params.id}`);
+    });
+  }
+
+  // randomly generate password
+  const password = Math.random().toString(36).substr(2, 8);
+  // Find the member
+  const memberPromise = models.Member.findById(req.params.id);
+
+  const passwordPromise = models.Member.generatePasswordHash(password);
+
+  return Promise.all([memberPromise, passwordPromise]).then(([member, passwordHash]) => {
+    if (!member) {
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Member not found');
+      req.session.save(() => {
+        return res.redirect('/member');
+      });
+    }
+
+    return member.update({
+      password: passwordHash,
+    }).then(() => {
+      req.session.alert.successMessages.push('Password succesfully reset.');
+      req.session.alert.infoMessages.push(`The new password is: ${password}`);
+      req.session.alert.infoMessages.push('The password can be updated on the settings page.');
+      return req.session.save(() => {
+        return res.redirect(`/member/${req.params.id}`);
+      });
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMesssages.push('Error. Contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  });
+};
+exports.postResetPassword = postResetPassword;
