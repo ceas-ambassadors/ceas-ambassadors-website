@@ -444,6 +444,41 @@ const getProfile = (req, res) => {
 };
 exports.getProfile = getProfile;
 
+/**
+ * GET for '/member' - renders list of members
+ * @param {*} req - incoming request
+ * @param {*} res - outgoing request
+ */
+const getList = (req, res) => {
+  // create as variable to allow for modifying of search
+  const memberWhere = {
+    private_user: false,
+  };
+  if (req.user && req.user.super_user) {
+    // super users can see private users
+    delete memberWhere.private_user;
+  }
+  // get all member alphabetically sorted and return them
+  return models.Member.findAll({
+    where: memberWhere,
+    order: [
+      ['last_name', 'ASC'],
+      ['first_name', 'ASC'],
+    ],
+  }).then((members) => {
+    return res.status(res.locals.status).render('member/list', {
+      title: 'Members',
+      members, // shorthand for members: members,
+    });
+  });
+};
+exports.getList = getList;
+
+/**
+ * POST for updating member attributes
+ * @param {*} req incoming request
+ * @param {*} res outgoing response
+ */
 const postUpdateAttributes = (req, res) => {
   if (!req.user) {
     req.session.status = 401;

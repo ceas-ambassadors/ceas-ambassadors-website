@@ -1,0 +1,6 @@
+extends ../layout
+//- load member list style
+include ./mixins/list.pug
+
+block content
+  +member-list(members, "Members")

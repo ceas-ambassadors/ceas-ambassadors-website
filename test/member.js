@@ -68,6 +68,13 @@ describe('Member tests', () => {
       .expect(404, done);
   });
 
+  // GET /member/ - listing of members
+  it('Get member list', (done) => {
+    request.agent(app)
+      .get('/member')
+      .expect(200, done);
+  });
+
   // POST to /member/:email/update-attributes not signed in
   it('POST /member/:id/update-attributes not signed in', () => {
     const email = 'test@mail.uc.edu';

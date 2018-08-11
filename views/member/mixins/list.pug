@@ -1,0 +1,11 @@
+//- This file defines the card mixin for members
+//- mixins allow for code reuse by functionizing common html blocks
+//- https://pugjs.org/language/mixins.html
+//- import member-card mixin
+include ./card.pug
+
+mixin member-list(members, title)
+  h1=title
+  div.member-table
+    each member in members
+      +member-card(member)

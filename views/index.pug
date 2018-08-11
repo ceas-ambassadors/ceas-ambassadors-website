@@ -6,10 +6,14 @@ block content
   //- Only insert featured member if there is a member to feature
   if member
       h1 Featured Member
-      span #{member.first_name} #{member.last_name}
-      span #{member.major}-#{member.grad_year}
-      div=member.hometown
-      div=member.coops
+      span 
+        img(src='/images/default-profile-picture.jpg', style="height:100px;")
+        span
+          |  #{member.first_name} #{member.last_name}
+          |  #{member.major}-#{member.grad_year}
+        div
+          | #{member.hometown}
+          | #{member.coops}
 
   +event-list('Upcoming Events', events)
   +event-list('Next Meeting', meetings)

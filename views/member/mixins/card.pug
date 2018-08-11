@@ -1,0 +1,29 @@
+//- This file defines the card mixin for members
+//- mixins allow for code reuse by functionizing common html blocks
+//- https://pugjs.org/language/mixins.html
+
+mixin member-card(member)
+  div.member-card
+    img.member-photo(src='/images/default-profile-picture.jpg')
+    div.member-card-info
+      a.member-name(href='/member/' + member.id) #{member.first_name} #{member.last_name}
+      p #{member.email}
+      p.major #{member.major}
+      if member.grad_year
+        p.class='Class of ' + member.grad_year
+      if member.coops
+        p.coop= 'Co-ops: ' + member.coops
+      //- list hours for member if the user super user
+      //- TODO: currently only does this if a user is logged in
+      //if user
+      //  //- not in a human friendly format, but not a big deal right now - will
+      //  //- need fixed on the backend
+      //  div=member.service + ' Hours'
+      //  div=member.meetings + ' Meetings'
+      //  div=member.service_not_needed + ' '
+
+      //- other options for data on this card if it looks too empty
+      //- member.hometown
+      //- member.minors
+      //- minor.accend (true or false value though)
+      //- member.clubs

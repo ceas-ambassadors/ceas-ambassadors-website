@@ -4,7 +4,8 @@ extends ../layout
 include ../event/mixins/list.pug
 
 block content
-  //- TODO - picture
+  div
+    img(src='/images/default-profile-picture.jpg', style="height:100px;")
   h1=member.first_name+' '+member.last_name
   h4=member.major+' '+member.grad_year
   div=member.hometown

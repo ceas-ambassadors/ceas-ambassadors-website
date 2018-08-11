@@ -193,3 +193,84 @@ nav{
 .event-box{
   margin-top: 10px;
 }
+
+/*************************
+* Member Card Styling
+*************************/
+.member-table{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.member-card{
+  display: flex;
+  background: #ffffff;
+  padding: 10px 25px;
+  margin: 1%;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
+  z-index: 1;
+  flex: 1;
+  align-items: center;
+}
+
+.member-card .member-photo{
+  height: 100px;
+}
+
+.member-card-info{
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.member-card-info p{
+  margin: 0;
+  padding: 0;
+}
+
+.member-card-info .member-name{
+  text-decoration: none;
+  color: #000;
+  font-weight: 600;
+  font-size: 1.2em;
+}
+
+.member-card-info .member-name:hover{
+  text-decoration: underline;
+}
+
+.member-card-info .major{
+  margin-top: 6px;
+}
+
+.member-card-info .class{
+  font-style: italic;
+}
+
+.member-card-info .coop{
+  margin-top: 8px;
+}
+
+@media (min-width: 721px){
+  .member-card{
+    max-width: 48%;
+  }
+}
+
+@media (min-width: 1080px){
+  .member-card{
+    max-width: 31.33%;
+  }
+}
+@media (min-width: 1456px){
+  .member-card{
+    max-width: 23%;
+  }
+}
+@media (min-width: 1890px){
+  .member-card{
+    max-width: 18%;
+  }
+}

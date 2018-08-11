@@ -8,6 +8,9 @@ const memberHandler = require('../controllers/member');
 
 const router = express.Router();
 
+/* GET list of members */
+router.get('/', memberHandler.getList);
+
 /* POST /member/profile/update */
 router.post('/profile/update', memberHandler.postProfileUpdate);
 
