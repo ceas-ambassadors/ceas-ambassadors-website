@@ -61,3 +61,7 @@ block content
     form(id='deleteMember', action='/member/' + member.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete this member. Proceed?')")
       input(type='hidden', name='_csrf', value=csrfToken)
       input(type='submit', name='delete', value='Delete Member')
+    h2 Reset Password
+    form(id='resetPassword', action='/member/' + member.id + '/reset-password', method='post', onSubmit="return confirm('This will reset this member\\'s password to a random password. They can change it back once they have logged in. Proceed?')")
+      input(type='hidden', name='_csrf', value=csrfToken)
+      input(type='submit', name='submit', value='Reset Password')
