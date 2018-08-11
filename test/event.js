@@ -858,6 +858,41 @@ describe('Event Tests', () => {
       });
     });
 
+    it('POST /event/create as an event edit for event that has already happened', () => {
+      const date = Date.now() - 1;
+      return models.Event.create({
+        title: 'Test Meeting',
+        start_time: date,
+        end_time: date + common.getEventLength(),
+        location: 'Your computer',
+        public: true,
+        meeting: false,
+      }).then((event) => {
+        const isPublic = 'on';
+        const isMeeting = 'off';
+        const response = agent
+          .post('/event/create')
+          .send({
+            eventId: event.id,
+            isEdit: 'true',
+            title: event.title,
+            startTime: event.start_time,
+            endTime: event.end_time,
+            location: 'edited',
+            description: event.description,
+            isPublic,
+            isMeeting,
+          })
+          .redirects(1)
+          .expect(201);
+        return response.then(() => {
+          return models.Event.findById(event.id).then((editedEvent) => {
+            assert.deepEqual(editedEvent.location, 'edited');
+          });
+        });
+      });
+    });
+
     // Try to edit event meeting attribute
     it('POST /event/create as edit to change meeting status', () => {
       return common.createPublicEvent().then((event) => {

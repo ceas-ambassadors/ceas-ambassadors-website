@@ -237,7 +237,8 @@ const postCreateEdit = [
       });
     }
     // Make sure the times are in the future and the end time is after the start time
-    if (startTime >= endTime || startTime < Date.now()) {
+    // start time doesn't have to be in the future on an edit
+    if (startTime >= endTime || (startTime < Date.now() && req.body.isEdit !== 'true')) {
       if (startTime < Date.now()) {
         req.session.alert.errorMessages.push('The start time must be in the future.');
       }
