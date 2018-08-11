@@ -35,6 +35,7 @@ block content
     +event-list("Unconfirmed Meetings", unconfirmedMeetings)
   //- show escalation UI and not current user
   if user && user.super_user && user.id !== member.id
+    h1 Modify Member
     h2 Meta Attributes
     if member.super_user
       //- descalate super user
@@ -56,3 +57,7 @@ block content
       form(id='privateUser', action='/member/' + member.id + '/update-attributes?private_user=true', method='post')
         input(type='hidden', name='_csrf', value=csrfToken)
         input(type='submit', name='elevate', value='Set profile to private')
+    h2 Delete Member
+    form(id='deleteMember', action='/member/' + member.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete this member. Proceed?')")
+      input(type='hidden', name='_csrf', value=csrfToken)
+      input(type='submit', name='delete', value='Delete Member')

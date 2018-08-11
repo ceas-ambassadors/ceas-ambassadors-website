@@ -115,6 +115,21 @@ describe('Member tests', () => {
     });
   });
 
+  // Try to POST member delete not logged in
+  it('Try to POST /member/:id/delete not logged in', () => {
+    return common.createNormalUser().then((member) => {
+      const response = request.agent(app)
+        .post(`/member/${member.id}/delete`)
+        .redirects(1)
+        .expect(401);
+      return response.then(() => {
+        return models.Member.findById(member.id).then((assertMember) => {
+          assert(assertMember);
+        });
+      });
+    });
+  });
+
   describe('Member tests which require a logged in normal user', () => {
     let agent = null;
     let loginMember = null;
@@ -251,6 +266,20 @@ describe('Member tests', () => {
         return agent.get(`/member/${member.id}`)
           .redirects(1)
           .expect(403);
+      });
+    });
+
+    it('Try to POST /member/:id/delete as a normal user', () => {
+      return common.createSuperUser().then((member) => {
+        const response = agent
+          .post(`/member/${member.id}/delete`)
+          .redirects(1)
+          .expect(403);
+        return response.then(() => {
+          return models.Member.findById(member.id).then((assertMember) => {
+            assert(assertMember);
+          });
+        });
       });
     });
   });
@@ -413,6 +442,20 @@ describe('Member tests', () => {
         return agent.get(`/member/${member.id}`)
           .redirects(1)
           .expect(200);
+      });
+    });
+
+    it('POST /member/:id/delete succesfully', () => {
+      return common.createNormalUser().then((member) => {
+        const response = agent
+          .post(`/member/${member.id}/delete`)
+          .redirects(1)
+          .expect(200);
+        return response.then(() => {
+          return models.Member.findById(member.id).then((assertMember) => {
+            assert(!assertMember);
+          });
+        });
       });
     });
   });

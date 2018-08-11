@@ -556,3 +556,56 @@ const postUpdateAttributes = (req, res) => {
   });
 };
 exports.postUpdateAttributes = postUpdateAttributes;
+
+const postDelete = (req, res) => {
+  // Make sure the user is signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to delete a member.');
+    return req.session.save(() => {
+      return res.redirect(`/member/${req.params.id}`);
+    });
+  }
+
+  // Make sure the user is a super user
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to delete a member.');
+    return req.session.save(() => {
+      return res.redirect(`/member/${req.params.id}`);
+    });
+  }
+
+  // Get the member
+  return models.Member.findById(req.params.id).then((member) => {
+    if (!member) {
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Member not found.');
+      return req.session.save(() => {
+        return res.redirect('/member');
+      });
+    }
+
+    // Delete all relevant attendance records
+    return models.Attendance.destroy({
+      where: {
+        member_id: req.params.id,
+      },
+    }).then(() => {
+      return member.destroy().then(() => {
+        req.session.alert.successMessages.push('Member succesfully deleted.');
+        return req.session.save(() => {
+          return res.redirect('/member');
+        });
+      });
+    });
+  }).catch((err) => {
+    console.log(err);
+    req.session.status = 500;
+    req.session.alert.errorMesssages.push('Error. Contact the tech chair if it persists.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  });
+};
+exports.postDelete = postDelete;

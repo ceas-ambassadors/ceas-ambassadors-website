@@ -20,4 +20,7 @@ router.get('/:id', memberHandler.getProfile);
 /* POST /member/:id/update-attributes */
 router.post('/:id/update-attributes', memberHandler.postUpdateAttributes);
 
+/* POST /member/:id/delete */
+router.post('/:id/delete', memberHandler.postDelete);
+
 module.exports = router;
