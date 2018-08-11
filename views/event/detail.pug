@@ -18,7 +18,7 @@ block content
       = ' '
       span= event.title
     div(style="font-size:120%;padding-bottom:20px;") <strong>#{start_time}</strong> - <strong>#{end_time}</strong> at <strong>#{event.location}</strong>
-    if event.description !== ''
+    if event.description
       h4 Description
       div #{event.description}
 

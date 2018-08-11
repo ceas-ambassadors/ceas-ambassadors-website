@@ -1,67 +1,86 @@
-//- @param renderHours - boolean to render the hours section of the profile
 extends ../layout
 //- include event list mixin
 include ../event/mixins/list.pug
 
 block content
-  div
-    img(src='/images/default-profile-picture.jpg', style="height:100px;")
-  h1=member.first_name+' '+member.last_name
-  h4=member.major+' '+member.grad_year
-  div=member.hometown
-  if member.minors
-    h3 Minors
-    div=member.minors
-  if member.accend
-    h3 Accend student
-  h3 Coops
-  div=member.coops
+  div(style="display:flex;")
+    img(src='/images/default-profile-picture.jpg', style="height:200px;")
+    span.member-card-info
+      h1 #{member.first_name} #{member.last_name}
+      div(style="font-size:20px;") #{member.major} #{member.grad_year}
+      if member.hometown
+        | from #{member.hometown}
+      if member.minors
+        div Minor in #{member.minors}
+      if member.accend
+        div Accend Student
+  //- throw some space in there
+  div(style="padding-top:2%;")
   if member.clubs
-    h3 Club
+    h3 Coops
+    div=member.coops
+  if member.clubs
+    h3 Clubs
     div=member.clubs
 
-  if renderHours
-    h1 Hours
+  //- throw some space in there
+  div(style="padding-top:2%;")
+  if user && (user.super_user || user.id === member.id)
+    h2 Total Service
     label Completed hours
     p=service
     label Meetings
     p=meetings
     label Hours not needed
     p=serviceNotNeeded
-    +event-list("Unconfirmed Events", unconfirmedEvents)
-    +event-list("Confirmed Events", confirmedEvents)
-    +event-list("Not Needed Events", notNeededEvents)
-    +event-list("Confirmed Meetings", confirmedMeetings)
-    +event-list("Unconfirmed Meetings", unconfirmedMeetings)
-  //- show escalation UI and not current user
+    if unconfirmedEvents.length > 0
+      +event-list("Unconfirmed Events", unconfirmedEvents)
+    if confirmedEvents.length > 0
+      +event-list("Confirmed Events", confirmedEvents)
+    if notNeededEvents.length > 0
+      +event-list("Not Needed Events", notNeededEvents)
+    if confirmedMeetings.length > 0
+      +event-list("Confirmed Meetings", confirmedMeetings)
+
+  //- show modify member UI for super users (but not current member)
   if user && user.super_user && user.id !== member.id
+    //- throw some space in there
+    div(style="padding-top:2%;")
     h1 Modify Member
     h2 Meta Attributes
+    //- throw some space in there
+    div(style="padding-top:2%;")
     if member.super_user
       //- descalate super user
       form(id='superUserDemote', action='/member/' + member.id + '/update-attributes?super_user=false', method='post')
         input(type='hidden', name='_csrf', value=csrfToken)
-        input(type='submit', name='demote', value='Demote Super User')    
+        input.submit-small(type='submit', name='demote', value='Demote Super User')    
     if !member.super_user
       //- escalate to super user
       form(id='superUserElevate', action='/member/' + member.id + '/update-attributes?super_user=true', method='post')
         input(type='hidden', name='_csrf', value=csrfToken)
-        input(type='submit', name='elevate', value='Elevate to Super User')
+        input.submit-small(type='submit', name='elevate', value='Elevate to Super User')
+    //- throw some space in there
+    div(style="padding-top:2%;")
     if member.private_user
       //- set to public
       form(id='publicUser', action='/member/' + member.id + '/update-attributes?private_user=false', method='post')
         input(type='hidden', name='_csrf', value=csrfToken)
-        input(type='submit', name='elevate', value='Set profile to public')   
+        input.submit-small(type='submit', name='elevate', value='Set profile to public')   
     if !member.private_user
       //- set to private
       form(id='privateUser', action='/member/' + member.id + '/update-attributes?private_user=true', method='post')
         input(type='hidden', name='_csrf', value=csrfToken)
-        input(type='submit', name='elevate', value='Set profile to private')
+        input.submit-small(type='submit', name='elevate', value='Set profile to private')
+    //- throw some space in there
+    div(style="padding-top:2%;")
     h2 Delete Member
     form(id='deleteMember', action='/member/' + member.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete this member. Proceed?')")
       input(type='hidden', name='_csrf', value=csrfToken)
-      input(type='submit', name='delete', value='Delete Member')
+      input.submit-small(type='submit', name='delete', value='Delete Member')
+    //- throw some space in there
+    div(style="padding-top:2%;")
     h2 Reset Password
     form(id='resetPassword', action='/member/' + member.id + '/reset-password', method='post', onSubmit="return confirm('This will reset this member\\'s password to a random password. They can change it back once they have logged in. Proceed?')")
       input(type='hidden', name='_csrf', value=csrfToken)
-      input(type='submit', name='submit', value='Reset Password')
+      input.submit-small(type='submit', name='submit', value='Reset Password')
