@@ -388,9 +388,7 @@ const getProfile = (req, res) => {
         // return res.redirect('/member');
       });
     }
-    // render hours only if the user is looking at their own page
-    // or the current user is a super user
-    const renderHours = ((req.user) && (req.user.super_user || req.user.email === member.email));
+
     const service = member.service / 3600000;
     const serviceNotNeeded = member.service_not_needed / 3600000;
 
@@ -423,7 +421,6 @@ const getProfile = (req, res) => {
     return res.status(res.locals.status).render('member/profile', {
       title: `${member.first_name} ${member.last_name}`,
       member, // shorthand for member: member,
-      renderHours,
       service,
       meetings: member.meetings,
       serviceNotNeeded,
