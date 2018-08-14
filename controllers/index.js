@@ -61,9 +61,6 @@ const getIndex = (req, res) => {
       grad_year: {
         [sequelizeOp.ne]: null,
       },
-      hometown: {
-        [sequelizeOp.ne]: null,
-      },
       coops: {
         [sequelizeOp.ne]: null,
       },
