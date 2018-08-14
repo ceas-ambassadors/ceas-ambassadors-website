@@ -3,8 +3,9 @@ extends ../layout
 block content
   h1 Profile
   a(href='/member/' + user.id) View your profile
-  form(id='updateProfile', action='member/profile/update', method='post')
-    input(type='hidden', name='_csrf', value=csrfToken)
+  //- because form-data is uploaded in chunks, csrf validation fails if the token doesn't arrive in the first chunk,
+    which it usually doesn't. We can fix this, for better or worse, by appending the csrf token to the request as a param
+  form(id='updateProfile', action='member/profile/update?_csrf=' + csrfToken, enctype="multipart/form-data", method='post')
     h2 Personal Information
     div
       label First Name:
@@ -17,7 +18,7 @@ block content
       input(type='text', name='hometown', value=user.hometown)
     div
       label Picture:
-      |  Coming Soon!
+      input(type='file', name='picture')
     h2 School Information
     div
       label Major:
