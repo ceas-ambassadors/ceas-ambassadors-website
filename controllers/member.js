@@ -417,6 +417,11 @@ const getProfile = (req, res) => {
       }
     }
 
+    // Add notice above private users
+    if (member.private_user) {
+      res.locals.alert.infoMessages.push('This member is private. They are only visible to themselves and super users.');
+    }
+
     // render their profile page
     return res.status(res.locals.status).render('member/profile', {
       title: `${member.first_name} ${member.last_name}`,
