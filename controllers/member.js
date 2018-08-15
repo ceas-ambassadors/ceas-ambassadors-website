@@ -6,7 +6,14 @@ const passport = require('passport');
 const multer = require('multer');
 const models = require('../models/');
 
-const upload = multer({ dest: 'uploads/' });
+const pictureUpload = multer({
+  dest: 'uploads/',
+  limits: {
+    fileSize: 5000000, // 5 MB
+    files: 1,
+  },
+}).single('picture');
+
 /**
  * GET for the login page
  */
@@ -292,21 +299,31 @@ exports.getSettings = getSettings;
 
 /**
  *
- * @param {*} req - incoming request
+ * @param {*} req - incoming requeest
  * @param {*} res - outgoing response
  */
-const postProfileUpdate = [
-  upload.single('picture'),
-  (req, res) => {
-    console.log(req.file);
-    // Ensure there is a user signed in
-    if (!req.user) {
-      req.session.status = 401;
-      req.session.alert.errorMessages.push('You must be signed in to publish profile changes.');
+const postProfileUpdate = (req, res) => {
+  // Ensure there is a user signed in
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be signed in to publish profile changes.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+
+  // upload the picture
+  // this wont fail if no picture is selected
+  return pictureUpload(req, res, (uploadErr) => {
+    if (uploadErr) {
+      // there was an error uploading the picture
+      req.session.status = 400;
+      req.session.alert.errorMessages.push(`Error uploading: ${uploadErr}`);
       return req.session.save(() => {
-        return res.redirect('/');
+        return res.redirect('/settings');
       });
     }
+    // File uploading succeeded
     // Convert accend checkbox to bool
     let accend = false;
     if (req.body.accend === 'on') {
@@ -344,7 +361,8 @@ const postProfileUpdate = [
         return res.redirect('/settings');
       });
     });
-  }];
+  });
+};
 exports.postProfileUpdate = postProfileUpdate;
 
 /**
