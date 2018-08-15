@@ -4,10 +4,11 @@
 const { check, validationResult } = require('express-validator/check');
 const passport = require('passport');
 const multer = require('multer');
+const fs = require('fs');
 const models = require('../models/');
 
 const pictureUpload = multer({
-  dest: 'uploads/',
+  dest: 'public/images/profile/',
   limits: {
     fileSize: 5000000, // 5 MB
     files: 1,
@@ -323,7 +324,17 @@ const postProfileUpdate = (req, res) => {
         return res.redirect('/settings');
       });
     }
-    // File uploading succeeded
+    // File uploading succeeded or wasn't needed
+    let file = null;
+    if (req.file) {
+      // remove '/public/ from path
+      file = req.file.path.split('/').slice(1, 4).join('/');
+      if (req.user.path_to_picture && fs.existsSync(`public/${req.user.path_to_picture}`)) {
+        // delete the old file
+        // add public back to the path
+        fs.unlink(`public/${req.user.path_to_picture}`);
+      }
+    }
     // Convert accend checkbox to bool
     let accend = false;
     if (req.body.accend === 'on') {
@@ -347,6 +358,7 @@ const postProfileUpdate = (req, res) => {
       accend, // shorthand for accend: accend,
       hometown: req.body.hometown,
       coops: req.body.coops,
+      path_to_picture: file,
     }).then(() => {
       req.session.status = 200;
       req.session.alert.successMessages.push('Profile updated!');
