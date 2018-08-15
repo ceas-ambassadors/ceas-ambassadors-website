@@ -3,7 +3,18 @@
  */
 const { check, validationResult } = require('express-validator/check');
 const passport = require('passport');
+const multer = require('multer');
+const fs = require('fs');
 const models = require('../models/');
+
+const pictureUpload = multer({
+  dest: 'public/images/profile/',
+  limits: {
+    fileSize: 5000000, // 5 MB
+    files: 1,
+  },
+}).single('picture');
+
 /**
  * GET for the login page
  */
@@ -289,7 +300,7 @@ exports.getSettings = getSettings;
 
 /**
  *
- * @param {*} req - incoming request
+ * @param {*} req - incoming requeest
  * @param {*} res - outgoing response
  */
 const postProfileUpdate = (req, res) => {
@@ -301,41 +312,66 @@ const postProfileUpdate = (req, res) => {
       return res.redirect('/');
     });
   }
-  // Convert accend checkbox to bool
-  let accend = false;
-  if (req.body.accend === 'on') {
-    accend = true;
-  }
 
-  // Ensure that gradYear is a number
-  // correct syntax for let gradYear = req.body.gradYear;
-  let { gradYear } = req.body;
-  if (gradYear !== null && Number(gradYear) === 0) {
-    gradYear = null;
-  }
-  // Take any changes submitted as the whole truth - no verification needed.
-  return req.user.update({
-    first_name: req.body.firstName,
-    last_name: req.body.lastName,
-    major: req.body.major,
-    grad_year: gradYear,
-    clubs: req.body.clubs,
-    minors: req.body.minors,
-    accend, // shorthand for accend: accend,
-    hometown: req.body.hometown,
-    coops: req.body.coops,
-  }).then(() => {
-    req.session.status = 200;
-    req.session.alert.successMessages.push('Profile updated!');
-    return req.session.save(() => {
-      return res.redirect('/settings');
-    });
-  }).catch((err) => {
-    console.log(err);
-    req.session.alert.errorMessages.push('There was a problem. Please alert the tech chair if it continues.');
-    req.session.status = 500;
-    return req.session.save(() => {
-      return res.redirect('/settings');
+  // upload the picture
+  // this wont fail if no picture is selected
+  return pictureUpload(req, res, (uploadErr) => {
+    if (uploadErr) {
+      // there was an error uploading the picture
+      req.session.status = 400;
+      req.session.alert.errorMessages.push(`Error uploading: ${uploadErr}`);
+      return req.session.save(() => {
+        return res.redirect('/settings');
+      });
+    }
+    // File uploading succeeded or wasn't needed
+    let file = null;
+    if (req.file) {
+      // remove '/public/ from path
+      file = req.file.path.split('/').slice(1, 4).join('/');
+      if (req.user.path_to_picture && fs.existsSync(`public/${req.user.path_to_picture}`)) {
+        // delete the old file
+        // add public back to the path
+        fs.unlink(`public/${req.user.path_to_picture}`);
+      }
+    }
+    // Convert accend checkbox to bool
+    let accend = false;
+    if (req.body.accend === 'on') {
+      accend = true;
+    }
+
+    // Ensure that gradYear is a number
+    // correct syntax for let gradYear = req.body.gradYear;
+    let { gradYear } = req.body;
+    if (gradYear !== null && Number(gradYear) === 0) {
+      gradYear = null;
+    }
+    // Take any changes submitted as the whole truth - no verification needed.
+    return req.user.update({
+      first_name: req.body.firstName,
+      last_name: req.body.lastName,
+      major: req.body.major,
+      grad_year: gradYear,
+      clubs: req.body.clubs,
+      minors: req.body.minors,
+      accend, // shorthand for accend: accend,
+      hometown: req.body.hometown,
+      coops: req.body.coops,
+      path_to_picture: file,
+    }).then(() => {
+      req.session.status = 200;
+      req.session.alert.successMessages.push('Profile updated!');
+      return req.session.save(() => {
+        return res.redirect('/settings');
+      });
+    }).catch((err) => {
+      console.log(err);
+      req.session.alert.errorMessages.push('There was a problem. Please alert the tech chair if it continues.');
+      req.session.status = 500;
+      return req.session.save(() => {
+        return res.redirect('/settings');
+      });
     });
   });
 };

@@ -62,3 +62,6 @@ typings/
 
 #idea files from Jetbrains products
 .idea/*
+
+# Saved profile pictures
+public/images/profile/*
