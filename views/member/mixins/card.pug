@@ -4,7 +4,10 @@
 
 mixin member-card(member)
   div.member-card
-    img.member-photo(src='/images/default-profile-picture.jpg')
+    if member.path_to_picture
+      img.member-photo(src='/' + member.path_to_picture)
+    else
+      img.member-photo(src='/images/default-profile-picture.jpg')
     div.member-card-info
       a.member-name(href='/member/' + member.id) #{member.first_name} #{member.last_name}
       p #{member.email}
