@@ -20,9 +20,6 @@ a whole lot, you'll configure domains later.
 ### Dokku plugins we will need
 Dokku uses plugins to manage common operations - we can actually run everything we need to in dokku
 containers!
-#### Persistant Storage
-We will need persitent storage to store photos - they can't be stored in a docker image because
-docker images are temporary. We will probably use [dokku-copy-files-to-image](https://github.com/dokku/dokku-copy-files-to-image).
 #### Mysql
 We will need a database for the website! We use the official dokku plugin: [dokku-mysql](https://github.com/dokku/dokku-mysql).
 #### lets-encrypt
@@ -35,6 +32,19 @@ $ dokku apps:create amb-site
 $ dokku mysql:create amb-db
 $ dokku config:set amb-site NODE_ENV='production'
 $ dokku config:set amb-site COOKIE_SECRET='<randomly-generated-password-here>'
+```
+We need to setup a storage directory for the images - because the website runs in a container, if we don't do this,
+all photos uploaded are deleted upon the container being restarted. By  connecting a real directory to a directory in the app,
+images will be written to a real location on disk. Full documentation is [here](https://github.com/dokku/dokku/blob/master/docs/advanced-usage/persistent-storage.md). Dokku recommends setting this in the following directory `/var/lib/dokku/data/storage`, which is created on install. The full path for our directory is: `/var/lib/dokku/data/storage/amb-site/images/profile`.
+```shell
+# create the directory
+$ sudo mkdir /var/lib/dokku/data/storage/amb-site
+$ sudo mkdir /var/lib/dokku/data/storage/amb-site/images
+$ sudo mkdir /var/lib/dokku/data/storage/amb-site/images/profile
+$ sudo chown -R dokku:dokku /var/lib/dokku/data/storage/amb-site
+$ dokku storage:mount amb-site /var/lib/dokku/data/storage/amb-site/images/profile:/app/public/images/profile
+# per the docs, you need to restart
+$ dokku ps:restart amb-site
 ```
 On your personal computer, you'll need to setup a remote for sending code to
 ```shell
