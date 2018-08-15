@@ -79,6 +79,9 @@ existing session cookies to hit endpoints of another website. While we likely wo
 want to even leave the option. As part of this, a hidden input needs included on every form with the name `_csrf` - the value token for this
 input is automatically available at `csrfToken` in views.
 
+#### multer
+[multer](https://github.com/expressjs/multer) is a module which handles the uploading of files. We use it for uploading profile pictures. See the production.md file for notes on how file storage works in production. Files need stored in the `/public` directory tree so that they are available to send to the client.
+
 ## .env
 This will be home to details on the different .env values. .env refers to the `.env` file used for development. Because we use docker to deploy the website and we use git to track version control, it's insecure to store production credentials in the git repo. We manage these on the server through the use of environment variables. But, on a development machine, you don't want to be changing environment variables all the time. So, we use the `dotenv` package for NPM to emulate environment variables - they're loaded from the file `.env` and treated as if they were environment variables. As mentioned elsewhere, copy `.env.example` and rename it `.env` to get started.
 ### Database URLs
