@@ -176,17 +176,16 @@ describe('Member tests', () => {
       const accendFrontend = 'on'; // because it's a checkbox on the frontend
       const accend = true; // expected end value
       const response = agent.post('/member/profile/update')
-        .send({
-          firstName,
-          lastName,
-          hometown,
-          major,
-          gradYear,
-          minors,
-          clubs,
-          coops,
-          accend: accendFrontend,
-        })
+        .field('firstName', firstName) // use field because .send() and .attach() are incompatible
+        .field('lastName', lastName)
+        .field('hometown', hometown)
+        .field('major', major)
+        .field('gradYear', gradYear)
+        .field('minors', minors)
+        .field('clubs', clubs)
+        .field('coops', coops)
+        .field('accend', accendFrontend)
+        .attach('picture', 'public/images/default-profile-picture.jpg') // send a proifle picture
         .redirects(1)
         .expect(200);
 
@@ -200,6 +199,7 @@ describe('Member tests', () => {
           assert.deepEqual(member.grad_year, gradYear);
           assert.deepEqual(member.clubs, clubs);
           assert.deepEqual(member.coops, coops);
+          assert(member.path_to_picture !== null);
           assert.equal(member.accend, accend);
         });
       });
