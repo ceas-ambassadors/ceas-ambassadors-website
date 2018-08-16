@@ -48,13 +48,17 @@ const sequelizeSessionStore = new SequelizeStore({
 if (!process.env.COOKIE_SECRET) {
   throw Error('COOKIE_SECRET environment variable is undefined');
 }
-// TODO - see notes on cookie.secure here https://github.com/expressjs/session#compatible-session-stores
-app.use(session({
+const sess = {
   secret: process.env.COOKIE_SECRET,
   store: sequelizeSessionStore,
   resave: false,
-  // proxy: true // if you do SSL outside of node
-}));
+  cookie: {},
+};
+// In production, serve secure cookies (https only)
+if (process.env.NODE_ENV === 'production') {
+  sess.cookie.secure = true; // serve secure cookies
+}
+app.use(session(sess));
 // cross site request forgery protection
 // disable csurf for testing
 if (process.env.NODE_ENV === 'test') {
