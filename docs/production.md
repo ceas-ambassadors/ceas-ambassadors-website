@@ -60,7 +60,20 @@ mysql> UPDATE Members SET super_user=1 WHERE email=<your-email>;
 # Press CTRL-D to exit
 ```
 ### Setting up domains
-This will be updated once we've setup the domain name.
+To setup domains, you need to update our domain records with whoever owns our domain. Check the google drive for information on logging in. You'll want the following configurations:
+| Type | Host | Value | TTL |
+| ---- | ---- | ----- | --- |
+| A Record | * | `<ip address of server> `| automatic |
+| A Record | @ | `<ip address of server>` | automatic |
+| URL Redirect Record | www | http://ucceasambassadors.com | unmasked |
+Once the domain configuration is complete, run the following commands on the server to configure dokku for receiving requests for the name
+```shell
+$ dokku domains:add-global ucceasambassadors.com
+$ dokku domains:add amb-site ucceasambassadors.com
+# Configure lets encrypt for free https
+$ dokku config:set --no-restart amb-site DOKKU_LETSENCRYPT_EMAIL=ucceasamb@gmail.com
+$ dokku letsencrypt amb-site
+```
 
 ### Securing the server
 You need to disable root ssh access.
