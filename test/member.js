@@ -150,6 +150,37 @@ describe('Member tests', () => {
     });
   });
 
+  it('GET profile of private member as that private member', () => {
+    // create a private user
+    return models.Member.generatePasswordHash('password').then((passwordHash) => {
+      return models.Member.create({
+        email: common.getNormalUserEmail(),
+        password: passwordHash,
+        accend: false,
+        super_user: false,
+        private_user: true,
+      }).then((member) => {
+        // create an agent to reuse
+        const agent = request.agent(app);
+        // login the user
+        const response = agent
+          .post('/login')
+          .send({
+            email: member.email,
+            password: 'password',
+          })
+          .redirects(1)
+          .expect(200);
+        return response.then(() => {
+          // try to get the private profile as the private user
+          return agent
+            .get(`/member/${member.id}`)
+            .expect(200);
+        });
+      });
+    });
+  });
+
   describe('Member tests which require a logged in normal user', () => {
     let agent = null;
     let loginMember = null;
