@@ -39,22 +39,27 @@ const getDetails = (req, res) => {
       // if it is a private event and the current member is not on the attendee list - they cannot
       // see event details
       // super users can see all events
-      if (event.public !== true && !req.user.super_user) {
-        let found = false;
-        for (let idx = 0; idx < members.length; idx += 1) {
-          if (members[idx].email === req.user.email) {
-            found = true;
-            break;
+      if (event.public !== true) {
+        if (!req.user.super_user) {
+          let found = false;
+          for (let idx = 0; idx < members.length; idx += 1) {
+            if (members[idx].email === req.user.email) {
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            // This member can't see this event because they're not a super user and not on list
+            req.session.status = 403;
+            req.session.alert.errorMessages.push('You are not an attendee for the private event.');
+            return req.session.save(() => {
+              return res.redirect('/event');
+            });
           }
         }
-        if (!found) {
-          // This member can't see this event because they're not a super user and not on list
-          req.session.status = 403;
-          req.session.alert.errorMessages.push('You are not an attendee for the private event.');
-          return req.session.save(() => {
-            return res.redirect('/event');
-          });
-        }
+        // If we get this far, we should notify the super user or member attending
+        // that the meeting is a private meeting
+        res.locals.alert.infoMessages.push('This event is private. It is only visible to attendees and super users.');
       }
       // members is not an array of full members - it only has the above selected attrs + status
       const confirmedAttendees = [];
