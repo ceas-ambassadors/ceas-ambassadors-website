@@ -3,6 +3,9 @@ extends ../layout
 include ../event/mixins/list.pug
 
 block content
+  if user && user.id === member.id
+    div(style="padding-bottom:20px;")
+      a(href='/settings') Update your profile!
   div(style="display:flex;")
     if member.path_to_picture
       img(src='/' + member.path_to_picture, style="height:200px;width:200px;")
