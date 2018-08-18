@@ -337,7 +337,8 @@ const postProfileUpdate = (req, res) => {
       });
     }
     // File uploading succeeded or wasn't needed
-    let file = null;
+    // default to old path - it will be null or a valid path
+    let file = req.user.path_to_picture;
     if (req.file) {
       // remove '/public/ from path
       file = req.file.path.split('/').slice(1, 4).join('/');
