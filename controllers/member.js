@@ -35,6 +35,7 @@ exports.getLogin = getLogin;
  * POST for the login page
  */
 const postLogin = (req, res, next) => {
+  // logged in users cannot login again
   if (req.user) {
     req.session.status = 400;
     req.session.alert.errorMessages.push('You are already logged in.');
@@ -42,7 +43,9 @@ const postLogin = (req, res, next) => {
       return res.redirect('/');
     });
   }
+  // try to authenticate
   return passport.authenticate('local', (err, member, info) => {
+    // there was an error - pass it onto the next middleware
     if (err) {
       return next(err);
     }
@@ -54,12 +57,21 @@ const postLogin = (req, res, next) => {
         return res.redirect('/login');
       });
     }
+    // create a session for the member
+    // requires a callback - passport doesn't believe in promises at time of writing
     return req.logIn(member, (loginErr) => {
+      // pass login error to next middleware
       if (loginErr) {
         return next(loginErr);
       }
+      // success logging in!
       req.session.status = 200;
       req.session.alert.successMessages.push('Signed in!');
+      // Check to see if there are any messages for the user
+      // could be turned into it's own function if this logic gets too complex
+      if (member.major === null || member.grad_year === null || member.hometown === null) {
+        req.session.alert.infoMessages.push('You can add details to your profile by clicking your email in the top right of the page.');
+      }
       return req.session.save(() => {
         return res.redirect('/');
       });
