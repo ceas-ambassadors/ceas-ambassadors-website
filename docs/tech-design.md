@@ -1,3 +1,8 @@
+# This document is now out of date
+**While this document was useful when initially writing the website and planning effort, it is now out of date. Further
+effort is managed via Github issues, and new features will be documented and planned there.**
+
+# Technical Design 
 This document is home to the technical design of the website. Will outline
 features, database, and architecture. At a certain point in the implementation 
 of this project, this document might become outdated. I'll try to at least
@@ -75,10 +80,10 @@ Need to use `dotenv` to manage environment variables/secrets
 ### [I] Reset website
 The current website has functionality to reset the website for a new semester.
 This clears out current hours, events, and meetings.
-### [I] Apply page
+### [C] Apply page
 There should be a page that has a link to apply for ambassadors. I can just iframe
 a google doc here. 
-### [I] Favicon
+### [C] Favicon
 Will need an icon for the site
 ### [C] Home page
 Need a home page that lists upcoming events, meetings, and maybe a randomly chosen
@@ -92,23 +97,23 @@ potential students, or for submitting website feedback. Would need to feed into 
 to be checked.
 
 ## Members
-### [I] Delete members
+### [C] Delete members
 Members need to be deletable, for leaving the org or graduating. Should only be an allowable action for super users. Should ask for confirmation before deleting.
-### [I] Detail view of member
+### [C] Detail view of member
 Should show all details on member, including attended events and meetings, contact info, total hours, etc. Super users should be able to view this for any given member, and a member should be able to view their own.
-### [I] Add custom event
+### [C] Add custom event
 Members complete custom events, need to be able to add a single event.
 This should create a real event, and then mark it as private. Only super users should have this ability.
-### [I] List view of members
+### [C] List view of members
 Currently, this has a "highlight by service hour requirement" for logged in users. This would be a good idea. Requires frontend javascript code. Only logged in super users should see how many hours a member has.
 
 ## Events
 ### [C] Add new events
 Should verify that the event is valid - that is, it should not let the end time
 be before the start time. Super user only
-### [I] Delete events
+### [C] Delete events
 Hours should be linked - so deleting an event should cause a member's hours to decrease. Super user only
-### [I] Edit events
+### [C] Edit events
 Hours should be linked - editing an event should cause a member's hours to change. Super user only.
 ### [C] Detail view
 Should include signed up members, and confirmed attended members. Confirmed members should be super user only.
