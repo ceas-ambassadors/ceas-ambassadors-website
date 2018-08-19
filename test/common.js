@@ -11,20 +11,25 @@ const clearDatabase = () => {
   // that sequelize hasn't had a chance to create all tables
   // so force sync it to make sure all tables are there
   return models.sequelize.sync().then(() => {
-    const memberPromise = models.Member.destroy({
+    return models.Event.destroy({
       where: {},
-    });
-    const sessionPromise = models.Session.destroy({
-      where: {},
-    });
-    const eventPromise = models.Event.destroy({
-      where: {},
+    }).then(() => {
+      return models.Member.destroy({
+        where: {},
+      }).then(() => {
+        return models.Session.destroy({
+          where: {},
+        }).then(() => {
+          return models.Attendance.destroy({
+            where: {},
+          });
+        });
+      });
     });
     // all attendance records are deleted when their corresponding events are deleted
     // const attendancePromise = models.Attendance.destroy({
     //   where: {},
     // });
-    return Promise.all([memberPromise, sessionPromise, eventPromise]);
   });
 };
 exports.clearDatabase = clearDatabase;
