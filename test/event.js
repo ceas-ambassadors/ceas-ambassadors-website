@@ -524,6 +524,9 @@ describe('Event Tests', () => {
     });
 
     // POST create event with startTime < now
+    // This used to result in a failure to create the event, but now we want to create the event
+    // and give the user an info alert
+    // leaving the test, with this note of why it exists
     it('POST to create event with start time < now', () => {
       response = agent.post('/event/create')
         .send({
@@ -536,14 +539,14 @@ describe('Event Tests', () => {
           isMeeting: 'off',
         })
         .redirects(1)
-        .expect(400);
+        .expect(201);
 
       return response.then(() => {
         return models.Event.findAll({
           where: {},
         }).then((events) => {
           // assert that event does not exist
-          assert.equal(events.length, 0, 'Event should not exist');
+          assert.equal(events.length, 1, 'Event should exist');
         });
       });
     });

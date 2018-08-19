@@ -241,19 +241,19 @@ const postCreateEdit = [
         return res.redirect(redirectUrl);
       });
     }
-    // Make sure the times are in the future and the end time is after the start time
-    // start time doesn't have to be in the future on an edit
-    if (startTime >= endTime || (startTime < Date.now() && req.body.isEdit !== 'true')) {
-      if (startTime < Date.now()) {
-        req.session.alert.errorMessages.push('The start time must be in the future.');
-      }
-      if (startTime >= endTime) {
-        req.session.alert.errorMessages.push('The end time must be after the start time.');
-      }
+    // Return error if the start time is after the end time
+    if (startTime >= endTime) {
+      req.session.alert.errorMessages.push('The end time must be after the start time.');
       req.session.status = 400;
       return req.session.save(() => {
         return res.redirect(redirectUrl);
       });
+    }
+
+    // If the start time is before now and it's not an edit, make sure the user knows with an
+    // info message
+    if (startTime < Date.now() && req.body.isEdit !== 'true') {
+      req.session.alert.infoMessages.push('This event was created in the past.');
     }
 
     // handle isPublic and isMeeting flags
