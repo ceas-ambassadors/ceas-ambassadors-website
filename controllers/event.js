@@ -12,15 +12,12 @@ const models = require('../models/');
  */
 const getDetails = (req, res) => {
   models.Event.findById(req.params.id).then((event) => {
-    /**
-     * TODO
-     * only render private events for super users or people on the list of attendees
-     */
     if (!event) {
-      // TODO - make 404 page
-      res.locals.status = 404;
-      res.locals.alert.errorMessages.push('Event not found.');
-      return res.status(res.locals.status).render('index', { title: 'Event not found' });
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Event not found.');
+      return req.session.save(() => {
+        return res.redirect('/event');
+      });
     }
 
     // Get a list of members who are signed up with some status for this event
@@ -575,7 +572,6 @@ const postDelete = (req, res) => {
   return models.Event.findById(req.params.id).then((event) => {
     if (!event) {
       // event was not found - 404
-      // TODO - have a real 404 page
       req.session.status = 404;
       req.session.alert.errorMessages.push('Event not found.');
       return req.session.save(() => {

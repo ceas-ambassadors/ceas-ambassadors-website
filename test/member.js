@@ -64,7 +64,8 @@ describe('Member tests', () => {
   // GET /member/profile/ of a non-existent emial
   it('GET profile of non-existent member', (done) => {
     request.agent(app)
-      .get('/member/not-real@mail.uc.edu')
+      .get('/member/-1')
+      .redirects(1)
       .expect(404, done);
   });
 

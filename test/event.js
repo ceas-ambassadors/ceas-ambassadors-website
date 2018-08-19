@@ -63,6 +63,7 @@ describe('Event Tests', () => {
   it('GET nonexistent event details', (done) => {
     request.agent(app)
       .get('/event/-1')
+      .redirects(1)
       .expect(404, done);
   });
 

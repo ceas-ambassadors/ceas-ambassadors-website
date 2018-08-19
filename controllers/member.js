@@ -415,13 +415,11 @@ const getProfile = (req, res) => {
 
   return Promise.all([memberPromise, eventPromise]).then(([member, events]) => {
     if (!member) {
-      res.locals.status = 404;
-      res.locals.alert.errorMessages.push('Member not found.');
-      // TODO - build 404 page
-      return res.status(res.locals.status).render('index', { title: 'Not Found' });
-      // return res.render('404', {
-      //   title: 'Not Found',
-      // });
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Member not found.');
+      return req.session.save(() => {
+        return res.redirect('/member');
+      });
     }
 
     // Don't render private members for anyone but super users or that user
@@ -552,7 +550,7 @@ const postUpdateAttributes = (req, res) => {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Member not found.');
       return req.session.save(() => {
-        return res.redirect(`/member/${req.params.id}`);
+        return res.redirect('/member/');
       });
     }
     let superUser = req.query.super_user;
