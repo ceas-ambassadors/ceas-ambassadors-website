@@ -24,6 +24,22 @@ module.exports = (sequelize, DataTypes) => {
         // Disallow upserts because they're difficult to support with our hook ecosystem
         throw Error('Upserts are difficult to support for attendance.');
       },
+      beforeCreate: (attendance /* , options */) => {
+        // validate that if the event is a meeting, it isn't a not_needed record
+        return sequelize.models.Event.findById(attendance.event_id).then((event) => {
+          if (event.meeting && attendance.status === Attendance.getStatusNotNeeded()) {
+            throw Error('Meetings cannot have not needed status.');
+          }
+        });
+      },
+      beforeUpdate: (attendance /* , options */) => {
+        // validate that if the event is a meeting, it isn't being updated to a not_needed record
+        return sequelize.models.Event.findById(attendance.event_id).then((event) => {
+          if (event.meeting && attendance.status === Attendance.getStatusNotNeeded()) {
+            throw Error('Meetings cannot have not needed status.');
+          }
+        });
+      },
       afterCreate: (attendance /* , options */) => {
         // afterCreate only cares to add the event to the appropriate columns because there is
         // no previous data to remove
