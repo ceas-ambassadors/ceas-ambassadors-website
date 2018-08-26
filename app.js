@@ -140,15 +140,32 @@ app.use((req, res, next) => {
   next(createError(404));
 });
 
-// error handler
-app.use((err, req, res/* , next */) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+/**
+ * Error Handler
+ *
+ * This is the error handler that is always next in the stack for synchronous errors
+ * If there is a synchronous error in code, this important handler will catch it and tell the user
+ * that something went wrong
+ * If the code is asynchronous, this must be called with next(err) or similar
+ *
+ * This function doesn't work without 'next' as an argument
+ */
+app.use((err, req, res, next) => { /* eslint-disable-line no-unused-vars */
+  // destructure message from err
+  const { message } = err;
 
+  let error = null;
+  // only provide error in development
+  if (process.env.NODE_ENV !== 'production') {
+    error = err;
+  }
   // render the error page
+  // will return status if defined on err, otherwise a 500
   res.status(err.status || 500);
-  res.render('error');
+  return res.render('error', {
+    error,
+    message,
+  });
 });
 
 /**
