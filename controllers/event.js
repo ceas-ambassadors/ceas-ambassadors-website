@@ -10,7 +10,7 @@ const models = require('../models/');
  * @param {*} req - incoming request
  * @param {*} res - outgoing response
  */
-const getDetails = (req, res) => {
+const getDetails = (req, res, next) => {
   return models.Event.findById(req.params.id).then((event) => {
     if (!event) {
       req.session.status = 404;
@@ -83,14 +83,7 @@ const getDetails = (req, res) => {
         unconfirmedAndConfirmedAttendees,
       });
     });
-  }).catch((err) => {
-    console.log(err);
-    req.session.status = 500;
-    req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
-    return req.session.save(() => {
-      return res.redirect('/event');
-    });
-  });
+  }).catch(next);
 };
 exports.getDetails = getDetails;
 
@@ -99,7 +92,7 @@ exports.getDetails = getDetails;
  * @param {*} req - incoming request
  * @param {*} res - outgoing response
  */
-const getList = (req, res) => {
+const getList = (req, res, next) => {
   // define where part of queries
   const eventWhere = {
     public: true,
@@ -135,14 +128,7 @@ const getList = (req, res) => {
       events: output[0],
       meetings: output[1],
     });
-  }).catch((err) => {
-    console.log(err);
-    req.session.status = 500;
-    req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
-    return req.session.save(() => {
-      return res.redirect('/');
-    });
-  });
+  }).catch(next);
 };
 exports.getList = getList;
 
@@ -184,7 +170,7 @@ const postCreateEdit = [
   check('startTime').not().isEmpty().withMessage('A start time must be supplied.'),
   check('endTime').not().isEmpty().withMessage('An end time must be supplied.'),
   check('location').not().isEmpty().withMessage('A location must be set.'),
-  (req, res) => {
+  (req, res, next) => {
     // Ensure a user is making the request
     if (!req.user) {
       req.session.status = 401;
@@ -288,7 +274,7 @@ const postCreateEdit = [
           return req.session.save(() => {
             return res.redirect(`/event/${req.body.eventId}`);
           });
-        });
+        }).catch(next);
       });
     }
     // not edit - create the event
@@ -308,15 +294,7 @@ const postCreateEdit = [
       return req.session.save(() => {
         return res.redirect(`/event/${event.id}`);
       });
-    }).catch((err) => {
-      // There was an error
-      console.log(err);
-      req.session.status = 500;
-      req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
-      return req.session.save(() => {
-        return res.redirect(redirectUrl);
-      });
-    });
+    }).catch(next);
   },
 ];
 exports.postCreateEdit = postCreateEdit;
@@ -326,7 +304,7 @@ exports.postCreateEdit = postCreateEdit;
  * @param {*} req - incoming request
  * @param {*} res - outgoing response
  */
-const postSignup = (req, res) => {
+const postSignup = (req, res, next) => {
   // Make sure the user is signed in
   if (!req.user) {
     req.session.status = 401;
@@ -432,15 +410,7 @@ const postSignup = (req, res) => {
         });
       });
     });
-  }).catch((err) => {
-    // There was an error
-    console.log(err);
-    req.session.status = 500;
-    req.session.alert.errorMessages.push('There was a problem. Please contact the tech chair if it persists.');
-    return req.session.save(() => {
-      return res.redirect(`/event/${req.params.id}`);
-    });
-  });
+  }).catch(next);
 };
 exports.postSignup = postSignup;
 
@@ -454,7 +424,7 @@ exports.postSignup = postSignup;
  * @param {*} req - incoming request
  * @param {*} res - outgoing response
  */
-const postConfirmAttendance = (req, res) => {
+const postConfirmAttendance = (req, res, next) => {
   // Make sure the user is signed in
   if (!req.user) {
     req.session.status = 401;
@@ -533,14 +503,7 @@ const postConfirmAttendance = (req, res) => {
     }
     // code should not get here
     throw Error('Attendance status wasnt updated.');
-  }).catch((err) => {
-    console.log(err);
-    req.session.status = 500;
-    req.session.alert.errorMessages.push('There was an error. Contact the tech chair if it persists.');
-    return req.session.save(() => {
-      return res.redirect(`/event/${req.params.id}`);
-    });
-  });
+  }).catch(next);
 };
 exports.postConfirmAttendance = postConfirmAttendance;
 
@@ -550,7 +513,7 @@ exports.postConfirmAttendance = postConfirmAttendance;
  * @param {*} req - incoming request
  * @param {*} res - outgoing response
  */
-const postDelete = (req, res) => {
+const postDelete = (req, res, next) => {
   // Make sure the user is signed in
   if (!req.user) {
     req.session.status = 401;
@@ -585,14 +548,7 @@ const postDelete = (req, res) => {
         return res.redirect('/event');
       });
     });
-  }).catch((err) => {
-    console.log(err);
-    req.session.status = 500;
-    req.session.alert.errorMesssages.push('Error. Contact the tech chair if it persists.');
-    return req.session.save(() => {
-      return res.redirect('/');
-    });
-  });
+  }).catch(next);
 };
 exports.postDelete = postDelete;
 
@@ -601,7 +557,7 @@ exports.postDelete = postDelete;
  * @param {*} req - incoming request
  * @param {*} res - outgoing response
  */
-const getEdit = (req, res) => {
+const getEdit = (req, res, next) => {
   // make sure there is a user
   if (!req.user) {
     req.session.status = 401;
@@ -635,6 +591,6 @@ const getEdit = (req, res) => {
       event, // shorthand for event: event,
       isEdit: true,
     });
-  });
+  }).catch(next);
 };
 exports.getEdit = getEdit;
