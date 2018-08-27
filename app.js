@@ -151,6 +151,8 @@ app.use((req, res, next) => {
  * This function doesn't work without 'next' as an argument
  */
 app.use((err, req, res, next) => { /* eslint-disable-line no-unused-vars */
+  // let's log the error so we have it in the logs
+  console.error(err);
   // destructure message from err
   const { message } = err;
 
