@@ -11,7 +11,7 @@ const models = require('../models/');
  * @param {*} res - outgoing response
  */
 const getDetails = (req, res) => {
-  models.Event.findById(req.params.id).then((event) => {
+  return models.Event.findById(req.params.id).then((event) => {
     if (!event) {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Event not found.');
