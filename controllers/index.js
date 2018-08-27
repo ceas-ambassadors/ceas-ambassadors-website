@@ -6,7 +6,7 @@
 const sequelizeOp = require('sequelize').Op;
 const models = require('../models/');
 
-const getIndex = (req, res) => {
+const getIndex = (req, res, next) => {
   /**
    *  if the server is recovering from an error, don't do any database operations.
    *  Just show the error - that way there won't be an ifinite loop of errors if it's db or homepage
@@ -82,14 +82,7 @@ const getIndex = (req, res) => {
       meetings,
       featuredMembers,
     });
-  }).catch((err) => {
-    console.log(err);
-    req.session.status = 500;
-    req.session.alert.errorMessages.push('Error. Contact the tech chair if it persists.');
-    return res.session.save(() => {
-      return res.redirect('/');
-    });
-  });
+  }).catch(next);
 };
 exports.getIndex = getIndex;
 

@@ -162,18 +162,6 @@ const postSignup = [
       });
     }
 
-    // define handler for errors on this page
-    const errorHandler = (err) => {
-      // If the code gets this far, there was a problem with one of the sequelize calls
-      // Try and send them back to the signup page
-      console.log(err);
-      req.session.status = 500;
-      req.session.alert.errorMessages.push('There was a problem. If it persists please contact the tech chair.');
-      return req.session.save(() => {
-        return res.redirect('/');
-      });
-    };
-
     return models.Member.findOne({
       where: {
         email: req.body.email,
@@ -206,9 +194,9 @@ const postSignup = [
               return res.redirect('/');
             });
           });
-        }).catch(errorHandler);
-      }).catch(errorHandler);
-    }).catch(errorHandler);
+        });
+      });
+    }).catch(next);
   },
 ];
 exports.postSignup = postSignup;
@@ -221,7 +209,7 @@ const postChangePassword = [
   check('currentPassword').not().isEmpty().withMessage('Current password must be provided'),
   check('newPassword').not().isEmpty().withMessage('The new password must be provided.'),
   check('repeatNewPassword').not().isEmpty().withMessage('The new password must be repeated.'),
-  (req, res) => {
+  (req, res, next) => {
     // Ensure there is a user signed in
     if (!req.user) {
       req.session.status = 401;
@@ -270,14 +258,7 @@ const postChangePassword = [
           return req.session.save(() => {
             return res.redirect('/settings');
           });
-        }).catch((err) => {
-          console.log(err);
-          req.session.alert.errorMessages('There was a problem. Please alert the tech chair if it continues.');
-          req.session.status = 500;
-          return req.session.save(() => {
-            return res.redirect('/settings');
-          });
-        });
+        }).catch(next);
       }
       // the passwords did not match
       req.session.status = 400;
@@ -285,7 +266,7 @@ const postChangePassword = [
       return req.session.save(() => {
         return res.redirect('/settings');
       });
-    });
+    }).catch(next);
   },
 ];
 exports.postChangePassword = postChangePassword;
@@ -315,7 +296,7 @@ exports.getSettings = getSettings;
  * @param {*} req - incoming requeest
  * @param {*} res - outgoing response
  */
-const postProfileUpdate = (req, res) => {
+const postProfileUpdate = (req, res, next) => {
   // Ensure there is a user signed in
   if (!req.user) {
     req.session.status = 401;
@@ -378,14 +359,7 @@ const postProfileUpdate = (req, res) => {
       return req.session.save(() => {
         return res.redirect('/settings');
       });
-    }).catch((err) => {
-      console.log(err);
-      req.session.alert.errorMessages.push('There was a problem. Please alert the tech chair if it continues.');
-      req.session.status = 500;
-      return req.session.save(() => {
-        return res.redirect('/settings');
-      });
-    });
+    }).catch(next);
   });
 };
 exports.postProfileUpdate = postProfileUpdate;
@@ -395,7 +369,7 @@ exports.postProfileUpdate = postProfileUpdate;
  * @param {*} req - incoming request
  * @param {*} res - outgoing repsonse
  */
-const getProfile = (req, res) => {
+const getProfile = (req, res, next) => {
   // Get a list of members who are signed up with some status for this event
   // It's faster to run a raw sql query than it is to run two queries in a row
   // This is because Sequelize can't do joins
@@ -481,14 +455,7 @@ const getProfile = (req, res) => {
       unconfirmedMeetings,
       confirmedMeetings,
     });
-  }).catch((err) => {
-    console.log(err);
-    req.session.status = 500;
-    req.session.alert.errorMessages.push('There was an error. Please contact the tech chair if it persists.');
-    return req.session.save(() => {
-      return res.redirect('/');
-    });
-  });
+  }).catch(next);
 };
 exports.getProfile = getProfile;
 
@@ -497,7 +464,7 @@ exports.getProfile = getProfile;
  * @param {*} req - incoming request
  * @param {*} res - outgoing request
  */
-const getList = (req, res) => {
+const getList = (req, res, next) => {
   // create as variable to allow for modifying of search
   const memberWhere = {
     private_user: false,
@@ -518,7 +485,7 @@ const getList = (req, res) => {
       title: 'Members',
       members, // shorthand for members: members,
     });
-  });
+  }).catch(next);
 };
 exports.getList = getList;
 
@@ -527,7 +494,7 @@ exports.getList = getList;
  * @param {*} req incoming request
  * @param {*} res outgoing response
  */
-const postUpdateAttributes = (req, res) => {
+const postUpdateAttributes = (req, res, next) => {
   if (!req.user) {
     req.session.status = 401;
     req.session.alert.errorMessages.push('You must be signed in to modify attributes.');
@@ -594,18 +561,11 @@ const postUpdateAttributes = (req, res) => {
         return res.redirect(`/member/${req.params.id}`);
       });
     });
-  }).catch((err) => {
-    console.log(err);
-    req.session.status = 500;
-    req.session.alert.errorMessages.push('There was an error. Please contact the tech chair if it persists.');
-    return req.session.save(() => {
-      return res.redirect('/');
-    });
-  });
+  }).catch(next);
 };
 exports.postUpdateAttributes = postUpdateAttributes;
 
-const postDelete = (req, res) => {
+const postDelete = (req, res, next) => {
   // Make sure the user is signed in
   if (!req.user) {
     req.session.status = 401;
@@ -647,14 +607,7 @@ const postDelete = (req, res) => {
         });
       });
     });
-  }).catch((err) => {
-    console.log(err);
-    req.session.status = 500;
-    req.session.alert.errorMesssages.push('Error. Contact the tech chair if it persists.');
-    return req.session.save(() => {
-      return res.redirect('/');
-    });
-  });
+  }).catch(next);
 };
 exports.postDelete = postDelete;
 
@@ -669,7 +622,7 @@ exports.postDelete = postDelete;
  * @param {*} req - incoming request
  * @param {*} res - outgoing response
  */
-const postResetPassword = (req, res) => {
+const postResetPassword = (req, res, next) => {
   // Must be logged in to post reset password
   if (!req.user) {
     req.session.status = 401;
@@ -714,13 +667,6 @@ const postResetPassword = (req, res) => {
         return res.redirect(`/member/${req.params.id}`);
       });
     });
-  }).catch((err) => {
-    console.log(err);
-    req.session.status = 500;
-    req.session.alert.errorMesssages.push('Error. Contact the tech chair if it persists.');
-    return req.session.save(() => {
-      return res.redirect('/');
-    });
-  });
+  }).catch(next);
 };
 exports.postResetPassword = postResetPassword;

@@ -1,6 +1,14 @@
 extends layout
 
 block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+  if error
+    //- error is not defined in production
+    h1= message
+    h2= error.status
+    pre #{error.stack}
+  else
+    //- this is the code that is hit in production
+    h1 An error has occurred. We try our best to prevent this! 
+    h2 Please contact the technology chair if the behavior continues. Any information is helpful!
+    h3
+      a(href='/') You can click here to return home.
