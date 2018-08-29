@@ -77,4 +77,8 @@ block content
       form(id='privateUser', action='/member/' + user.id + '/update-attributes?private_user=true', method='post')
         input(type='hidden', name='_csrf', value=csrfToken)
         input(type='submit', name='elevate', value='Set profile to private')
+
+    //- If the user is a super user, they can access the website reset page
+    h1 Website Reset
+    a(href='/reset') Click here to go to the website reset page.
   
