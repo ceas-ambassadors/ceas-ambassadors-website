@@ -99,3 +99,28 @@ const getVirtualTour = (req, res) => {
   });
 };
 exports.getVirtualTour = getVirtualTour;
+
+const getReset = (req, res) => {
+  // Must be logged in to visit reset page
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be a logged in view the reset page.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+
+  // Must be a super user to visit the reset page.
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to view the reset page.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+
+  return res.status(res.locals.status).render('reset', {
+    title: 'Reset Website',
+  });
+};
+exports.getReset = getReset;

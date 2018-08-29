@@ -35,4 +35,7 @@ router.get('/apply', indexHandler.getApply);
 /* GET virtual tour page */
 router.get('/virtual-tour', indexHandler.getVirtualTour);
 
+/* GET website reset page */
+router.get('/reset', indexHandler.getReset);
+
 module.exports = router;
