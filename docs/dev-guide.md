@@ -102,6 +102,8 @@ This database is wiped entirely clean at the start and end of every test - so do
 This should hold production data. It uses this environment variable because it's what is used by the dokku plugin.
 ### COOKIE_SECRET
 This is the secret used to secure session cookies. This should be a randomly generated password in production, but it can be anything in PROD.
+### RESET_KEY
+This is the key that allows for reseting the website at the end of the semester. It should be a protected secret password, probably only known by the tech chair and president. A super user with this key will be able to delete all events and attendance records for all users.
 
 ## Tests
 There will be a comprehensive test suite for this codebase. To run tests, first configure the website using the above instructions - tests won't work until you've gotten the website to run yourself. Then, just run `npm test`. Our tests are written using [mocha](https://mochajs.org/) as the runner, and [supertest](https://github.com/visionmedia/supertest) as a method of mocking a user on the website. In combination, they allow us to test the endpoints as if a user was using them. Ideally, all behavior on the website will have a test. This way, if we break that behavior with a code change or upgrading npm modules breaks behavior, it will be easy to determine.

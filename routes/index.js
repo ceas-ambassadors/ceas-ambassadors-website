@@ -38,4 +38,7 @@ router.get('/virtual-tour', indexHandler.getVirtualTour);
 /* GET website reset page */
 router.get('/reset', indexHandler.getReset);
 
+/* POST website reset */
+router.post('/reset', indexHandler.postReset);
+
 module.exports = router;
