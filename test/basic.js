@@ -52,4 +52,98 @@ describe('Basic Tests', () => {
       .get('/404') // As long as the page 404 doesn't exist, this will give a 404
       .expect(404, done);
   });
+
+  // Putting semester reset tests in this file because they don't make sense anywhere else
+  describe('Semester reset tests', () => {
+    beforeEach((done) => {
+      common.clearDatabase().then(() => {
+        done();
+      });
+    });
+
+    it('Test getting reset page not logged in', (done) => {
+      request.agent(app)
+        .get('/reset')
+        .redirects(1)
+        .expect(401, done);
+    });
+
+    it('Test getting reset page as a normal user', () => {
+      const agent = request.agent(app);
+      return common.createNormalUser().then((member) => {
+        return common.createUserSession(member, agent).then(() => {
+          return agent
+            .get('/reset')
+            .redirects(1)
+            .expect(403);
+        });
+      });
+    });
+
+    it('Test getting reset page as a super user', () => {
+      const agent = request.agent(app);
+      return common.createSuperUser().then((member) => {
+        return common.createUserSession(member, agent).then(() => {
+          return agent
+            .get('/reset')
+            .expect(200);
+        });
+      });
+    });
+
+    it('Test posting to reset page not logged in', (done) => {
+      request.agent(app)
+        .post('/reset')
+        .send({
+          password: process.env.RESET_KEY,
+        })
+        .redirects(1)
+        .expect(401, done);
+    });
+
+    it('Test posting to reset page as a normal user', () => {
+      const agent = request.agent(app);
+      return common.createNormalUser().then((member) => {
+        return common.createUserSession(member, agent).then(() => {
+          return agent
+            .post('/reset')
+            .send({
+              password: process.env.RESET_KEY,
+            })
+            .redirects(1)
+            .expect(403);
+        });
+      });
+    });
+
+    it('POST to reset page succesfully', () => {
+      const agent = request.agent(app);
+      return common.createSuperUser().then((member) => {
+        return common.createUserSession(member, agent).then(() => {
+          return agent
+            .post('/reset')
+            .send({
+              password: process.env.RESET_KEY,
+            })
+            .redirects(1)
+            .expect(200);
+        });
+      });
+    });
+
+    it('POST to reset page with wrong password', () => {
+      const agent = request.agent(app);
+      return common.createSuperUser().then((member) => {
+        return common.createUserSession(member, agent).then(() => {
+          return agent
+            .post('/reset')
+            .send({
+              password: 'abackajs;dflkjas;',
+            })
+            .redirects(1)
+            .expect(400);
+        });
+      });
+    });
+  });
 });
