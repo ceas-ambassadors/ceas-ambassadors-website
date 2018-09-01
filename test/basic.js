@@ -5,9 +5,10 @@
 /* eslint-disable no-undef */
 // Immediately set environment to test
 process.env.NODE_ENV = 'test';
+const assert = require('assert');
 const request = require('supertest');
 const app = require('../app.js');
-// const models = require('../models');
+const models = require('../models');
 const common = require('./common');
 
 describe('Basic Tests', () => {
@@ -104,14 +105,29 @@ describe('Basic Tests', () => {
     it('Test posting to reset page as a normal user', () => {
       const agent = request.agent(app);
       return common.createNormalUser().then((member) => {
-        return common.createUserSession(member, agent).then(() => {
-          return agent
-            .post('/reset')
-            .send({
-              password: process.env.RESET_KEY,
-            })
-            .redirects(1)
-            .expect(403);
+        // create a handful of events to make sure they aren't deleted
+        const events = [];
+        events.push(common.createPublicEvent());
+        events.push(common.createPublicEvent());
+        events.push(common.createMeeting());
+        return Promise.all(events).then(() => {
+          return common.createUserSession(member, agent).then(() => {
+            const response = agent
+              .post('/reset')
+              .send({
+                password: process.env.RESET_KEY,
+              })
+              .redirects(1)
+              .expect(403);
+
+            return response.then(() => {
+              return models.Event.findAll({
+                where: {},
+              }).then((remainingEvents) => {
+                assert.deepEqual(remainingEvents.length, 3);
+              });
+            });
+          });
         });
       });
     });
@@ -119,14 +135,29 @@ describe('Basic Tests', () => {
     it('POST to reset page succesfully', () => {
       const agent = request.agent(app);
       return common.createSuperUser().then((member) => {
-        return common.createUserSession(member, agent).then(() => {
-          return agent
-            .post('/reset')
-            .send({
-              password: process.env.RESET_KEY,
-            })
-            .redirects(1)
-            .expect(200);
+        // create a handful of events for deleting
+        const events = [];
+        events.push(common.createPublicEvent());
+        events.push(common.createPublicEvent());
+        events.push(common.createMeeting());
+        return Promise.all(events).then(() => {
+          return common.createUserSession(member, agent).then(() => {
+            const response = agent
+              .post('/reset')
+              .send({
+                password: process.env.RESET_KEY,
+              })
+              .redirects(1)
+              .expect(200);
+
+            return response.then(() => {
+              return models.Event.findAll({
+                where: {},
+              }).then((remainingEvents) => {
+                assert.deepEqual(remainingEvents.length, 0);
+              });
+            });
+          });
         });
       });
     });
@@ -134,14 +165,29 @@ describe('Basic Tests', () => {
     it('POST to reset page with wrong password', () => {
       const agent = request.agent(app);
       return common.createSuperUser().then((member) => {
-        return common.createUserSession(member, agent).then(() => {
-          return agent
-            .post('/reset')
-            .send({
-              password: 'abackajs;dflkjas;',
-            })
-            .redirects(1)
-            .expect(400);
+        // create a handful of events to make sure they aren't deleted
+        const events = [];
+        events.push(common.createPublicEvent());
+        events.push(common.createPublicEvent());
+        events.push(common.createMeeting());
+        return Promise.all(events).then(() => {
+          return common.createUserSession(member, agent).then(() => {
+            const response = agent
+              .post('/reset')
+              .send({
+                password: 'abackajs;dflkjas;',
+              })
+              .redirects(1)
+              .expect(400);
+
+            return response.then(() => {
+              return models.Event.findAll({
+                where: {},
+              }).then((remainingEvents) => {
+                assert.deepEqual(remainingEvents.length, 3);
+              });
+            });
+          });
         });
       });
     });
