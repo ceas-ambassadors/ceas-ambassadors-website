@@ -298,3 +298,11 @@ nav{
     max-width: 18%;
   }
 }
+
+/************************
+* Member Hours Table Styling*
+*************************/
+
+.hours-table{
+  margin-top: 25px;
+}
