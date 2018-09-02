@@ -26,6 +26,12 @@ describe('Basic Tests', () => {
     });
   });
 
+  beforeEach((done) => {
+    common.clearDatabase().then(() => {
+      done();
+    });
+  });
+
   // Test /
   it('GET hompeage', (done) => {
     request.agent(app)
@@ -56,12 +62,6 @@ describe('Basic Tests', () => {
 
   // Putting semester reset tests in this file because they don't make sense anywhere else
   describe('Semester reset tests', () => {
-    beforeEach((done) => {
-      common.clearDatabase().then(() => {
-        done();
-      });
-    });
-
     it('Test getting reset page not logged in', (done) => {
       request.agent(app)
         .get('/reset')

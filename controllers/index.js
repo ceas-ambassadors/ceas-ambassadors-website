@@ -145,7 +145,7 @@ const postReset = (req, res, next) => {
   }
 
   // check that the reset key is defined
-  if ('RESET_KEY' in process.env && typeof process.env.RESET_KEY === 'undefined') {
+  if (!('RESET_KEY' in process.env) || typeof process.env.RESET_KEY === 'undefined') {
     req.session.status = 500;
     req.session.alert.errorMessages.push('There is no reset key defined. Please ask the technology chair to set one.');
     return req.session.save(() => {
