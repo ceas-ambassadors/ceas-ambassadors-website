@@ -15,6 +15,6 @@ mixin member-table(members, title)
                 td #{member.email}
                 td #{member.major}
                 td #{member.meetings}
-                td #{member.service * 3600000}
-                td #{member.service_not_needed * 3600000}
+                td #{member.service / 3600000}
+                td #{member.service_not_needed / 3600000}
 
