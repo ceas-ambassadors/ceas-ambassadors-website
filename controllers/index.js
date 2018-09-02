@@ -99,3 +99,86 @@ const getVirtualTour = (req, res) => {
   });
 };
 exports.getVirtualTour = getVirtualTour;
+
+const getReset = (req, res) => {
+  // Must be logged in to visit reset page
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be a logged in view the reset page.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+
+  // Must be a super user to visit the reset page.
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to view the reset page.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+
+  return res.status(res.locals.status).render('reset', {
+    title: 'Reset Website',
+  });
+};
+exports.getReset = getReset;
+
+const postReset = (req, res, next) => {
+  // Must be logged in to trigger reset
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be a logged in trigger a reset.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+
+  // Must be a super user to trigger a reset
+  if (!req.user.super_user) {
+    req.session.status = 403;
+    req.session.alert.errorMessages.push('You must be a super user to trigger a reset.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+
+  // check that the reset key is defined
+  if (!('RESET_KEY' in process.env) || typeof process.env.RESET_KEY === 'undefined') {
+    req.session.status = 500;
+    req.session.alert.errorMessages.push('There is no reset key defined. Please ask the technology chair to set one.');
+    return req.session.save(() => {
+      return res.redirect('/reset');
+    });
+  }
+  // Check that the supplied password matches the password defined in the environment variables
+  if (process.env.RESET_KEY !== req.body.password) {
+    req.session.status = 400;
+    req.session.alert.errorMessages.push('Incorrect reset key. Please ask the technology chair for the reset key.');
+    return req.session.save(() => {
+      return res.redirect('/reset');
+    });
+  }
+  // from here on out everything is good to go - trigger a reset
+  // delete all events - which will cascade to attendances
+  // then update all member summation columns to 0 in case they weren't zero
+  return models.Event.destroy({
+    where: {},
+  }).then(() => {
+    // Ensure that all members summation columns are set to zero
+    return models.Member.update({
+      service: 0,
+      meetings: 0,
+      service_not_needed: 0,
+    }, {
+      where: {},
+    }).then(() => {
+      req.session.alert.successMessages.push('The website was succesfully reset!');
+      return req.session.save(() => {
+        return res.redirect('/');
+      });
+    });
+  }).catch(next);
+};
+exports.postReset = postReset;
