@@ -13,7 +13,7 @@ On Windows, to connect the first time to a MySQL server, open MySQL Shell and fi
 Models names should be nouns - `Member`, `Event`, `Attendance`, etc. Sequelize automatically pluralizes them for table names, so `Member` becomes `Members`. Sequelize has no regard for grammatic conventions, it just appends an `s`. Column names (and attributes) should be named with underscores, so `myAttribute` becomes `my_attribute`.
 
 # Database Design
-This is the actual structue of the tables and their relationships. 
+This is the actual structue of the tables and their relationships. Each heading here is a model, and therefore table in our database - though as noted in [naming standards](#Naming Standards), they are pluralized.
 ### Member
 * id
   * unique auto incrementing id for member - primary key
@@ -92,6 +92,13 @@ This is the actual structue of the tables and their relationships.
   * Date record was created - automatically handled by sequelize
 * updated_at
   * date record was last updated - automatically handled by sequelize
+
+### Session - Used by our session module
+Very rarely should this table need accessed - everything involving this table should be done via session manipulation, not database queries/writes.
+* sid - session id - primary key
+* expires - date when session expire
+* data - serialized data in session stored in database
+
 
 ## On summation columns
 Summation columns are managed using [sequelize hooks](http://docs.sequelizejs.com/manual/tutorial/hooks.html). This means one must take care not to affect these columns when manually running sql update/delete commands on events and attendance records. I intend to eventually add an endpoint for resyncing the database. Hooks for bulk operations should result in hooks for individual events being called, [per this issue on the sequelize repo](https://github.com/sequelize/sequelize/issues/6368). 
