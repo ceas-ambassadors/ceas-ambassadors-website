@@ -131,6 +131,19 @@ $ dokku logs amb-site -t
 ```
 Logs do not persist forever - if you restart the container, logs could be lost!
 ## Backing up the database
+Backing up the database is incredibly important, and should be done regularly. If something happens, such as a catastrophic failure, the database container is destroyed, or we lose contact with the server, it's important to have a backup to recover from. Reading to and from dokku database containers is easy though!
+
+To export a dump of the database (passwords are encrypted, so it's safe)
+```
+dokku mysql:export amb-db > date-amb-db.dump.sql
+```
+Likewise, restoring from backups is easy as well
+```
+dokku mysql:import amb-db < date-amb-db.dump.sql
+```
+I typically follow the format `YYYY-MM-DD-amb-db.dump.sql` for file naming.
+### Auto backup
+Coming soon...
 ## Restarting the website
 If you need to restart the server, it can be triggered through dokku. If you're restarted to recover from an error,
 you should heavily consider piping logs to a file so that they can be inspected and debugged.
