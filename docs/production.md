@@ -143,7 +143,12 @@ dokku mysql:import amb-db < date-amb-db.dump.sql
 ```
 I typically follow the format `YYYY-MM-DD-amb-db.dump.sql` for file naming.
 ### Auto backup
-Coming soon...
+Our backup solution chooses to send data our email to minimize the risk of losing access to data (such as in the event the website server goes down and is destroyed by our hosting provider. It has happened!). A script written in the `tools` directory generates a backup from a cronjob and sends the backup to our gmail, where the emails must be manually managed. Because we can't execute scripts in containers, the repo can also be cloned to a different directory to run the script. I copied to the `/opt/` directory. 
+The script requires the `mail` command, which is configured on debian systems by the `mailutils` package. It can be autocalled using a cronjob. To setup a cron job, run `crontab -e` and enter the following:
+```
+0 5 * * * /opt/ceas-ambassadors-website/tools/db_backup.sh amb-db <email>
+```
+It is probably unwise to add the cron job as a your user. It can be added as root, or as a backup-specific user. If adding as a specific user, that user must have permission to use the `dokku` command without password authentication.
 ## Restarting the website
 If you need to restart the server, it can be triggered through dokku. If you're restarted to recover from an error,
 you should heavily consider piping logs to a file so that they can be inspected and debugged.
