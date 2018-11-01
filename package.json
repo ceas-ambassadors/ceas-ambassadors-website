@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "bcrypt": "^3.0.0",
-    "connect-session-sequelize": "^5.2.1",
+    "connect-session-sequelize": "^6.0.0",
     "cookie-parser": "~1.4.3",
     "csurf": "^1.9.0",
     "debug": "~4.1.0",
