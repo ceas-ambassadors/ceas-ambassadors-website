@@ -81,6 +81,18 @@ describe('Basic Tests', () => {
       });
     });
 
+    it('Test getting training page as a normal user', () => {
+      const agent = request.agent(app);
+      return common.createNormalUser().then((member) => {
+        return common.createUserSession(member, agent).then(() => {
+          return agent
+            .get('/training')
+            .redirects(1)
+            .expect(403)
+        })
+      })
+    })
+
     it('Test getting reset page as a super user', () => {
       const agent = request.agent(app);
       return common.createSuperUser().then((member) => {

@@ -61,7 +61,7 @@ describe('Member tests', () => {
     });
   });
 
-  // GET /member/profile/ of a non-existent emial
+  // GET /member/profile/ of a non-existent email
   it('GET profile of non-existent member', (done) => {
     request.agent(app)
       .get('/member/-1')
