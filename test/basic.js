@@ -88,10 +88,10 @@ describe('Basic Tests', () => {
           return agent
             .get('/training')
             .redirects(1)
-            .expect(403)
-        })
-      })
-    })
+            .expect(200);
+        });
+      });
+    });
 
     it('Test getting reset page as a super user', () => {
       const agent = request.agent(app);

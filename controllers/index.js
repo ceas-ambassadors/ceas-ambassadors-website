@@ -102,7 +102,7 @@ exports.getVirtualTour = getVirtualTour;
 
 const getTraining = (req, res) => {
   // Must be logged in to visit training page
-  if(!req.user) {
+  if (!req.user) {
     req.session.status = 401;
     req.session.alert.errorMessages.push('You must be logged in to view the training page.');
     return req.session.save(() => {
@@ -113,7 +113,7 @@ const getTraining = (req, res) => {
   return res.status(res.locals.status).render('training', {
     title: 'Training Materials',
   });
-}
+};
 exports.getTraining = getTraining;
 
 const getReset = (req, res) => {
