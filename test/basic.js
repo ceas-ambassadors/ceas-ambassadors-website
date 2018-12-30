@@ -87,7 +87,6 @@ describe('Basic Tests', () => {
         return common.createUserSession(member, agent).then(() => {
           return agent
             .get('/training')
-            .redirects(1)
             .expect(200);
         });
       });
