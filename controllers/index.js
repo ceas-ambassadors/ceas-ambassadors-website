@@ -100,11 +100,27 @@ const getVirtualTour = (req, res) => {
 };
 exports.getVirtualTour = getVirtualTour;
 
+const getTraining = (req, res) => {
+  // Must be logged in to visit training page
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to view the training page.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+
+  return res.status(res.locals.status).render('training', {
+    title: 'Training Materials',
+  });
+};
+exports.getTraining = getTraining;
+
 const getReset = (req, res) => {
   // Must be logged in to visit reset page
   if (!req.user) {
     req.session.status = 401;
-    req.session.alert.errorMessages.push('You must be a logged in view the reset page.');
+    req.session.alert.errorMessages.push('You must be a logged in to view the reset page.');
     return req.session.save(() => {
       return res.redirect('/');
     });
@@ -182,3 +198,5 @@ const postReset = (req, res, next) => {
   }).catch(next);
 };
 exports.postReset = postReset;
+
+// const getTraining // new training material
