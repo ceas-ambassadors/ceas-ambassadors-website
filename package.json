@@ -7,6 +7,9 @@
     "test": "./node_modules/.bin/mocha --exit",
     "lint": "./node_modules/.bin/eslint ."
   },
+  "engines": {
+    "node": "8.14.1"
+  },
   "eslintConfig": {
     "extends": "airbnb-base",
     "env": {
