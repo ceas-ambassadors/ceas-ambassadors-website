@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "8.14"
+  - "8.11"
 env:
   - TEST_DB_URL='mysql://travis:@localhost/amb_site_test' COOKIE_SECRET='keyboard_cat' RESET_KEY='alphabet_soup'
 services:
