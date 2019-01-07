@@ -3,6 +3,11 @@ This document is intended to be home to developer documentation for this project
 ## Getting Started
 ### Things to Install
 You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which is installed with Nodejs. If you're working with the databse, or need to run a database locally, you'll need to install [mysql](https://www.mysql.com/).
+
+#### NodeJS Version
+We use a specific version of NodeJS with our project to ensure we aren't affected by breaking version changes.
+You can see the version of NodeJS we use in two different places: `package.json` under `engines` and `.travis.yml`. You should develop on the code base using the specified version of NodeJS. A great way to manage Node versions is
+with [Node Version Manager (NVM)](https://www.google.com/search?client=ubuntu&channel=fs&q=nvm&ie=utf-8&oe=utf-8).
 ### Working with the code
 To get started, first clone the repository using [git](#Version-Control).
 
