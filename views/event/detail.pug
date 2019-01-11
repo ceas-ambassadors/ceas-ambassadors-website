@@ -65,7 +65,8 @@ block content
             each member in unconfirmedAttendees
               tr
                 td=member.first_name+' '+member.last_name
-                td=(member.service / 3600000) // Divide service by factor to convert to hours
+                //- Divide service by factor to convert to hours
+                td=(member.service / 3600000)
                 td
                   form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=confirmed', method='post')
                     input(type='hidden', name='_csrf', value=csrfToken)
