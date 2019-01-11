@@ -39,7 +39,7 @@ We use a template rendering engine for creating webpages called [pug](https://pu
 
 All of the pug files are located in the `views` folder. All files that extend `layout.pug` will inherit it's base definitions - things like the ability to flash message, the nav bar, and a stylized container for content. Because of the multiple files that can define arguments for webpages, it can be difficult to keep track of possible (or necessary) arguments need to be passed to the render function. In the worst case, you can check every `extends` and `includes` directive in the files, but I hope to document in each file what arguments it takes.
 
-CSS styles can be found in `public/stylesheets` directory. I intend to use only one css file unless it gets too long and unwieldy - I hope to keep it organized by grouping styles logically and commenting their purpose. 
+CSS styles can be found in `public/stylesheets` directory. I intend to use only one css file unless it gets too long and unwieldy - I hope to keep it organized by grouping styles logically and commenting their purpose. Some of our CSS comes from libraries. These libararies are linked in [`layout.pug`](../views/layout.pug). Explore their documentation to see the CSS they contribute. If there's CSS that's not defined in our stylesheets, it's probably defined in these libraries.
 
 Similar to CSS, javascript and image files are also held in the `public` directory. These files are where you would write frontend javascript (if we need it), which can then be included on pug files with the [`script` directive](https://pugjs.org/language/includes.html).
 

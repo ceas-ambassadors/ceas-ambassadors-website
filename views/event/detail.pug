@@ -53,10 +53,11 @@ block content
       //- for events, list members by status
       if !event.meeting && unconfirmedAttendees.length > 0
         h2 Confirm Attendance for Unconfirmed Attendees
-        table
+        table.table
           thead
             tr
               th Member
+              th Hours
               th Confirm
               th Not Needed
               th Did Not Attend
@@ -64,6 +65,8 @@ block content
             each member in unconfirmedAttendees
               tr
                 td=member.first_name+' '+member.last_name
+                //- Divide service by factor to convert to hours
+                td=(member.service / 3600000)
                 td
                   form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=confirmed', method='post')
                     input(type='hidden', name='_csrf', value=csrfToken)
