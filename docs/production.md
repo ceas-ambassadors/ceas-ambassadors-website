@@ -164,3 +164,10 @@ On the server:
 $ dokku logs amb-site > ~/logs/year-month-day-log-error.log
 $ dokku ps:restart amb-site
 ```
+## Keeping the website up to date
+It's a good idea to regularly update the packages running on the website. You can use APT to manage these:
+```
+$ sudo apt-get update
+$ sudo apt-get upgrade
+```
+Keeping these packages up to date is necessary for the security of our server.
