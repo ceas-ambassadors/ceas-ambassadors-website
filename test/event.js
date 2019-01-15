@@ -524,6 +524,31 @@ describe('Event Tests', () => {
       });
     });
 
+    // POST create event with an event duration of more than 24 hours
+    it('POST to create event with event duration > 24hrs', () => {
+      response = agent.post('/event/create')
+        .send({
+          title: 'Start time and end time out of order',
+          startTime: '2000 January 01 10:00 AM',
+          endTime: '2000 January 02 10:01 AM',
+          location: 'Baldwin Hall',
+          description: 'A test event',
+          isPublic: 'on',
+          isMeeting: 'off',
+        })
+        .redirects(1)
+        .expect(400);
+
+      return response.then(() => {
+        return models.Event.findAll({
+          where: {},
+        }).then((events) => {
+          // assert that event does not exist
+          assert.equal(events.length, 0, 'Event should not exist');
+        });
+      });
+    });
+
     // POST create event with startTime < now
     // This used to result in a failure to create the event, but now we want to create the event
     // and give the user an info alert
@@ -546,7 +571,7 @@ describe('Event Tests', () => {
         return models.Event.findAll({
           where: {},
         }).then((events) => {
-          // assert that event does not exist
+          // assert that event does exist
           assert.equal(events.length, 1, 'Event should exist');
         });
       });
