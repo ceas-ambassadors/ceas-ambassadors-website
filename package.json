@@ -49,6 +49,6 @@
     "eslint-plugin-import": "^2.11.0",
     "mocha": "^5.1.1",
     "sequelize-cli": "^5.2.0",
-    "supertest": "^3.0.0"
+    "supertest": "^3.4.1"
   }
 }
