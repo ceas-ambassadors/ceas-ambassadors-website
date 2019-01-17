@@ -58,6 +58,7 @@ block content
             tr
               th Member
               th Hours
+              th Major
               th Confirm
               th Not Needed
               th Did Not Attend
@@ -67,6 +68,7 @@ block content
                 td=member.first_name+' '+member.last_name
                 //- Divide service by factor to convert to hours
                 td=(member.service / 3600000)
+                td=(member.major)
                 td
                   form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=confirmed', method='post')
                     input(type='hidden', name='_csrf', value=csrfToken)
