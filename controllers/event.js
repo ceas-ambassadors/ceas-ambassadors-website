@@ -159,7 +159,7 @@ const getCreate = (req, res) => {
 exports.getCreate = getCreate;
 
 /**
- * POST for the create event page
+ * POST for the create event page - Also handles page edits
  * @param {*} req - incoming request
  * @param {*} res - outgoing response
  * @description Expects the following req.body objects:
@@ -227,6 +227,16 @@ const postCreateEdit = [
     // Return error if the start time is after the end time
     if (startTime >= endTime) {
       req.session.alert.errorMessages.push('The end time must be after the start time.');
+      req.session.status = 400;
+      return req.session.save(() => {
+        return res.redirect(redirectUrl);
+      });
+    }
+
+    // disallow events that are longer than 24 hours
+    const lengthLimit = 24 * 60 * 60 * 1000;
+    if (endTime - startTime > lengthLimit) {
+      req.session.alert.errorMessages.push('The maximum allowed event length is 24 hours.');
       req.session.status = 400;
       return req.session.save(() => {
         return res.redirect(redirectUrl);
