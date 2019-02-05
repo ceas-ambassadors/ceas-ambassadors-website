@@ -75,12 +75,14 @@ $ dokku config:set --no-restart amb-site DOKKU_LETSENCRYPT_EMAIL=ucceasamb@gmail
 $ dokku letsencrypt amb-site
 ```
 ### Timezone Configuration
-When you setup the server, it will probably have the UTC timezone as a default. Because our app doesn't handle timezones,
+When you setup the app, it will probably have the UTC timezone as a default. Because our app doesn't handle timezones,
 you should set it to be the same timezone our users are in, EST. 
+This configuration is handled in dokku.
 ```
-$ sudo timedatectl set-timezone EST
+$ dokku config:set amb-site TZ="America/New_York"
 ```
-Configurating this option will ensure that timing for events is correct.
+Configurating this option will ensure that timing for events is correct, and
+that they don't fall off the home page before they've happened.
 ### Securing the server
 You need to disable root ssh access. Password access definitely needs disabled.
 
