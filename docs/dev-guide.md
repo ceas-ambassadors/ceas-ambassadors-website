@@ -1,6 +1,16 @@
 This document is intended to be home to developer documentation for this project. It will contain details encompassing things like version control, style guides, and getting started on working with the project.
 
 ## Getting Started
+Getting started on working with the website in a development environment
+requires a few steps, which can all be accomplished via reading this document
+or simple internet searches.
+1. Install the correct version of nodejs.
+2. Clone the repository.
+3. Install mysql.
+4. Create dev and test databases, and a user to access them.
+5. Configure the .env file.
+6. Run `npm install` successfully.
+7. Run `npm test` successfully.
 ### Things to Install
 You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which is installed with Nodejs. If you're working with the databse, or need to run a database locally, you'll need to install [mysql](https://www.mysql.com/).
 
