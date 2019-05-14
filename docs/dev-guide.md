@@ -130,7 +130,7 @@ To write tests, start by looking at existing tests - they are probably the easie
 We'll follow the [Airbnb style guide](https://github.com/airbnb/javascript). I chose this because it was the most popular javascript style guide at the time of writing. It is enforced by a linter run on the Travis CI build. You can run it locally by running `npm run lint` after running `npm install`.
 
 ## Build Tool
-This project automatically triggers a run of tests and the linter on every push to Github. This is configured through our `.travis.yml` file. The build history can be accessed [here](https://travis-ci.org/kurtlewis/ceas-ambassadors-website).
+This project automatically triggers a run of tests and the linter on every push to Github. This is configured through our `.travis.yml` file. The build history can be accessed [here](https://travis-ci.org/ceas-ambassadors/ceas-ambassadors-website).
 
 
 ## Version Control
