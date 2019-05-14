@@ -1,7 +1,7 @@
 /**
  * Definition of session table - duplicated from https://github.com/mweibel/connect-session-sequelize/blob/master/lib/model.js
  * because it'll be useful to have an accessible table
- * It's worth noting that this doesn't follow all the conventions that 
+ * It's worth noting that this doesn't follow all the conventions that
  * the other tables follow because doing so would not work with the module that
  * uses this table
  */
