@@ -74,9 +74,17 @@ $ dokku domains:add amb-site ucceasambassadors.com
 $ dokku config:set --no-restart amb-site DOKKU_LETSENCRYPT_EMAIL=ucceasamb@gmail.com
 $ dokku letsencrypt amb-site
 ```
-
+### Timezone Configuration
+When you setup the app, it will probably have the UTC timezone as a default. Because our app doesn't handle timezones,
+you should set it to be the same timezone our users are in, EST. 
+This configuration is handled in dokku.
+```
+$ dokku config:set amb-site TZ="America/New_York"
+```
+Configurating this option will ensure that timing for events is correct, and
+that they don't fall off the home page before they've happened.
 ### Securing the server
-You need to disable root ssh access.
+You need to disable root ssh access. Password access definitely needs disabled.
 
 # Maintenance
 **THESE COMMANDS ARE FOR THE ABOVE DESCRIBED SERVER - UBUNTU 18.04 WITH THE DOKKU DEPLOYMENT SYSTEM**
@@ -158,3 +166,10 @@ On the server:
 $ dokku logs amb-site > ~/logs/year-month-day-log-error.log
 $ dokku ps:restart amb-site
 ```
+## Keeping the website up to date
+It's a good idea to regularly update the packages running on the website. You can use APT to manage these:
+```
+$ sudo apt-get update
+$ sudo apt-get upgrade
+```
+Keeping these packages up to date is necessary for the security of our server.

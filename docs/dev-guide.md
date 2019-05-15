@@ -1,8 +1,23 @@
 This document is intended to be home to developer documentation for this project. It will contain details encompassing things like version control, style guides, and getting started on working with the project.
 
 ## Getting Started
+Getting started on working with the website in a development environment
+requires a few steps, which can all be accomplished via reading this document
+or simple internet searches.
+1. Install the correct version of nodejs.
+2. Clone the repository.
+3. Install mysql.
+4. Create dev and test databases, and a user to access them.
+5. Configure the .env file.
+6. Run `npm install` successfully.
+7. Run `npm test` successfully.
 ### Things to Install
 You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which is installed with Nodejs. If you're working with the databse, or need to run a database locally, you'll need to install [mysql](https://www.mysql.com/).
+
+#### NodeJS Version
+We use a specific version of NodeJS with our project to ensure we aren't affected by breaking version changes.
+You can see the version of NodeJS we use in two different places: `package.json` under `engines` and `.travis.yml`. You should develop on the code base using the specified version of NodeJS. A great way to manage Node versions is
+with [Node Version Manager (NVM)](https://www.google.com/search?client=ubuntu&channel=fs&q=nvm&ie=utf-8&oe=utf-8).
 ### Working with the code
 To get started, first clone the repository using [git](#Version-Control).
 
@@ -34,7 +49,7 @@ We use a template rendering engine for creating webpages called [pug](https://pu
 
 All of the pug files are located in the `views` folder. All files that extend `layout.pug` will inherit it's base definitions - things like the ability to flash message, the nav bar, and a stylized container for content. Because of the multiple files that can define arguments for webpages, it can be difficult to keep track of possible (or necessary) arguments need to be passed to the render function. In the worst case, you can check every `extends` and `includes` directive in the files, but I hope to document in each file what arguments it takes.
 
-CSS styles can be found in `public/stylesheets` directory. I intend to use only one css file unless it gets too long and unwieldy - I hope to keep it organized by grouping styles logically and commenting their purpose. 
+CSS styles can be found in `public/stylesheets` directory. I intend to use only one css file unless it gets too long and unwieldy - I hope to keep it organized by grouping styles logically and commenting their purpose. Some of our CSS comes from libraries. These libararies are linked in [`layout.pug`](../views/layout.pug). Explore their documentation to see the CSS they contribute. If there's CSS that's not defined in our stylesheets, it's probably defined in these libraries.
 
 Similar to CSS, javascript and image files are also held in the `public` directory. These files are where you would write frontend javascript (if we need it), which can then be included on pug files with the [`script` directive](https://pugjs.org/language/includes.html).
 
@@ -115,7 +130,7 @@ To write tests, start by looking at existing tests - they are probably the easie
 We'll follow the [Airbnb style guide](https://github.com/airbnb/javascript). I chose this because it was the most popular javascript style guide at the time of writing. It is enforced by a linter run on the Travis CI build. You can run it locally by running `npm run lint` after running `npm install`.
 
 ## Build Tool
-This project automatically triggers a run of tests and the linter on every push to Github. This is configured through our `.travis.yml` file. The build history can be accessed [here](https://travis-ci.org/kurtlewis/ceas-ambassadors-website).
+This project automatically triggers a run of tests and the linter on every push to Github. This is configured through our `.travis.yml` file. The build history can be accessed [here](https://travis-ci.org/ceas-ambassadors/ceas-ambassadors-website).
 
 
 ## Version Control

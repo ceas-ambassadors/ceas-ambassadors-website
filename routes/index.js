@@ -41,4 +41,6 @@ router.get('/reset', indexHandler.getReset);
 /* POST website reset */
 router.post('/reset', indexHandler.postReset);
 
+router.get('/training', indexHandler.getTraining); // new page
+
 module.exports = router;
