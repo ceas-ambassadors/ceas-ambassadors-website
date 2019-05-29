@@ -385,7 +385,7 @@ const getProfile = (req, res, next) => {
     type: models.sequelize.QueryTypes.SELECT,
   });
 
-  const memberPromise = models.Member.findById(req.params.id);
+  const memberPromise = models.Member.findByPk(req.params.id);
 
   return Promise.all([memberPromise, eventPromise]).then(([member, events]) => {
     if (!member) {
@@ -511,7 +511,7 @@ const postUpdateAttributes = (req, res, next) => {
     });
   }
   // get the requested member
-  return models.Member.findById(req.params.id).then((member) => {
+  return models.Member.findByPk(req.params.id).then((member) => {
     if (!member) {
       // member not found, 404
       req.session.status = 404;
@@ -585,7 +585,7 @@ const postDelete = (req, res, next) => {
   }
 
   // Get the member
-  return models.Member.findById(req.params.id).then((member) => {
+  return models.Member.findByPk(req.params.id).then((member) => {
     if (!member) {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Member not found.');
@@ -644,7 +644,7 @@ const postResetPassword = (req, res, next) => {
   // randomly generate password
   const password = Math.random().toString(36).substr(2, 8);
   // Find the member
-  const memberPromise = models.Member.findById(req.params.id);
+  const memberPromise = models.Member.findByPk(req.params.id);
 
   const passwordPromise = models.Member.generatePasswordHash(password);
 

@@ -109,7 +109,7 @@ describe('Account Tests', () => {
       .expect(400);
     // check that bad_email@mail.uc.edu was not added to the database
     return response.then(() => {
-      return models.Member.findById('bad_email@mail.uc.edu').then((member) => {
+      return models.Member.findByPk('bad_email@mail.uc.edu').then((member) => {
         assert(!member);
       });
     });
@@ -130,7 +130,7 @@ describe('Account Tests', () => {
       .expect(400);
     // check that bad_email@mail.uc.edu was not added to the database
     return response.then(() => {
-      return models.Member.findById('bad_email@mail.uc.edu').then((member) => {
+      return models.Member.findByPk('bad_email@mail.uc.edu').then((member) => {
         assert(!member);
       });
     });
@@ -151,7 +151,7 @@ describe('Account Tests', () => {
       .expect(400);
     // check that bad_email@mail.uc.edu was not added to the database
     return response.then(() => {
-      return models.Member.findById('bad_email@mail.uc.edu').then((member) => {
+      return models.Member.findByPk('bad_email@mail.uc.edu').then((member) => {
         assert(!member);
       });
     });
@@ -171,7 +171,7 @@ describe('Account Tests', () => {
       .expect(400);
     // check that bad_email@mail.uc.edu was not added to the database
     return response.then(() => {
-      return models.Member.findById('bad_email@mail.uc.edu').then((member) => {
+      return models.Member.findByPk('bad_email@mail.uc.edu').then((member) => {
         assert(!member);
       });
     });
@@ -383,7 +383,7 @@ describe('Account Tests', () => {
         .expect(200);
 
       return response.then(() => {
-        return models.Member.findById(loginMember.id).then((member) => {
+        return models.Member.findByPk(loginMember.id).then((member) => {
           return models.Member.comparePassword('newPassword', member).then((res) => {
             assert(res, 'The new password was not applied.');
           });
@@ -402,7 +402,7 @@ describe('Account Tests', () => {
         .expect(400);
 
       return response.then(() => {
-        return models.Member.findById(loginMember.id).then((member) => {
+        return models.Member.findByPk(loginMember.id).then((member) => {
           return models.Member.comparePassword('newPassword', member).then((res) => {
             assert(!res, 'The new password was wrongfully applied.');
           });
@@ -421,7 +421,7 @@ describe('Account Tests', () => {
         .expect(400);
 
       return response.then(() => {
-        return models.Member.findById(loginMember.id).then((member) => {
+        return models.Member.findByPk(loginMember.id).then((member) => {
           return models.Member.comparePassword('newPassword', member).then((res) => {
             assert(!res, 'The new password was wrongfully applied.');
           });
@@ -440,7 +440,7 @@ describe('Account Tests', () => {
         .expect(400);
 
       return response.then(() => {
-        return models.Member.findById(loginMember.id).then((member) => {
+        return models.Member.findByPk(loginMember.id).then((member) => {
           return models.Member.comparePassword('newPassword', member).then((res) => {
             assert(!res, 'The new password was wrongfully applied.');
           });
@@ -460,7 +460,7 @@ describe('Account Tests', () => {
         .expect(400);
 
       return response.then(() => {
-        return models.Member.findById(loginMember.id).then((member) => {
+        return models.Member.findByPk(loginMember.id).then((member) => {
           return models.Member.comparePassword('newPassword', member).then((res) => {
             assert(!res, 'The new password was wrongfully applied.');
           });
@@ -480,7 +480,7 @@ describe('Account Tests', () => {
         .expect(400);
 
       return response.then(() => {
-        return models.Member.findById(loginMember.id).then((member) => {
+        return models.Member.findByPk(loginMember.id).then((member) => {
           return models.Member.comparePassword('newPassword', member).then((res) => {
             assert(!res, 'The new password was wrongfully applied.');
           });
