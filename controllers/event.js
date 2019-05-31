@@ -11,7 +11,7 @@ const models = require('../models/');
  * @param {*} res - outgoing response
  */
 const getDetails = (req, res, next) => {
-  return models.Event.findById(req.params.id).then((event) => {
+  return models.Event.findByPk(req.params.id).then((event) => {
     if (!event) {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Event not found.');
@@ -260,7 +260,7 @@ const postCreateEdit = [
     }
 
     if (req.body.isEdit === 'true') {
-      return models.Event.findById(req.body.eventId).then((event) => {
+      return models.Event.findByPk(req.body.eventId).then((event) => {
         // For edits, switching between meetings and non-meetings is disallowed
         if (isMeeting !== event.meeting) {
           // The UI doesn't even display meeting check box, so just set it back to the default
@@ -325,7 +325,7 @@ const postSignup = (req, res, next) => {
   }
 
   // Get the event
-  const eventPromise = models.Event.findById(req.params.id);
+  const eventPromise = models.Event.findByPk(req.params.id);
 
   // Get the member
   let memberEmail = null;
@@ -542,7 +542,7 @@ const postDelete = (req, res, next) => {
     });
   }
 
-  return models.Event.findById(req.params.id).then((event) => {
+  return models.Event.findByPk(req.params.id).then((event) => {
     if (!event) {
       // event was not found - 404
       req.session.status = 404;
@@ -586,7 +586,7 @@ const getEdit = (req, res, next) => {
     });
   }
   // get event
-  return models.Event.findById(req.params.id).then((event) => {
+  return models.Event.findByPk(req.params.id).then((event) => {
     if (!event) {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Event not found.');

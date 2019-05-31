@@ -207,7 +207,7 @@ passport.serializeUser((user, done) => {
 
 // converts the cookie from the client into an instance of Member upon a request
 passport.deserializeUser((id, done) => {
-  models.Member.findById(id).then((member) => {
+  models.Member.findByPk(id).then((member) => {
     return done(null, member);
   }).catch((err) => {
     return done(err, null);
