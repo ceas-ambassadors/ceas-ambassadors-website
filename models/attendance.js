@@ -19,6 +19,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
+    // manually name our table. the use of the 'underscored' option would
+    // decapitilize the first word.
+    tableName: 'Attendances',
     hooks: {
       beforeUpsert: () => {
         // Disallow upserts because they're difficult to support with our hook ecosystem
@@ -26,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       beforeCreate: (attendance /* , options */) => {
         // validate that if the event is a meeting, it isn't a not_needed record
-        return sequelize.models.Event.findById(attendance.event_id).then((event) => {
+        return sequelize.models.Event.findByPk(attendance.event_id).then((event) => {
           if (event.meeting && attendance.status === Attendance.getStatusNotNeeded()) {
             throw Error('Meetings cannot have not needed status.');
           }
@@ -34,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       beforeUpdate: (attendance /* , options */) => {
         // validate that if the event is a meeting, it isn't being updated to a not_needed record
-        return sequelize.models.Event.findById(attendance.event_id).then((event) => {
+        return sequelize.models.Event.findByPk(attendance.event_id).then((event) => {
           if (event.meeting && attendance.status === Attendance.getStatusNotNeeded()) {
             throw Error('Meetings cannot have not needed status.');
           }
@@ -48,9 +51,9 @@ module.exports = (sequelize, DataTypes) => {
           // No action needed. Resolve with empty promise for consistent return value
           return Promise.resolve();
         }
-        const eventPromise = sequelize.models.Event.findById(attendance.event_id);
+        const eventPromise = sequelize.models.Event.findByPk(attendance.event_id);
 
-        const memberPromise = sequelize.models.Member.findById(attendance.member_id);
+        const memberPromise = sequelize.models.Member.findByPk(attendance.member_id);
 
         return Promise.all([eventPromise, memberPromise]).then((output) => {
           const event = output[0];
@@ -88,9 +91,9 @@ module.exports = (sequelize, DataTypes) => {
           return Promise.resolve();
         }
 
-        const eventPromise = sequelize.models.Event.findById(attendance.event_id);
+        const eventPromise = sequelize.models.Event.findByPk(attendance.event_id);
 
-        const memberPromise = sequelize.models.Member.findById(attendance.member_id);
+        const memberPromise = sequelize.models.Member.findByPk(attendance.member_id);
 
         return Promise.all([eventPromise, memberPromise]).then((output) => {
           const event = output[0];
@@ -146,9 +149,9 @@ module.exports = (sequelize, DataTypes) => {
           // No action needed. Resolve with empty promise for consistent return value
           return Promise.resolve();
         }
-        const eventPromise = sequelize.models.Event.findById(attendance.event_id);
+        const eventPromise = sequelize.models.Event.findByPk(attendance.event_id);
 
-        const memberPromise = sequelize.models.Member.findById(attendance.member_id);
+        const memberPromise = sequelize.models.Member.findByPk(attendance.member_id);
 
         return Promise.all([eventPromise, memberPromise]).then((output) => {
           const event = output[0];

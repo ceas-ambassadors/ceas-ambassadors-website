@@ -56,11 +56,15 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
+    // manually name the table. the use of 'underscored' would change the name
+    // to not have a capital letter
+    tableName: 'Members',
   });
   Member.associate = (models) => {
     // associations can be defined here
     models.Member.belongsToMany(models.Event, {
       as: 'member_id',
+      foreignKey: 'member_id', // names what the column appears as in code
       through: models.Attendance,
     });
   };

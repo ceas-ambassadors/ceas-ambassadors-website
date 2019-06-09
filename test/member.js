@@ -91,7 +91,7 @@ describe('Member tests', () => {
         .redirects(1)
         .expect(401);
       return response.then(() => {
-        return models.Member.findById(createdMember.id).then((member) => {
+        return models.Member.findByPk(createdMember.id).then((member) => {
           assert.equal(member.super_user, false);
           assert.equal(member.private_user, false);
         });
@@ -124,7 +124,7 @@ describe('Member tests', () => {
         .redirects(1)
         .expect(401);
       return response.then(() => {
-        return models.Member.findById(member.id).then((assertMember) => {
+        return models.Member.findByPk(member.id).then((assertMember) => {
           assert(assertMember);
         });
       });
@@ -141,7 +141,7 @@ describe('Member tests', () => {
         .expect(401);
 
       return response.then(() => {
-        return models.Member.findById(member.id).then((assertMember) => {
+        return models.Member.findByPk(member.id).then((assertMember) => {
           // assumes that the normal user password is 'password'
           return models.Member.comparePassword('password', assertMember).then((truth) => {
             assert(truth);
@@ -222,7 +222,7 @@ describe('Member tests', () => {
         .expect(200);
 
       return response.then(() => {
-        return models.Member.findById(loginMember.id).then((member) => {
+        return models.Member.findByPk(loginMember.id).then((member) => {
           assert(member);
           assert.deepEqual(member.first_name, firstName);
           assert.deepEqual(member.last_name, lastName);
@@ -255,7 +255,7 @@ describe('Member tests', () => {
         .expect(200);
 
       return response.then(() => {
-        return models.Member.findById(loginMember.id).then((member) => {
+        return models.Member.findByPk(loginMember.id).then((member) => {
           assert(member);
           assert.deepEqual(member.first_name, firstName);
           assert.deepEqual(member.last_name, lastName);
@@ -275,7 +275,7 @@ describe('Member tests', () => {
         .redirects(1)
         .expect(200);
       return response.then(() => {
-        return models.Member.findById(loginMember.id).then((member) => {
+        return models.Member.findByPk(loginMember.id).then((member) => {
           assert(member);
           assert.deepEqual(member.grad_year, null);
         });
@@ -297,7 +297,7 @@ describe('Member tests', () => {
           .redirects(1)
           .expect(403);
         return response.then(() => {
-          return models.Member.findById(createdMember.id).then((member) => {
+          return models.Member.findByPk(createdMember.id).then((member) => {
             assert.equal(member.super_user, false);
             assert.equal(member.private_user, false);
           });
@@ -328,7 +328,7 @@ describe('Member tests', () => {
           .redirects(1)
           .expect(403);
         return response.then(() => {
-          return models.Member.findById(member.id).then((assertMember) => {
+          return models.Member.findByPk(member.id).then((assertMember) => {
             assert(assertMember);
           });
         });
@@ -343,7 +343,7 @@ describe('Member tests', () => {
           .expect(403);
 
         return response.then(() => {
-          return models.Member.findById(member.id).then((assertMember) => {
+          return models.Member.findByPk(member.id).then((assertMember) => {
             // assumes that the super user password is 'password'
             return models.Member.comparePassword('password', assertMember).then((truth) => {
               assert(truth);
@@ -381,7 +381,7 @@ describe('Member tests', () => {
           .redirects(1)
           .expect(304);
         return response.then(() => {
-          return models.Member.findById(createdMember.id).then((member) => {
+          return models.Member.findByPk(createdMember.id).then((member) => {
             assert.equal(member.super_user, false);
             assert.equal(member.private_user, false);
           });
@@ -403,7 +403,7 @@ describe('Member tests', () => {
           .redirects(1)
           .expect(200);
         return response.then(() => {
-          return models.Member.findById(createdMember.id).then((member) => {
+          return models.Member.findByPk(createdMember.id).then((member) => {
             assert.equal(member.super_user, true);
             assert.equal(member.private_user, false);
           });
@@ -425,7 +425,7 @@ describe('Member tests', () => {
           .redirects(1)
           .expect(200);
         return response.then(() => {
-          return models.Member.findById(createdMember.id).then((member) => {
+          return models.Member.findByPk(createdMember.id).then((member) => {
             assert.equal(member.super_user, false);
             assert.equal(member.private_user, false);
           });
@@ -447,7 +447,7 @@ describe('Member tests', () => {
           .redirects(1)
           .expect(200);
         return response.then(() => {
-          return models.Member.findById(createdMember.id).then((member) => {
+          return models.Member.findByPk(createdMember.id).then((member) => {
             assert.equal(member.super_user, false);
             assert.equal(member.private_user, true);
           });
@@ -469,7 +469,7 @@ describe('Member tests', () => {
           .redirects(1)
           .expect(200);
         return response.then(() => {
-          return models.Member.findById(createdMember.id).then((member) => {
+          return models.Member.findByPk(createdMember.id).then((member) => {
             assert.equal(member.super_user, false);
             assert.equal(member.private_user, false);
           });
@@ -491,7 +491,7 @@ describe('Member tests', () => {
           .redirects(1)
           .expect(304);
         return response.then(() => {
-          return models.Member.findById(createdMember.id).then((member) => {
+          return models.Member.findByPk(createdMember.id).then((member) => {
             assert.equal(member.super_user, false);
             assert.equal(member.private_user, true);
           });
@@ -522,7 +522,7 @@ describe('Member tests', () => {
           .redirects(1)
           .expect(200);
         return response.then(() => {
-          return models.Member.findById(member.id).then((assertMember) => {
+          return models.Member.findByPk(member.id).then((assertMember) => {
             assert(!assertMember);
           });
         });
@@ -537,7 +537,7 @@ describe('Member tests', () => {
           .expect(200);
 
         return response.then(() => {
-          return models.Member.findById(member.id).then((assertMember) => {
+          return models.Member.findByPk(member.id).then((assertMember) => {
             // assumes that the normal user password is 'password'
             // it's hard to get the new password from the UI, so let's just asser that
             // the password isn't 'password' anymore

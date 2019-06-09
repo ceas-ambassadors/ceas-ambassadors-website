@@ -35,6 +35,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
+    // manually name the table, the use of the 'underscored' option would
+    // rename it without a capital letter
+    tableName: 'Events',
     hooks: {
       // http://docs.sequelizejs.com/manual/tutorial/hooks.html
       beforeUpsert: () => {
@@ -84,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
         }).then((attendances) => {
           const promises = [];
           for (let i = 0; i < attendances.length; i += 1) {
-            promises.push(sequelize.models.Member.findById(attendances[i].member_id));
+            promises.push(sequelize.models.Member.findByPk(attendances[i].member_id));
           }
           return Promise.all(promises).then((output) => {
             const returns = []; // array of actions for return
@@ -121,6 +124,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     models.Event.belongsToMany(models.Member, {
       as: 'event_id',
+      foreignKey: 'event_id', // names what the column appears as in code
       through: models.Attendance,
       hooks: true,
     });

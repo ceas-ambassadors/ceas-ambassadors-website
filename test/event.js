@@ -210,7 +210,7 @@ describe('Event Tests', () => {
           });
 
           // events should not increase amount of service attended, added as unconfirmed
-          const memberPromise = models.Member.findById(loginMember.id)
+          const memberPromise = models.Member.findByPk(loginMember.id)
             .then((member) => {
               assert.equal(member.service, 0);
             });
@@ -239,7 +239,7 @@ describe('Event Tests', () => {
           });
 
           // Meeting should not be added to the meeting count
-          const memberPromise = models.Member.findById(loginMember.id)
+          const memberPromise = models.Member.findByPk(loginMember.id)
             .then((member) => {
               assert.equal(member.meetings, 0);
             });
@@ -915,7 +915,7 @@ describe('Event Tests', () => {
           .redirects(1)
           .expect(201);
         return response.then(() => {
-          return models.Event.findById(event.id).then((editedEvent) => {
+          return models.Event.findByPk(event.id).then((editedEvent) => {
             assert.deepEqual(editedEvent.location, 'edited');
           });
         });

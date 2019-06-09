@@ -38,7 +38,7 @@ describe('Attendance Tests', () => {
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           // assert that the member service didn't change
-          return models.Member.findById(output[1].id).then((member) => {
+          return models.Member.findByPk(output[1].id).then((member) => {
             assert.equal(member.service, 0);
             assert.equal(member.meetings, 0);
             assert.equal(member.service_not_needed, 0);
@@ -57,7 +57,7 @@ describe('Attendance Tests', () => {
           status: models.Attendance.getStatusNotNeeded(),
         }).then(() => {
           // assert that only the member not needed service changed
-          return models.Member.findById(output[1].id).then((member) => {
+          return models.Member.findByPk(output[1].id).then((member) => {
             assert.equal(member.service, 0);
             assert.equal(member.meetings, 0);
             assert.equal(member.service_not_needed, common.getEventLength());
@@ -76,7 +76,7 @@ describe('Attendance Tests', () => {
           status: models.Attendance.getStatusConfirmed(),
         }).then(() => {
           // assert that only the member service changed
-          return models.Member.findById(output[1].id).then((member) => {
+          return models.Member.findByPk(output[1].id).then((member) => {
             assert.equal(member.service, common.getEventLength());
             assert.equal(member.meetings, 0);
             assert.equal(member.service_not_needed, 0);
@@ -98,7 +98,7 @@ describe('Attendance Tests', () => {
             status: models.Attendance.getStatusConfirmed(),
           }).then(() => {
             // assert that only the member service changed
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, common.getEventLength());
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -121,7 +121,7 @@ describe('Attendance Tests', () => {
             status: models.Attendance.getStatusNotNeeded(),
           }).then(() => {
             // assert that only the member not needed service changed
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, common.getEventLength());
@@ -144,7 +144,7 @@ describe('Attendance Tests', () => {
             status: models.Attendance.getStatusUnconfirmed(),
           }).then(() => {
             // assert that the member service didn't change
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -167,7 +167,7 @@ describe('Attendance Tests', () => {
             status: models.Attendance.getStatusConfirmed(),
           }).then(() => {
             // assert that only the member service changed
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, common.getEventLength());
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -190,7 +190,7 @@ describe('Attendance Tests', () => {
             status: models.Attendance.getStatusNotNeeded(),
           }).then(() => {
             // assert that only the member not needed service changed
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, common.getEventLength());
@@ -213,7 +213,7 @@ describe('Attendance Tests', () => {
             status: models.Attendance.getStatusUnconfirmed(),
           }).then(() => {
             // assert that the member service didn't change
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -236,7 +236,7 @@ describe('Attendance Tests', () => {
             status: models.Attendance.getStatusConfirmed(),
           }).then(() => {
             // assert that only the member service changed
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, common.getEventLength());
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -259,7 +259,7 @@ describe('Attendance Tests', () => {
             status: models.Attendance.getStatusNotNeeded(),
           }).then(() => {
             // assert that only the member not needed service changed
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, common.getEventLength());
@@ -282,7 +282,7 @@ describe('Attendance Tests', () => {
             status: models.Attendance.getStatusUnconfirmed(),
           }).then(() => {
             // assert that the member service didn't change
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -303,7 +303,7 @@ describe('Attendance Tests', () => {
         }).then((attendance) => {
           return attendance.destroy().then(() => {
             // assert that the member service didn't change
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -324,7 +324,7 @@ describe('Attendance Tests', () => {
         }).then((attendance) => {
           return attendance.destroy().then(() => {
             // assert that the member service didn't change
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -345,7 +345,7 @@ describe('Attendance Tests', () => {
         }).then((attendance) => {
           return attendance.destroy().then(() => {
             // assert that the member service didn't change
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -366,7 +366,7 @@ describe('Attendance Tests', () => {
           event_id: output[0].id,
           status: models.Attendance.getStatusConfirmed(),
         }).then(() => {
-          return models.Member.findById(output[1].id).then((member) => {
+          return models.Member.findByPk(output[1].id).then((member) => {
             assert.equal(member.service, 0);
             assert.equal(member.meetings, 1);
             assert.equal(member.service_not_needed, 0);
@@ -384,7 +384,7 @@ describe('Attendance Tests', () => {
           event_id: output[0].id,
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
-          return models.Member.findById(output[1].id).then((member) => {
+          return models.Member.findByPk(output[1].id).then((member) => {
             assert.equal(member.service, 0);
             assert.equal(member.meetings, 0);
             assert.equal(member.service_not_needed, 0);
@@ -419,7 +419,7 @@ describe('Attendance Tests', () => {
           status: models.Attendance.getStatusConfirmed(),
         }).then((attendance) => {
           return attendance.destroy().then(() => {
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -439,7 +439,7 @@ describe('Attendance Tests', () => {
           status: models.Attendance.getStatusUnconfirmed(),
         }).then((attendance) => {
           return attendance.destroy().then(() => {
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -461,7 +461,7 @@ describe('Attendance Tests', () => {
           return attendance.update({
             status: models.Attendance.getStatusConfirmed(),
           }).then(() => {
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 1);
               assert.equal(member.service_not_needed, 0);
@@ -483,7 +483,7 @@ describe('Attendance Tests', () => {
           return attendance.update({
             status: models.Attendance.getStatusUnconfirmed(),
           }).then(() => {
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -529,7 +529,7 @@ describe('Attendance Tests', () => {
             end_time: output[0].start_time.getTime() + (common.getEventLength() / 2),
           }).then(() => {
             // it should not have changed the member because it was unconfirmed
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -553,7 +553,7 @@ describe('Attendance Tests', () => {
             end_time: output[0].start_time.getTime() + (common.getEventLength() / 2),
           }).then(() => {
             // not needed time should have updated to be 1/2 of its previous value
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, (common.getEventLength() / 2));
@@ -577,7 +577,7 @@ describe('Attendance Tests', () => {
             end_time: output[0].start_time.getTime() + (common.getEventLength() / 2),
           }).then(() => {
             // service should now be 1/2 of event length
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, (common.getEventLength() / 2));
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -601,7 +601,7 @@ describe('Attendance Tests', () => {
             end_time: output[0].start_time.getTime() + (common.getEventLength() / 2),
           }).then(() => {
             // changing event times should not impact meetings
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 1);
               assert.equal(member.service_not_needed, 0);
@@ -622,7 +622,7 @@ describe('Attendance Tests', () => {
         }).then(() => {
           return output[0].destroy().then(() => {
             // unconfirmed status should see no difference
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -643,7 +643,7 @@ describe('Attendance Tests', () => {
         }).then(() => {
           return output[0].destroy().then(() => {
             // everything should be 0
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -664,7 +664,7 @@ describe('Attendance Tests', () => {
         }).then(() => {
           return output[0].destroy().then(() => {
             // everything should be 0
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -685,7 +685,7 @@ describe('Attendance Tests', () => {
         }).then(() => {
           return output[0].destroy().then(() => {
             // changing event times should not impact meetings
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -706,7 +706,7 @@ describe('Attendance Tests', () => {
         }).then(() => {
           return output[0].destroy().then(() => {
             // changing event times should not impact meetings
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.service, 0);
               assert.equal(member.meetings, 0);
               assert.equal(member.service_not_needed, 0);
@@ -737,7 +737,7 @@ describe('Attendance Tests', () => {
               member_id: output[1].id,
             },
           }).then(() => {
-            return models.Member.findById(output[1].id).then((member) => {
+            return models.Member.findByPk(output[1].id).then((member) => {
               assert.equal(member.meetings, 0);
             });
           });
