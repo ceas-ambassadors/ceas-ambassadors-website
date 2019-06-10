@@ -403,7 +403,6 @@ const postSignup = (req, res, next) => {
       }
       if (!event.public) {
         // Private events are automatically confirmed because they're entered by a super user
-        // TODO - check that user is a super user - only proceed if so
         status = models.Attendance.getStatusConfirmed();
       }
 
