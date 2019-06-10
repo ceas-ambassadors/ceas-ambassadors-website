@@ -152,7 +152,7 @@ app.use((req, res, next) => {
  */
 app.use((err, req, res, next) => { /* eslint-disable-line no-unused-vars */
   // don't need to log the whole stack error for 404's
-  if (err.status && err.status != 404) {
+  if (err.status && err.status !== 404) {
     // let's log the error so we have it in the logs
     console.error(err);
   }
