@@ -8,7 +8,7 @@ or simple internet searches.
 2. Clone the repository.
 3. Install mysql.
 4. Create dev and test databases, and a user to access them.
-5. Configure the .env file.
+5. `cp .env.example .env` and configure the new .env file.
 6. Run `npm install` successfully.
 7. Run `npm test` successfully.
 ### Things to Install
@@ -18,6 +18,23 @@ You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which
 We use a specific version of NodeJS with our project to ensure we aren't affected by breaking version changes.
 You can see the version of NodeJS we use in two different places: `package.json` under `engines` and `.travis.yml`. You should develop on the code base using the specified version of NodeJS. A great way to manage Node versions is
 with [Node Version Manager (NVM)](https://www.google.com/search?client=ubuntu&channel=fs&q=nvm&ie=utf-8&oe=utf-8).
+
+#### Install MySQL and create databases
+Install first with the following commands
+```
+$ sudo apt update
+$ sudo apt install mysql-server
+$ sudo mysql_secure_installation
+```
+
+Configure MySQL and create the test and dev databases.
+1. Run the command: `$ sudo mysql_secure_installation` to start the security installation prompt.
+2. The first prompt is a MySQL root user password, enter a secure password and press `Y`. After that you can hit enter to accept the defaults for all the subsequent questions. 
+3. To open MySQL prompt from the terminal use the command: `sudo mysql`.
+4. Create your test and dev databases according to your environment file. 
+
+Checkout this [Digital Ocean article](https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-18-04) for more information on configuring MySQL.
+
 ### Working with the code
 To get started, first clone the repository using [git](#Version-Control).
 
