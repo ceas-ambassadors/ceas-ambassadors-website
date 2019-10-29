@@ -18,12 +18,15 @@ mixin event-list(name, events)
           th Details
       tbody
         each event in events
-          //- TODO - color code based on if event has happened
           //- Convert dates to nicer looking values
           //- date to string adds time zone information we want to remove - split on spaces and remove, then rejoin
           - start_time = String(event.start_time).split(' ').slice(0, 5).join(' ')
           - end_time = String(event.end_time).split(' ').slice(0, 5).join(' ')
-          tr
+
+          //- Color code based on if event has happened
+          - current_date = new Date()
+          - is_event_old = event.end_time < current_date
+          tr(class=is_event_old ? 'event-passed' : 'event-future')
             td=event.title
             td=start_time
             td.disp-col=end_time
