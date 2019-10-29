@@ -65,3 +65,9 @@ typings/
 
 # Saved profile pictures
 public/images/profile/*
+
+# macOS Finder attributes
+.DS_Store
+
+# VS Code file
+.vscode

@@ -194,6 +194,13 @@ nav{
   margin-top: 10px;
 }
 
+.event-future {
+  background-color: #ecfee8; 
+}
+
+.event-passed {
+  background-color: #ffe7e6; 
+}
 
 /*****************************
 * Styling event/member detail
