@@ -226,20 +226,42 @@ nav{
 }
 
 .member-card{
+  box-sizing: content-box;
   display: flex;
   background: #ffffff;
-  padding: 10px 25px;
+  padding: 15px 25px;
   margin: 1%;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   border-radius: 4px;
+  border-bottom: 5px solid #b31227;
   z-index: 1;
   flex: 1;
   align-items: center;
+  transition: 0.3s;
+  max-width: 300px;
+  flex-basis: 300px;
+  color: #4b4b4b;
+}
+
+.member-card:hover{
+  background-color: #3d161bb0;
+  border-bottom: 5px solid #3d161b;
+  color: #ffffff;
 }
 
 .member-card .member-photo{
-  height: 100px;
-  width: 100px;
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
+}
+
+.member-card .image-cropper{
+	width: 100px;
+	height: 100px;
+	position: relative;
+	overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
 }
 
 .member-card-info{
@@ -247,6 +269,7 @@ nav{
   display: flex;
   flex-direction: column;
   justify-content: center;
+  flex-shrink: 20;
 }
 
 .member-card-info p{
@@ -256,17 +279,31 @@ nav{
 
 .member-card-info .member-name{
   text-decoration: none;
-  color: #000;
+  color: #b31227;
   font-weight: 600;
   font-size: 1.2em;
+  transition: color 0.3s;
 }
 
 .member-card-info .member-name:hover{
   text-decoration: underline;
 }
 
+.member-card:hover .member-name{
+  color: #ffffff;
+}
+
 .member-card-info .major{
   margin-top: 6px;
+}
+
+.member-card-info .email{
+  color: #b31227;
+  transition: color 0.3s;
+}
+
+.member-card:hover .email{
+  color: #ffffff;
 }
 
 .member-card-info .class{
@@ -277,32 +314,32 @@ nav{
   margin-top: 8px;
 }
 
-@media (min-width: 721px){
-  .member-card{
-    max-width: 48%;
-  }
-}
-
-@media (min-width: 1080px){
-  .member-card{
-    max-width: 31.33%;
-  }
-}
-@media (min-width: 1456px){
-  .member-card{
-    max-width: 23%;
-  }
-}
-@media (min-width: 1890px){
-  .member-card{
-    max-width: 18%;
+@media (max-width: 630px){
+  .member-card-info .email{
+    font-size: 10px;
   }
 }
 
 /************************
-* Member Hours Table Styling*
+* Member Hours Table Styling
 *************************/
-
 .hours-table{
   margin-top: 25px;
+}
+
+/*************************
+* Member Profile Styling
+*************************/
+.member-photo-lg{
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
+}
+
+.image-cropper-lg{
+	width: 200px;
+	height: 200px;
+	position: relative;
+	overflow: hidden;
+  border-radius: 50%;
 }

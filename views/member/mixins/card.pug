@@ -4,13 +4,14 @@
 
 mixin member-card(member)
   div.member-card
-    if member.path_to_picture
-      img.member-photo(src='/' + member.path_to_picture)
-    else
-      img.member-photo(src='/images/default-profile-picture.jpg')
+    div.image-cropper
+      if member.path_to_picture
+        img.member-photo(src='/' + member.path_to_picture)
+      else
+        img.member-photo(src='/images/default-profile-picture.jpg')
     div.member-card-info
       a.member-name(href='/member/' + member.id) #{member.first_name} #{member.last_name}
-      p #{member.email}
+      p.email #{member.email}
       p.major #{member.major}
       if member.grad_year
         p.class='Class of ' + member.grad_year

@@ -7,10 +7,11 @@ block content
     div(style="padding-bottom:20px;")
       a(href='/settings') Update your profile!
   div(style="display:flex;")
-    if member.path_to_picture
-      img(src='/' + member.path_to_picture, style="height:200px;width:200px;")
-    else
-      img(src='/images/default-profile-picture.jpg', style="height:200px;width:200px;")
+    div.image-cropper-lg
+      if member.path_to_picture
+        img.member-photo-lg(src='/' + member.path_to_picture)
+      else
+        img.member-photo-lg(src='/images/default-profile-picture.jpg')
     span.member-card-info
       h1 #{member.first_name} #{member.last_name}
       div(style="font-size:20px;") #{member.major} #{member.grad_year}
