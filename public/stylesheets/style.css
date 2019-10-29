@@ -253,9 +253,9 @@ nav{
 }
 
 .member-card .member-photo{
-  margin: 0 auto;
+  object-fit: cover;
+  width: 100%;
   height: 100%;
-  width: auto;
 }
 
 .member-card .image-cropper{
@@ -334,9 +334,9 @@ nav{
 * Member Profile Styling
 *************************/
 .member-photo-lg{
-  margin: 0 auto;
+  object-fit: cover;
+  width: 100%;
   height: 100%;
-  width: auto;
 }
 
 .image-cropper-lg{
