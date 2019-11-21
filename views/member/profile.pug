@@ -4,42 +4,50 @@ include ../event/mixins/list.pug
 
 block content
   if user && user.id === member.id
-    div(style="padding-bottom:20px;")
-      a(href='/settings') Update your profile!
-  div(style="display:flex;")
-    div.image-cropper-lg
-      if member.path_to_picture
-        img.member-photo-lg(src='/' + member.path_to_picture)
-      else
-        img.member-photo-lg(src='/images/default-profile-picture.jpg')
-    span.member-card-info
-      h1 #{member.first_name} #{member.last_name}
-      div(style="font-size:20px;") #{member.major} #{member.grad_year}
-      if member.hometown
-        | from #{member.hometown}
-      if member.minors
-        div Minor in #{member.minors}
-      if member.accend
-        div Accend Student
-  //- throw some space in there
-  div(style="padding-top:2%;")
-  if member.clubs
-    h3 Coops
-    div=member.coops
-  if member.clubs
-    h3 Clubs
-    div=member.clubs
-
-  //- throw some space in there
-  div(style="padding-top:2%;")
+    a.user-button(href='/settings') Update Profile
+  div.profile-card
+    div.main-info
+      div.image-cropper-lg
+        if member.path_to_picture
+          img.member-photo-lg(src='/' + member.path_to_picture)
+        else
+          img.member-photo-lg(src='/images/default-profile-picture.jpg')
+      span.member-details
+        h1.member-name #{member.first_name} #{member.last_name}
+        p.email #{member.email}
+        if member.hometown
+          p.hometown from #{member.hometown}
+    div.secondary-info
+      if member.minors || member.grad_year || member.accend
+        div.secondary-info-detail
+          h3 Education
+          if member.minors
+            p #{member.major} with a minor in #{member.minors}
+          else
+            p #{member.major}
+          if member.grad_year
+            p Class of #{member.grad_year}
+          if member.accend
+            p Accend Student
+      if member.coops
+        div.secondary-info-detail
+          h3 Co-ops
+          p #{member.coops}
+      if member.clubs
+        div.secondary-info-detail
+          h3 Orgs and Clubs
+          p #{member.clubs}
+    //- show service hours only for themselves and super users
+    div.secondary-info
+      if user && (user.super_user || user.id === member.id)
+        div.secondary-info-detail
+            h3 Total Service
+            p #{service} Completed hours
+            p #{meetings} Meetings Attended
+            p #{serviceNotNeeded} Hours not needed
+  
+  //- show event attendance information only for themselves and super users
   if user && (user.super_user || user.id === member.id)
-    h2 Total Service
-    label Completed hours
-    p=service
-    label Meetings
-    p=meetings
-    label Hours not needed
-    p=serviceNotNeeded
     if unconfirmedEvents.length > 0
       +event-list("Unconfirmed Events", unconfirmedEvents)
     if confirmedEvents.length > 0
@@ -51,43 +59,34 @@ block content
 
   //- show modify member UI for super users (but not current member)
   if user && user.super_user && user.id !== member.id
-    //- throw some space in there
-    div(style="padding-top:2%;")
-    h1 Modify Member
-    h2 Meta Attributes
-    //- throw some space in there
-    div(style="padding-top:2%;")
-    if member.super_user
-      //- descalate super user
-      form(id='superUserDemote', action='/member/' + member.id + '/update-attributes?super_user=false', method='post')
+    div.profile-super-user
+      h1 Modify Member
+      h2 Meta Attributes
+      if member.super_user
+        //- descalate super user
+        form(id='superUserDemote', action='/member/' + member.id + '/update-attributes?super_user=false', method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          input.submit-small(type='submit', name='demote', value='Demote Super User')    
+      if !member.super_user
+        //- escalate to super user
+        form(id='superUserElevate', action='/member/' + member.id + '/update-attributes?super_user=true', method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          input.submit-small(type='submit', name='elevate', value='Elevate to Super User')
+      if member.private_user
+        //- set to public
+        form(id='publicUser', action='/member/' + member.id + '/update-attributes?private_user=false', method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          input.submit-small(type='submit', name='elevate', value='Set profile to public')   
+      if !member.private_user
+        //- set to private
+        form(id='privateUser', action='/member/' + member.id + '/update-attributes?private_user=true', method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          input.submit-small(type='submit', name='elevate', value='Set profile to private')
+      h2 Delete Member
+      form(id='deleteMember', action='/member/' + member.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete this member. Proceed?')")
         input(type='hidden', name='_csrf', value=csrfToken)
-        input.submit-small(type='submit', name='demote', value='Demote Super User')    
-    if !member.super_user
-      //- escalate to super user
-      form(id='superUserElevate', action='/member/' + member.id + '/update-attributes?super_user=true', method='post')
+        input.submit-small(type='submit', name='delete', value='Delete Member')
+      h2 Reset Password
+      form(id='resetPassword', action='/member/' + member.id + '/reset-password', method='post', onSubmit="return confirm('This will reset this member\\'s password to a random password. They can change it back once they have logged in. Proceed?')")
         input(type='hidden', name='_csrf', value=csrfToken)
-        input.submit-small(type='submit', name='elevate', value='Elevate to Super User')
-    //- throw some space in there
-    div(style="padding-top:2%;")
-    if member.private_user
-      //- set to public
-      form(id='publicUser', action='/member/' + member.id + '/update-attributes?private_user=false', method='post')
-        input(type='hidden', name='_csrf', value=csrfToken)
-        input.submit-small(type='submit', name='elevate', value='Set profile to public')   
-    if !member.private_user
-      //- set to private
-      form(id='privateUser', action='/member/' + member.id + '/update-attributes?private_user=true', method='post')
-        input(type='hidden', name='_csrf', value=csrfToken)
-        input.submit-small(type='submit', name='elevate', value='Set profile to private')
-    //- throw some space in there
-    div(style="padding-top:2%;")
-    h2 Delete Member
-    form(id='deleteMember', action='/member/' + member.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete this member. Proceed?')")
-      input(type='hidden', name='_csrf', value=csrfToken)
-      input.submit-small(type='submit', name='delete', value='Delete Member')
-    //- throw some space in there
-    div(style="padding-top:2%;")
-    h2 Reset Password
-    form(id='resetPassword', action='/member/' + member.id + '/reset-password', method='post', onSubmit="return confirm('This will reset this member\\'s password to a random password. They can change it back once they have logged in. Proceed?')")
-      input(type='hidden', name='_csrf', value=csrfToken)
-      input.submit-small(type='submit', name='submit', value='Reset Password')
+        input.submit-small(type='submit', name='submit', value='Reset Password')
