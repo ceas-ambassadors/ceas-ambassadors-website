@@ -23,37 +23,37 @@ a {
 
 nav{
   font-size: 1.2em;
+  margin-bottom: 40px;
 }
 
 /*********************
 *   Alert Styles     *
 *********************/
-#alert {
+#alert{
   padding: 1% 10%;
-  margin: 1% 10%;
-  color: #000000;
+  margin: 0 10% 20px 10%;
   font-size: 20px;
   padding: 20px;
   line-height: 180%;
   border-radius: 0;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.10);
 }
 
-.alert-error {
-  background-color: #d63131;
-  border-color: #c92a2a;
+.alert-error{
+  background-color:#ffe3e3;
+  border: 2px solid#e15e5e;
+  color:#9b0000;
 }
 
-.alert-info {
-  background-color: #e8da1e;
-  border-color: #f7f094;
+.alert-info{
+  background-color: #fffcf4;
+  border: 2px solid#f9e1a3;
+  color:#8b6c27;
 }
 
-.alert-success {
-  
-  background-color: #36c164;
-  border-color: #29bc5a;
-  
+.alert-success{
+  background-color:#e6ffef;
+  border: 2px solid#29bc5a;
+  color:#006a23;
 }
 
 /*********************
@@ -61,7 +61,7 @@ nav{
 *********************/
 /* Everything content wise appears within this container */
 #content {
-  padding: 5% 10%;
+  padding: 0 10%;
 }
 
 /*********************
