@@ -221,6 +221,49 @@ nav{
 }
 
 /*************************
+* Event Detail Styling
+*************************/
+.event h1{
+  font-weight: 600;
+}
+
+.event .super-container h1{
+  font-weight: 300;
+}
+
+.event .date-loc{
+  font-weight: 300;
+  color: #888888;
+}
+
+.event .super-container{
+  margin-top: 40px;
+}
+
+.event .super-container .member-sign-up{
+  padding: 15px 25px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  max-width: 600px;
+}
+
+.event .super-container h2{
+  color: #535353;
+  font-weight: 300;
+}
+
+.event .super-container .member-sign-up h2{
+	border-bottom: 2px solid #eaeaea;
+	padding-bottom: 10px;
+	font-size: 1.4rem;
+	font-weight: 600;
+}
+
+.event .super-container label{
+  padding-top: 10px;
+}
+
+/*************************
 * Member Card Styling
 *************************/
 .member-table{

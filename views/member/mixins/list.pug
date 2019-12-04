@@ -5,7 +5,7 @@
 include ./card.pug
 
 mixin member-list(members, title)
-  h1=title
+  h2=title
   div.member-table
     each member in members
       +member-card(member)

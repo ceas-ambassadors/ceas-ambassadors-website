@@ -346,6 +346,12 @@ const postSignup = (req, res, next) => {
     memberEmail = req.user.email;
   }
 
+  // Check if it's a full email or a 6+2
+  // Append @mail.uc.edu if it's just a 6+2
+  if (!memberEmail.includes('@')) {
+    memberEmail += '@mail.uc.edu';
+  }
+
   const memberPromise = models.Member.findOne({
     where: {
       email: memberEmail,
