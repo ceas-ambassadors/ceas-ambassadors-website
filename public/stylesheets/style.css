@@ -221,6 +221,75 @@ nav{
 }
 
 /*************************
+* Event Detail Styling
+*************************/
+.event h1{
+  font-weight: 600;
+}
+
+.event h2{
+  color: #535353;
+  font-weight: 300;
+}
+
+.event .date-loc{
+  font-weight: 300;
+  color: #6b6b6b;
+}
+
+.event .super-container{
+  margin-top: 40px;
+}
+
+.event .super-container h1{
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+
+.event .super-container label{
+  padding-top: 10px;
+}
+
+.event .super-container .super-section{
+  margin-bottom: 30px;
+}
+
+.event .super-container .member-sign-up{
+  padding: 15px 25px;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  max-width: 600px;
+}
+
+.event .super-container .member-sign-up h2{
+	border-bottom: 2px solid #eaeaea;
+	padding-bottom: 10px;
+	font-size: 1.4rem;
+	font-weight: 600;
+}
+
+.event .super-container .member-sign-up .member-info{
+  display: flex;
+}
+
+.event .super-container .member-sign-up .member-info label{
+  margin-right: 10px;
+}
+
+.event .super-container .member-sign-up .member-info input{
+  width: 40%;
+}
+
+.event .super-container .option-buttons-container {
+  margin-top: 10px;
+  display: flex;
+}
+
+.event .super-container .option-buttons-container .btn {
+  margin-right: 10px;
+}
+
+/*************************
 * Member Card Styling
 *************************/
 .member-table{
@@ -402,19 +471,25 @@ nav{
 /*************************
 * User Button Styling
 *************************/
-a.user-button{
+a.user-button,
+input.user-button{
 	padding: 10px 40px;
-	color: #b31227;
+  color: #b31227;
+  background: #ffffff;
 	border: 2px solid #b31227;
 	border-radius: 4px;
 	text-decoration: none;
 	transition: 0.2s;
 }
 
-a.user-button:hover{
+a.user-button:hover,
+input.user-button:hover{
   background: #fce8eb;
+  cursor: pointer;
 }
 
-a.user-button:active{
+a.user-button:active,
+input.user-button:active{
   background: #fab7c1;
+  cursor: pointer;
 }
