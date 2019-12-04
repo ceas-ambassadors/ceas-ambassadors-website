@@ -43,7 +43,7 @@ block content
             form(id='signUpMember', action='/event/' + event.id + '/signup' , method='post')
               input(type='hidden', name='_csrf', value=csrfToken)
               div.form-group.member-info
-                label Member 6+2:
+                label Member 6+2 (or email):
                 input.form-control.form-control-sm(type='text', name='email', placeholder='6+2')
               div.form-group
                 input.submit-small(type='submit', name='Sign Up Member', value='Sign Up Member')
