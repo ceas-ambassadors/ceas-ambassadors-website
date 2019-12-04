@@ -289,6 +289,29 @@ describe('Event Tests', () => {
       });
     });
 
+    // POST signup for event with specified username (6+2) as non super user
+    it('POST signup for event by specifying a user as a normal user with username', () => {
+      return common.createPublicEvent().then((event) => {
+        const response = agent
+          .post(`/event/${event.id}/signup`)
+          .send({
+            email: common.getNormalUsername(),
+          })
+          .redirects(1)
+          .expect(403);
+        return response.then(() => {
+          return models.Attendance.findAll({
+            where: {
+              member_id: loginMember.id,
+              event_id: event.id,
+            },
+          }).then((attendances) => {
+            assert.equal(attendances.length, 0);
+          });
+        });
+      });
+    });
+
     // POST signup for a private event as a normal user
     it('POST signup for private event as a normal user', () => {
       return common.createPrivateEvent().then((event) => {
@@ -602,6 +625,31 @@ describe('Event Tests', () => {
       });
     });
 
+    // POST signup with specified username (6+2)
+    it('POST signup for event with specified username', () => {
+      const memberPromise = common.createNormalUser();
+      const eventPromise = common.createPublicEvent();
+      return Promise.all([memberPromise, eventPromise]).then(([member, event]) => {
+        const response = agent
+          .post(`/event/${event.id}/signup`)
+          .send({
+            email: common.getNormalUsername(),
+          })
+          .redirects(1)
+          .expect(201);
+        return response.then(() => {
+          return models.Attendance.findAll({
+            where: {
+              member_id: member.id,
+              event_id: event.id,
+            },
+          }).then((attendances) => {
+            assert.equal(attendances.length, 1);
+          });
+        });
+      });
+    });
+
     // POST signup with not-real email
     it('POST signup for meeting with not real email', () => {
       const memberPromise = common.createNormalUser();
@@ -652,6 +700,31 @@ describe('Event Tests', () => {
       });
     });
 
+    // POST signup succesfully on private event for other user using username (6+2)
+    it('POST signup for private event with specified username', () => {
+      const memberPromise = common.createNormalUser();
+      const eventPromise = common.createPrivateEvent();
+      return Promise.all([memberPromise, eventPromise]).then(([member, event]) => {
+        const response = agent
+          .post(`/event/${event.id}/signup`)
+          .send({
+            email: common.getNormalUsername(),
+          })
+          .redirects(1)
+          .expect(201);
+        return response.then(() => {
+          return models.Attendance.findAll({
+            where: {
+              member_id: member.id,
+              event_id: event.id,
+            },
+          }).then((attendances) => {
+            assert.equal(attendances.length, 1);
+          });
+        });
+      });
+    });
+
     // POST signup succesfully on meeting for other user
     it('POST signup for meeting with specified email', () => {
       const memberPromise = common.createNormalUser();
@@ -661,6 +734,31 @@ describe('Event Tests', () => {
           .post(`/event/${event.id}/signup`)
           .send({
             email: common.getNormalUserEmail(),
+          })
+          .redirects(1)
+          .expect(201);
+        return response.then(() => {
+          return models.Attendance.findAll({
+            where: {
+              member_id: member.id,
+              event_id: event.id,
+            },
+          }).then((attendances) => {
+            assert.equal(attendances.length, 1);
+          });
+        });
+      });
+    });
+
+    // POST signup succesfully on meeting for other user using username (6+2)
+    it('POST signup for meeting with specified username', () => {
+      const memberPromise = common.createNormalUser();
+      const eventPromise = common.createMeeting();
+      return Promise.all([memberPromise, eventPromise]).then(([member, event]) => {
+        const response = agent
+          .post(`/event/${event.id}/signup`)
+          .send({
+            email: common.getNormalUsername(),
           })
           .redirects(1)
           .expect(201);

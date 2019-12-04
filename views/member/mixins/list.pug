@@ -4,8 +4,14 @@
 //- import member-card mixin
 include ./card.pug
 
-mixin member-list(members, title)
-  h2=title
+mixin member-list(members, title, heading='h1')
+  if heading == 'h1'
+    h1=title
+  else if heading == 'h2'
+    h2=title
+  else if heading == 'h3'
+    h3=title
+    
   div.member-table
     each member in members
       +member-card(member)

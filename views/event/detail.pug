@@ -20,82 +20,81 @@ block content
     div.date-loc
       p #{start_time} - #{end_time} at #{event.location}
     if event.description
-      div #{event.description}
+      p.description #{event.description}
 
-    //- throw some space in there
-    div(style="padding-top:2%;")
     //- show sign up if it's an event and they're logged in, or if its a meeting and they're a super user
     if user && (!event.meeting || user.super_user)
       form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
         input(type='hidden', name='_csrf', value=csrfToken)
-        input.submit-small(type='submit', name='Sign Up', value='Sign Up For Event')
+        input.user-button(type='submit', name='Sign Up', value='Sign Up For Event')
 
-    //- throw some space in there
-    div(style="padding-top:2%;")
     if !user || (user && !user.super_user)
       //- Show normal users a combination of unconfirmed and confirmed members
-      +member-list(unconfirmedAndConfirmedAttendees, "Attendees")
+      +member-list(unconfirmedAndConfirmedAttendees, "Attendees", "h2")
     else 
       //- Super user only section
         ** EVERYTHING FROM HERE DOWN AT THIS INDENT LEVEL IS SUPER USER ONLY**
       div.super-container
-        h1 Super User Only Options
-        //- Sign up another member block
-        div.member-sign-up
-          h2 Sign Up Another Member
-          form(id='signUpMember', action='/event/' + event.id + '/signup' , method='post')
-            input(type='hidden', name='_csrf', value=csrfToken)
-            div.form-group
-              label Member 6+2:
-              input.form-control.form-control-sm(type='text', name='email', placeholder='6+2', style="width:30%;")
-            div.form-group
-              input.submit-small(type='submit', name='Sign Up Member', value='Sign Up Member')
-        
-        //- for events, list members by status
-        if !event.meeting && unconfirmedAttendees.length > 0
-          h2 Confirm Attendance for Unconfirmed Attendees
-          table.table
-            thead
-              tr
-                th Member
-                th Hours
-                th Major
-                th Confirm
-                th Not Needed
-                th Did Not Attend
-            tbody
-              each member in unconfirmedAttendees
+        div.super-section
+          h1 Super User Only Options
+          //- Sign up another member block
+          div.member-sign-up
+            h2 Sign Up Another Member
+            form(id='signUpMember', action='/event/' + event.id + '/signup' , method='post')
+              input(type='hidden', name='_csrf', value=csrfToken)
+              div.form-group.member-info
+                label Member 6+2:
+                input.form-control.form-control-sm(type='text', name='email', placeholder='6+2')
+              div.form-group
+                input.submit-small(type='submit', name='Sign Up Member', value='Sign Up Member')
+
+        div.super-section
+          //- for events, list members by status
+          if !event.meeting && unconfirmedAttendees.length > 0
+            h2 Confirm Attendance for Unconfirmed Attendees
+            table.table
+              thead
                 tr
-                  td=member.first_name+' '+member.last_name
-                  //- Divide service by factor to convert to hours
-                  td=(member.service / 3600000)
-                  td=(member.major)
-                  td
-                    form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=confirmed', method='post')
-                      input(type='hidden', name='_csrf', value=csrfToken)
-                      input.submit-small(type='submit', name='Confirm', value='Confirm')
-                  td
-                    form(id='notNeededAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=notNeeded', method='post')
-                      input(type='hidden', name='_csrf', value=csrfToken)
-                      input.submit-small(type='submit', name='NotNeeded', value='Not Needed')
-                  td
-                    form(id='denyAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=denied', method='post')
-                      input(type='hidden', name='_csrf', value=csrfToken)
-                      input.submit-small(type='submit', name='Deny', value='Did Not Attend')
-        //- throw some space in there
-        div(style="padding-top:2%;")
-        if confirmedAttendees.length > 0
-          +member-list(confirmedAttendees, "Confirmed")
-        //- throw some space in there
-        div(style="padding-top:2%;")
-        if notNeededAttendees.length > 0
-          +member-list(notNeededAttendees, "Not needed")
+                  th Member
+                  th Hours
+                  th Major
+                  th Confirm
+                  th Not Needed
+                  th Did Not Attend
+              tbody
+                each member in unconfirmedAttendees
+                  tr
+                    td=member.first_name+' '+member.last_name
+                    //- Divide service by factor to convert to hours
+                    td=(member.service / 3600000)
+                    td=(member.major)
+                    td
+                      form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=confirmed', method='post')
+                        input(type='hidden', name='_csrf', value=csrfToken)
+                        input.submit-small(type='submit', name='Confirm', value='Confirm')
+                    td
+                      form(id='notNeededAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=notNeeded', method='post')
+                        input(type='hidden', name='_csrf', value=csrfToken)
+                        input.submit-small(type='submit', name='NotNeeded', value='Not Needed')
+                    td
+                      form(id='denyAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=denied', method='post')
+                        input(type='hidden', name='_csrf', value=csrfToken)
+                        input.submit-small(type='submit', name='Deny', value='Did Not Attend')
         
-        //- edit and delete options
-        h2 Event Options
-        a.btn.btn-danger(href='/event/' + event.id + '/edit') Edit Event
-        //- throw some space in there
-        div(style="padding-top:2%;")
-        form(id='deleteEvent', action='/event/' + event.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete the event. Proceed?')")
-          input(type='hidden', name='_csrf', value=csrfToken)
-          input.submit-small(type='submit', name='delete', value='Delete Event')
+        div.super-section
+          if confirmedAttendees.length > 0
+            +member-list(confirmedAttendees, "Confirmed", "h2")
+
+        div.super-section
+          if notNeededAttendees.length > 0
+            +member-list(notNeededAttendees, "Not needed", "h2")
+        
+        div.super-section
+          //- edit and delete options
+          h2 Event Options
+          div.option-buttons-container
+            a.btn.btn-danger(href='/event/' + event.id + '/edit') Edit Event
+
+            form(id='deleteEvent', action='/event/' + event.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete the event. Proceed?')")
+              input(type='hidden', name='_csrf', value=csrfToken)
+              input.submit-small(type='submit', name='delete', value='Delete Event')

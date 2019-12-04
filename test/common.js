@@ -39,6 +39,13 @@ const getNormalUserEmail = () => {
 };
 exports.getNormalUserEmail = getNormalUserEmail;
 
+const getNormalUsername = () => {
+  const userEmail = getNormalUserEmail();
+  const username = userEmail.substring(0, userEmail.indexOf('@'));
+  return username;
+};
+exports.getNormalUsername = getNormalUsername;
+
 const getSuperUserEmail = () => {
   return 'super@mail.uc.edu';
 };
