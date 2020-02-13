@@ -43,4 +43,8 @@ router.post('/reset', indexHandler.postReset);
 
 router.get('/training', indexHandler.getTraining); // new page
 
+router.get('/student-orgs', indexHandler.getStudentOrgs); // new page
+
+router.get('/calendar', indexHandler.getCalendar); // new page
+
 module.exports = router;
