@@ -25,9 +25,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Start MySQL
-      run: sudo service mysql start
-    
     - name: Check MySQL
       run: service mysql status
 
