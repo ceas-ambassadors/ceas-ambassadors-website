@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      TEST_DB_URL: mysql://localhost:3306/amb_site_test
+      TEST_DB_URL: mysql://root@localhost:3306/amb_site_test
       COOKIE_SECRET: keyboard_cat
       RESET_KEY: alphabet_soup
     
