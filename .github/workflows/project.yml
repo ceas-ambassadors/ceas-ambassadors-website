@@ -15,13 +15,12 @@ jobs:
     
     services:
       mysql:
-        image: mysql:8
+        image: mysql:5
         ports: 
         - 3306:3306
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: amb_site_test
-        options: --default-authentication-plugin=mysql_native_password
 
     steps:
     - uses: actions/checkout@v2
