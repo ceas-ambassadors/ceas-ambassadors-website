@@ -43,7 +43,7 @@ jobs:
           ${{ runner.os }}-node-
   
     - name: Install Node Dependencies
-      run: npm install
+      run: npm ci
     
     - name: Check Code Style
       run: npm run lint
