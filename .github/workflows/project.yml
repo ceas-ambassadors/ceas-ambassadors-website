@@ -24,6 +24,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Check MYSQL
+      run: service mysql status
 
     - name: Use Node.js 8.11 # This version should be temporary until we upgrade Node versions
       uses: actions/setup-node@v1
