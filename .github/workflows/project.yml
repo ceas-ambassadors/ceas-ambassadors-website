@@ -1,0 +1,52 @@
+name: Project CI
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    env:
+      TEST_DB_URL: mysql://localhost:3306/amb_site_test
+      COOKIE_SECRET: keyboard_cat
+      RESET_KEY: alphabet_soup
+    
+    services:
+      mysql:
+        image: mysql:8
+        ports: 
+        - 3306
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: amb_site_test
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js 8.11 # This version should be temporary until we upgrade Node versions
+      uses: actions/setup-node@v1
+      with:
+        node-version: 8.11
+        
+    - name: Cache Node Modules
+      uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+  
+    - name: Install Node Dependencies
+      run: npm ci
+    
+    - name: Check Code Style
+      run: npm run lint
+    
+    - name: Test
+      run: npm test
