@@ -35,7 +35,7 @@ jobs:
     - name: Use Node.js 8.11 # This version should be temporary until we upgrade Node versions
       uses: actions/setup-node@v1
       with:
-        node-version: 8.11
+        node-version: 14.x
         
     - name: Cache Node Modules
       uses: actions/cache@v1
