@@ -21,6 +21,7 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: amb_site_test
+        options: --default-authentication-plugin=mysql_native_password
 
     steps:
     - uses: actions/checkout@v2
