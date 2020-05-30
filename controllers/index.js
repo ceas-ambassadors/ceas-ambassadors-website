@@ -116,6 +116,13 @@ const getTraining = (req, res) => {
 };
 exports.getTraining = getTraining;
 
+const getBooklet = (req, res) => {
+  return res.status(res.locals.status).render('info-booklet', {
+      title: 'Ambassador Information Booklet',
+  });
+};
+exports.getBooklet = getBooklet;
+
 const getReset = (req, res) => {
   // Must be logged in to visit reset page
   if (!req.user) {

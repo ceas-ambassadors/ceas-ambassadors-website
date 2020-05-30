@@ -54,7 +54,7 @@ describe('Basic Tests', () => {
   });
 
   // GET /booklet
-  it('GET /booklet', (done) => {
+  it('GET booklet', (done) => {
     request.agent(app)
       .get('/booklet')
       .expect(200, done);
