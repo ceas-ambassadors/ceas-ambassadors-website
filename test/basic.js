@@ -64,7 +64,8 @@ describe('Basic Tests', () => {
   it('GET /training', (done) => {
     request.agent(app)
       .get('/training')
-      .expect(302, done);
+      .redirects(1)
+      .expect(401, done);
   });
   
 
@@ -72,14 +73,16 @@ describe('Basic Tests', () => {
   it('GET /student-orgs', (done) => {
     request.agent(app)
       .get('/student-orgs')
-      .expect(302, done);
+      .redirects(1)
+      .expect(401, done);
   });
 
   // GET /calendar
   it('GET /calendar', (done) => {
     request.agent(app)
       .get('/calendar')
-      .expect(302, done);
+      .redirects(1)
+      .expect(401, done);
   });
 
 
