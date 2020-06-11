@@ -8,7 +8,7 @@
     "lint": "./node_modules/.bin/eslint ."
   },
   "engines": {
-    "node": "8.11"
+    "node": "^14.3.0"
   },
   "eslintConfig": {
     "extends": "airbnb-base",
@@ -23,7 +23,7 @@
     }
   },
   "dependencies": {
-    "bcrypt": "^3.0.0",
+    "bcrypt": "^4.0.1",
     "connect-session-sequelize": "^6.0.0",
     "cookie-parser": "~1.4.3",
     "csurf": "^1.9.0",
