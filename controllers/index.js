@@ -118,7 +118,7 @@ exports.getTraining = getTraining;
 
 const getBooklet = (req, res) => {
   return res.status(res.locals.status).render('info-booklet', {
-      title: 'Ambassador Information Booklet',
+    title: 'Ambassador Information Booklet',
   });
 };
 exports.getBooklet = getBooklet;
