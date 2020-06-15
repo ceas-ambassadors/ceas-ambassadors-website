@@ -125,7 +125,7 @@ const getBooklet = (req, res) => {
       return res.redirect('/');
     });
   }
-  
+
   return res.status(res.locals.status).render('info-booklet', {
     title: 'Ambassador Information Booklet',
   });
