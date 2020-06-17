@@ -35,6 +35,9 @@ router.get('/apply', indexHandler.getApply);
 /* GET virtual tour page */
 router.get('/virtual-tour', indexHandler.getVirtualTour);
 
+/* GET booklet page */
+router.get('/booklet', indexHandler.getBooklet);
+
 /* GET website reset page */
 router.get('/reset', indexHandler.getReset);
 

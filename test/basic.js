@@ -138,6 +138,17 @@ describe('Basic Tests', () => {
       });
     });
 
+    it('Test getting info booklet page as a normal user', () => {
+      const agent = request.agent(app);
+      return common.createNormalUser().then((member) => {
+        return common.createUserSession(member, agent).then(() => {
+          return agent
+            .get('/booklet')
+            .expect(200);
+        });
+      });
+    });
+
     it('Test getting reset page as a super user', () => {
       const agent = request.agent(app);
       return common.createSuperUser().then((member) => {

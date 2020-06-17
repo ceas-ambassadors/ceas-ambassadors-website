@@ -146,6 +146,22 @@ const getCalendar = (req, res) => {
 };
 exports.getCalendar = getCalendar;
 
+const getBooklet = (req, res) => {
+  // Must be logged in to view amassador information
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to view the info booklet.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+
+  return res.status(res.locals.status).render('info-booklet', {
+    title: 'Ambassador Information Booklet',
+  });
+};
+exports.getBooklet = getBooklet;
+
 const getReset = (req, res) => {
   // Must be logged in to visit reset page
   if (!req.user) {
