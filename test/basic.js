@@ -67,7 +67,6 @@ describe('Basic Tests', () => {
       .redirects(1)
       .expect(401, done);
   });
-  
 
   // GET /student-orgs
   it('GET /student-orgs', (done) => {
@@ -84,7 +83,6 @@ describe('Basic Tests', () => {
       .redirects(1)
       .expect(401, done);
   });
-
 
   // Putting semester reset tests in this file because they don't make sense anywhere else
   describe('Semester reset tests', () => {
