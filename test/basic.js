@@ -33,7 +33,7 @@ describe('Basic Tests', () => {
   });
 
   // Test /
-  it('GET hompeage', (done) => {
+  it('GET homepage', (done) => {
     request.agent(app)
       .get('/')
       .expect(200, done);
@@ -58,6 +58,30 @@ describe('Basic Tests', () => {
     request.agent(app)
       .get('/404') // As long as the page 404 doesn't exist, this will give a 404
       .expect(404, done);
+  });
+
+  // GET /training
+  it('GET /training', (done) => {
+    request.agent(app)
+      .get('/training')
+      .redirects(1)
+      .expect(401, done);
+  });
+
+  // GET /student-orgs
+  it('GET /student-orgs', (done) => {
+    request.agent(app)
+      .get('/student-orgs')
+      .redirects(1)
+      .expect(401, done);
+  });
+
+  // GET /calendar
+  it('GET /calendar', (done) => {
+    request.agent(app)
+      .get('/calendar')
+      .redirects(1)
+      .expect(401, done);
   });
 
   // Putting semester reset tests in this file because they don't make sense anywhere else
@@ -87,6 +111,28 @@ describe('Basic Tests', () => {
         return common.createUserSession(member, agent).then(() => {
           return agent
             .get('/training')
+            .expect(200);
+        });
+      });
+    });
+
+    it('Test getting calendar page as a normal user', () => {
+      const agent = request.agent(app);
+      return common.createNormalUser().then((member) => {
+        return common.createUserSession(member, agent).then(() => {
+          return agent
+            .get('/calendar')
+            .expect(200);
+        });
+      });
+    });
+
+    it('Test getting student orgs page as a normal user', () => {
+      const agent = request.agent(app);
+      return common.createNormalUser().then((member) => {
+        return common.createUserSession(member, agent).then(() => {
+          return agent
+            .get('/student-orgs')
             .expect(200);
         });
       });

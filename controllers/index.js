@@ -116,6 +116,36 @@ const getTraining = (req, res) => {
 };
 exports.getTraining = getTraining;
 
+const getStudentOrgs = (req, res) => {
+  // Must be logged in to visit student orgs page
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to view the student orgs page.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+  return res.status(res.locals.status).render('student-orgs', {
+    title: 'Student Organizations',
+  });
+};
+exports.getStudentOrgs = getStudentOrgs;
+
+const getCalendar = (req, res) => {
+  // Must be logged in to visit calendar page
+  if (!req.user) {
+    req.session.status = 401;
+    req.session.alert.errorMessages.push('You must be logged in to view the calendar.');
+    return req.session.save(() => {
+      return res.redirect('/');
+    });
+  }
+  return res.status(res.locals.status).render('calendar', {
+    title: 'Calendar',
+  });
+};
+exports.getCalendar = getCalendar;
+
 const getBooklet = (req, res) => {
   // Must be logged in to view amassador information
   if (!req.user) {
