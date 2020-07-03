@@ -328,7 +328,7 @@ const postProfileUpdate = (req, res, next) => {
         // add public back to the path
         fs.unlink(`public/${req.user.path_to_picture}`, (err) => {
           if (err) throw err;
-          console.log('successfully deleted public/$req.user.path_to_picture')
+          console.log('successfully deleted public/$req.user.path_to_picture');
         });
       }
     }
