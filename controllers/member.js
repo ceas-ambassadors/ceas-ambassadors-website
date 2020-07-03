@@ -326,7 +326,7 @@ const postProfileUpdate = (req, res, next) => {
       if (req.user.path_to_picture && fs.existsSync(`public/${req.user.path_to_picture}`)) {
         // delete the old file
         // add public back to the path
-        fs.unlink(`public/${req.user.path_to_picture}`, next)
+        fs.unlink(`public/${req.user.path_to_picture}`, next);
       }
     }
     // Convert accend checkbox to bool
