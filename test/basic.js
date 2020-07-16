@@ -84,6 +84,14 @@ describe('Basic Tests', () => {
       .expect(401, done);
   });
 
+  // GET /booklet
+  it('GET /booklet', (done) => {
+    request.agent(app)
+      .get('/booklet')
+      .redirects(1)
+      .expect(401, done);
+  });
+
   // Putting semester reset tests in this file because they don't make sense anywhere else
   describe('Semester reset tests', () => {
     it('Test getting reset page not logged in', (done) => {
