@@ -47,7 +47,7 @@
     "eslint": "^7.5.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.22.0",
-    "mocha": "^8.0.1",
+    "mocha": "^8.1.0",
     "sequelize-cli": "^5.5.1",
     "supertest": "^4.0.2"
   }
