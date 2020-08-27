@@ -361,13 +361,12 @@ const postProfileUpdate = (req, res, next) => {
       coops: req.body.coops,
       path_to_picture: file,
     }).then(() => {
-      console.log( 'here' );
       req.session.status = 200;
       req.session.alert.successMessages.push('Profile updated!');
       return req.session.save(() => {
         return res.redirect('/settings');
       });
-    });
+    }).catch(next);
   });
 };
 exports.postProfileUpdate = postProfileUpdate;
