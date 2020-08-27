@@ -326,7 +326,14 @@ const postProfileUpdate = (req, res, next) => {
       if (req.user.path_to_picture && fs.existsSync(`public/${req.user.path_to_picture}`)) {
         // delete the old file
         // add public back to the path
-        fs.unlink(`public/${req.user.path_to_picture}`, next);
+        fs.unlink(`public/${req.user.path_to_picture}`, err => {
+          if(err) {
+            req.session.alert.errorMessages.push(`Error deleting old picture: ${err}`);
+            return req.session.save(() => {
+              return res.redirect('/settings');
+            });
+          }
+        });
       }
     }
     // Convert accend checkbox to bool
@@ -354,12 +361,13 @@ const postProfileUpdate = (req, res, next) => {
       coops: req.body.coops,
       path_to_picture: file,
     }).then(() => {
+      console.log( 'here' );
       req.session.status = 200;
       req.session.alert.successMessages.push('Profile updated!');
       return req.session.save(() => {
         return res.redirect('/settings');
       });
-    }).catch(next);
+    });
   });
 };
 exports.postProfileUpdate = postProfileUpdate;
