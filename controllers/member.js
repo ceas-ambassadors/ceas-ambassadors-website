@@ -326,12 +326,9 @@ const postProfileUpdate = (req, res, next) => {
       if (req.user.path_to_picture && fs.existsSync(`public/${req.user.path_to_picture}`)) {
         // delete the old file
         // add public back to the path
-        fs.unlink(`public/${req.user.path_to_picture}`, err => {
-          if(err) {
-            req.session.alert.errorMessages.push(`Error deleting old picture: ${err}`);
-            return req.session.save(() => {
-              return res.redirect('/settings');
-            });
+        fs.unlink(`public/${req.user.path_to_picture}`, (err) => {
+          if (err) {
+            console.log(err);s
           }
         });
       }
