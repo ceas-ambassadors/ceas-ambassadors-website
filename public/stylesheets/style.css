@@ -493,3 +493,11 @@ input.user-button:active{
   background: #fab7c1;
   cursor: pointer;
 }
+
+.hosted-block{
+  padding: 40px 40px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
+  border-bottom: 5px solid #b31227;
+  margin: 30px 0 40px 0;
+}
