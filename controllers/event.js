@@ -49,8 +49,7 @@ const getDetails = (req, res, next) => {
         ['first_name', 'ASC'],
       ],
     });
-    
-    return Promise.all([ eventAttendeesPromise, allMembersPromise ]).then(([ members, allMembers ]) => {
+    return Promise.all([eventAttendeesPromise, allMembersPromise]).then(([members, allMembers]) => {
       // if it is a private event and the current member is not on the attendee list - they cannot
       // see event details
       // super users can see all events
@@ -92,7 +91,7 @@ const getDetails = (req, res, next) => {
         }
       }
       // build list of members for showing to non-logged in users
-      const unconfirmedAndConfirmedAttendees = unconfirmedAttendees.concat(confirmedAttendees);      
+      const unconfirmedAndConfirmedAttendees = unconfirmedAttendees.concat(confirmedAttendees);
       return res.status(res.locals.status).render('event/detail', {
         title: event.title,
         event, // shorthand for event: event,
