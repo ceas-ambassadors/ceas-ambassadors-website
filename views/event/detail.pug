@@ -37,17 +37,51 @@ block content
       div.super-container
         div.super-section
           h1 Super User Only Options
-          //- Sign up another member block
-          div.member-sign-up
-            h2 Sign Up Another Member
-            form(id='signUpMember', action='/event/' + event.id + '/signup' , method='post')
-              input(type='hidden', name='_csrf', value=csrfToken)
-              div.form-group.member-info
-                label Member 6+2 (or email):
-                input.form-control.form-control-sm(type='text', name='email', placeholder='6+2')
-              div.form-group
-                input.submit-small(type='submit', name='Sign Up Member', value='Sign Up Member')
-
+          div.super-member-sign-up
+            //- Sign up another member block
+            div.member-sign-up
+                h2 Sign up member with 6+2
+                form(id='signUpMember', action='/event/' + event.id + '/signup' , method='post')
+                  input(type='hidden', name='_csrf', value=csrfToken)
+                  div.form-group.member-info
+                    label Member 6+2 (or email):
+                    input.form-control.form-control-sm(type='text', name='email', placeholder='6+2')
+                  div.form-group
+                    input.submit-small(type='submit', name='Sign Up Member', value='Sign Up Member')
+            div.member-sign-up
+              h2 Sign Up member with Search
+              form(id='signUpMember', action='/event/' + event.id + '/signup' , method='post')
+                input(type='hidden', name='_csrf', value=csrfToken)
+                div.form-group.member-info
+                  label Search for a Member
+                  //input.form-control.form-control-sm(type='text', name='email', placeholder='6+2')
+                  input.form-control.form-control-sm(id='searchMember', type='text', name='searchCriteria', placeholder='Default: All Members')
+                  script. 
+                    function populateMemberSearch() {
+                      let searchedMembers = [];
+                      let memberList = !{JSON.stringify(membersNotSignedUp)};
+                      let input = document.getElementById( 'searchMember' ).value;
+                      input = input.toLowerCase();
+                      for ( let i=0; i < memberList.length; i++ ) {
+                        if( memberList[i].first_name.toLowerCase().startsWith( input ) || memberList[i].last_name.toLowerCase().startsWith( input ) ||
+                            memberList[i].email.toLowerCase().startsWith( input ) ) {
+                          searchedMembers.push( memberList[i] );
+                        }
+                      }
+                      let dropDown = document.getElementById( 'selectMembers' )
+                      dropDown.innerHTML = null;
+                      dropDown.options[0] = new Option( '----Select----', '');
+                      for( let i=0; i < searchedMembers.length; i++ ) {
+                        let memberName = searchedMembers[i].first_name + ' ' + searchedMembers[i].last_name;
+                        dropDown.options[dropDown.options.length] = new Option( memberName, searchedMembers[i].email );
+                      }
+                    }
+                  input.submit-small(type='button', name='Search', value='search', onClick='populateMemberSearch()')
+                div.form-group.member-info
+                  label Search Results
+                  select.select-member(name='email', id='selectMembers')
+                    option(value='') ----Select----
+                  input.submit-small(type='submit', name='Sign Up Member', value='Sign Up Member')
         div.super-section
           //- for events, list members by status
           if !event.meeting && unconfirmedAttendees.length > 0
