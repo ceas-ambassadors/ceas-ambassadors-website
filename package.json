@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "eslint": "^7.14.0",
-    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0",
     "mocha": "^8.2.1",
     "sequelize-cli": "^6.2.0",
