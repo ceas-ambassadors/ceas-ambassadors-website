@@ -24,7 +24,7 @@ const getDetails = (req, res, next) => {
     // It's faster to run a raw sql query than it is to run two queries in a row
     // This is because Sequelize can't do joins
     // http://docs.sequelizejs.com/manual/tutorial/raw-queries.html
-    return models.sequelize.query(`SELECT Members.*, Attendances.status
+    const eventAttendeesPromise = models.sequelize.query(`SELECT Members.*, Attendances.status
                                    FROM Members INNER JOIN Attendances
                                    ON Members.id = Attendances.member_id WHERE
                                    Attendances.event_id = :event_id`, {
@@ -32,7 +32,24 @@ const getDetails = (req, res, next) => {
         event_id: req.params.id,
       },
       type: models.sequelize.QueryTypes.SELECT,
-    }).then((members) => {
+    });
+    // create as variable to allow for modifying of search
+    const memberWhere = {
+      private_user: false,
+    };
+    if (req.user && req.user.super_user) {
+      // super users can see private users
+      delete memberWhere.private_user;
+    }
+    // get all member alphabetically sorted and return them
+    const allMembersPromise = models.Member.findAll({
+      where: memberWhere,
+      order: [
+        ['last_name', 'ASC'],
+        ['first_name', 'ASC'],
+      ],
+    });
+    return Promise.all([eventAttendeesPromise, allMembersPromise]).then(([members, allMembers]) => {
       // if it is a private event and the current member is not on the attendee list - they cannot
       // see event details
       // super users can see all events
@@ -62,6 +79,7 @@ const getDetails = (req, res, next) => {
       const confirmedAttendees = [];
       const notNeededAttendees = [];
       const unconfirmedAttendees = [];
+      const membersNotSignedUp = allMembers;
       // Separate members into confirmed, not needed, and unconfirmed
       for (let i = 0; i < members.length; i += 1) {
         if (members[i].status === models.Attendance.getStatusConfirmed()) {
@@ -77,6 +95,7 @@ const getDetails = (req, res, next) => {
       return res.status(res.locals.status).render('event/detail', {
         title: event.title,
         event, // shorthand for event: event,
+        membersNotSignedUp,
         unconfirmedAttendees,
         notNeededAttendees,
         confirmedAttendees,
@@ -472,7 +491,7 @@ const postConfirmAttendance = (req, res, next) => {
   const denyConstant = 'denied';
   // Check that the value of the status query is valid
   if (req.query.status !== confirmedConstant && req.query.status !== notNeededConstant
-      && req.query.status !== denyConstant) {
+    && req.query.status !== denyConstant) {
     req.session.status = 400;
     req.session.alert.errorMessages.push('Incorrect value for status. Please use UI buttons.');
     return req.session.save(() => {
