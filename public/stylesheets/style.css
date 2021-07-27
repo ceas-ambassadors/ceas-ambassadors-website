@@ -145,6 +145,71 @@ nav{
 }
 
 /********************
+* Checkbox Styling
+ ********************/
+
+ input[type="checkbox"] {
+  height: 30px;
+  width: 30px;
+  background-color: #fab7c1;
+ }
+
+
+/*************************
+* Settings Page
+*************************/
+
+.settingInfo input {
+  border: 2px solid #cccccc;
+  padding: 10px;
+}
+
+.infoRow {
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 0px;
+}
+
+.infoRow1 {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  padding: 10px 0px;
+}
+
+.profilePic {
+  flex-direction: column;
+}
+
+.profilePic input {
+  border: none;
+}
+
+.infoPiece {
+  padding-right: 18px;
+  flex-direction: column;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.accend {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.settingHeader {
+  padding-top: 25px;
+}
+
+.superUserButton {
+  padding: 5px 0px;
+}
+
+/********************
 * Create Event Styles
  ********************/
 

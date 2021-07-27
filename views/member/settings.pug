@@ -2,83 +2,94 @@ extends ../layout
 
 block content
   h1 Profile
-  a(href='/member/' + user.id) View your profile
   //- because form-data is uploaded in chunks, csrf validation fails if the token doesn't arrive in the first chunk,
     which it usually doesn't. We can fix this, for better or worse, by appending the csrf token to the request as a param
-  form(id='updateProfile', action='member/profile/update?_csrf=' + csrfToken, enctype="multipart/form-data", method='post')
-    h2 Personal Information
-    div
-      label First Name:
-      input(type='text', name='firstName', value=user.first_name)
-    div
-      label Last Name:
-      input(type='text', name='lastName', value=user.last_name)
-    div
-      label Hometown:
-      input(type='text', name='hometown', value=user.hometown)
-    div
-      label Picture:
-      input(type='file', name='picture')
-    div Please select a square-ish image no larger than 5MB in size.
-    h2 School Information
-    div
-      label Major:
-      input(type='text', name='major', value=user.major)
-    div
-      label Graduation Year:
-      input(type='text', name='gradYear', value=user.grad_year)
-    div
-      label ACCEND
-      input(type='checkbox', name='accend', checked=user.accend)
-    div
-      label Minors:
-      input(type='text', name='minors', value=user.minors)
-    div
-      label Clubs:
-      //- TODO - probably make this a text area
-      input(type='text', name='clubs', value=user.clubs)
-    div
-      label Co-ops:
-      //- TODO - probably make this a text area
-      input(type='text', name='coops', value=user.coops)
-    input(type='submit', name='submitProfile', value='Submit Changes')
+  form(id='updateProfile', action='member/profile/update?_csrf=' + csrfToken, enctype='multipart/form-data', method='post')
+    div(class='settingInfo')
+      h2 Personal Information
+      a(href='/member/' + user.id) View your profile
+      div(class='infoRow')
+        div(class='infoPiece')
+          label First Name
+          input(type='text', name='firstName', value=user.first_name)
+        div(class='infoPiece')
+          label Last Name
+          input(type='text', name='lastName', value=user.last_name)
+        div(class='infoPiece')
+          label Hometown
+          input(type='text', name='hometown', value=user.hometown)
+        div(class='profilePic')
+          label Picture
+          input(type='file', name='picture')
+          div Please select a square-ish image no larger than 1MB in size.
+      h2 School Information
+      div(class='infoRow')  
+        div(class='infoPiece')
+          label Major
+          input(type='text', name='major', value=user.major)
+        div(class='infoPiece')
+          label Graduation Year
+          input(type='text', name='gradYear', value=user.grad_year)
+        div(class='infoPiece')
+          label Minors
+          input(type='text', name='minors', value=user.minors)
+        div(class='accend')
+          label ACCEND
+          input(type='checkbox', name='accend', checked=user.accend)
+      div(class='infoRow')
+        div(class='infoPiece')
+          label Clubs
+          //- TODO - probably make this a text area
+          input(type='text', name='clubs', value=user.clubs)
+        div(class='infoPiece')
+          label Co-ops
+          //- TODO - probably make this a text area
+          input(type='text', name='coops', value=user.coops)
+      //- input(type='submit', name='submitProfile', value='Submit Changes')
+      input.user-button(type='submit', name='submitProfile', value='Submit Changes')
 
-  //- Profile edit details
-  h1 Account
-  form(id='changePassword', action='change-password', method='post')
-    input(type='hidden', name='_csrf', value=csrfToken)
-    h2 Change Password
-    div 
-      label Current Password: 
-      input(type='password', name='currentPassword')
-    div
-      label New Password: 
-      input(type='password', name='newPassword')
-    div
-      label Repeat New Password: 
-      input(type='password', name='repeatNewPassword')
-    input(type='submit', name='changePassword', value='Change Password')
+      //- Profile edit details
+      div(class='settingHeader')
+        h1 Account
+        form(id='changePassword', action='change-password', method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          h2 Change Password
+          div(class='infoRow1')
+            label Current Password 
+            input(type='password', name='currentPassword')
+          div(class='infoRow1')
+            label New Password 
+            input(type='password', name='newPassword')
+          div(class='infoRow1')
+            label Repeat New Password 
+            input(type='password', name='repeatNewPassword')
+          input.user-button(type='submit', name='changePassword', value='Change Password')
 
-  //- If user is a super user, they can modify their meta attribute status'
-  if user && user.super_user
-    h1 Account Meta Attributes
-    if user.super_user
-      //- descalate super user
-      form(id='superUserDemote', action='/member/' + user.id + '/update-attributes?super_user=false', method='post')
-        input(type='hidden', name='_csrf', value=csrfToken)
-        input(type='submit', name='demote', value='Demote yourself from super user')    
-    if user.private_user
-      //- set to public
-      form(id='publicUser', action='/member/' + user.id + '/update-attributes?private_user=false', method='post')
-        input(type='hidden', name='_csrf', value=csrfToken)
-        input(type='submit', name='elevate', value='Set profile to public')   
-    if !user.private_user
-      //- set to private
-      form(id='privateUser', action='/member/' + user.id + '/update-attributes?private_user=true', method='post')
-        input(type='hidden', name='_csrf', value=csrfToken)
-        input(type='submit', name='elevate', value='Set profile to private')
+    //- If user is a super user, they can modify their meta attribute status'
+    if user && user.super_user
+      div(class='settingHeader')
+      h1 Account Meta Attributes
+      if user.super_user
+        //- descalate super user
+        form(id='superUserDemote', action='/member/' + user.id + '/update-attributes?super_user=false', method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          div(class="superUserButton")
+            input.user-button(type='submit', name='demote', value='Demote yourself from super user')    
+      if user.private_user
+        //- set to public
+        form(id='publicUser', action='/member/' + user.id + '/update-attributes?private_user=false', method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          div(class="superUserButton")
+            input.user-button(type='submit', name='elevate', value='Set profile to public')   
+      if !user.private_user
+        //- set to private
+        form(id='privateUser', action='/member/' + user.id + '/update-attributes?private_user=true', method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          div(class="superUserButton")  
+            input.user-button(type='submit', name='elevate', value='Set profile to private')
 
-    //- If the user is a super user, they can access the website reset page
-    h1 Website Reset
-    a(href='/reset') Click here to go to the website reset page.
-  
+      //- If the user is a super user, they can access the website reset page
+      div(class="settingHeader")
+        h1 Website Reset
+        a(href='/reset') Click here to go to the website reset page.
+    
