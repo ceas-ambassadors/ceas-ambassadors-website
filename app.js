@@ -73,7 +73,6 @@ if (process.env.NODE_ENV === 'test') {
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 /**
  * Database configuration
  * The actual connecting to the database happend in `./models/index.js`,
