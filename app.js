@@ -30,10 +30,19 @@ app.use(
     directives: {
       'script-src': ['"self"', 'https://drive.google.com/', 'https://docs.google.com/', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js', 'https://code.jquery.com/jquery-3.3.1.slim.min.js'],
       'script-src-elem': ['"self"', 'https://code.jquery.com/jquery-3.3.1.slim.min.js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'],
-      'frame-src': ['"self"', 'https://www.google.com/', 'https://drive.google.com/', 'https://docs.google.com/', 'https://calendar.google.com/', 'https://mapsengine.google.com/'],
+      'frame-src': ['"self"', 'https://formfacade.com/', 'https://www.google.com/', 'https://drive.google.com/', 'https://docs.google.com/', 'https://calendar.google.com/', 'https://mapsengine.google.com/'],
     },
   }),
 );
+app.use(helmet.dnsPrefetchControl());
+app.use(helmet.expectCt());
+app.use(helmet.frameguard());
+app.use(helmet.hidePoweredBy());
+app.use(helmet.hsts());
+app.use(helmet.ieNoOpen());
+app.use(helmet.noSniff());
+app.use(helmet.permittedCrossDomainPolicies());
+app.use(helmet.referrerPolicy());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
