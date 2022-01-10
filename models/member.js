@@ -53,6 +53,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
+    is_certified: {
+      type: DataTypes.BOOLEAN,
+    },
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,
