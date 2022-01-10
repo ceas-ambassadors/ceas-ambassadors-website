@@ -45,14 +45,7 @@ block content
             p #{service} Completed hours
             p #{meetings} Meetings Attended
             p #{serviceNotNeeded} Hours not needed
-        if member.is_certified
-          div.secondary-info-detail 
-            h3 Certified?
-            p Yes
-        if !member.is_certified
-          div.secondary-info-detail 
-            h3 Certified?
-            p No
+  
   //- show event attendance information only for themselves and super users
   if user && (user.super_user || user.id === member.id)
     if unconfirmedEvents.length > 0
@@ -89,16 +82,6 @@ block content
         form(id='privateUser', action='/member/' + member.id + '/update-attributes?private_user=true', method='post')
           input(type='hidden', name='_csrf', value=csrfToken)
           input.submit-small(type='submit', name='elevate', value='Set profile to private')
-      if member.is_certified
-        //- set to not certified
-        form(id='decertify', action='/member/' + member.id + '/update-attributes?is_certified=false', method='post')
-          input(type='hidden', name='_csrf', value=csrfToken)
-          input.submit-small(type='submit', name='elevate', value='Decertify')   
-      if !member.is_certified
-        //- set to certify
-        form(id='certify', action='/member/' + member.id + '/update-attributes?is_certified=true', method='post')
-          input(type='hidden', name='_csrf', value=csrfToken)
-          input.submit-small(type='submit', name='elevate', value='Certify')
       h2 Delete Member
       form(id='deleteMember', action='/member/' + member.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete this member. Proceed?')")
         input(type='hidden', name='_csrf', value=csrfToken)
