@@ -17,6 +17,8 @@ mixin member-card(member)
         p.class='Class of ' + member.grad_year
       if member.coops
         p.coop= 'Co-ops: ' + member.coops
+      if user && user.super_user 
+        p.is_certified #{member.is_certified ? "Certified" : "Not Certified"}
       //- list hours for member if the user super user
       //- TODO: currently only does this if a user is logged in
       //if user
