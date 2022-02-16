@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0,
     },
+    is_certified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: 0,
+    },
     path_to_picture: DataTypes.STRING,
     clubs: DataTypes.TEXT,
     minors: DataTypes.STRING,
