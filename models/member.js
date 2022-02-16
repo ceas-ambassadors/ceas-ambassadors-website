@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0,
     },
+    is_certified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: 0,
+    },
     path_to_picture: DataTypes.STRING,
     clubs: DataTypes.TEXT,
     minors: DataTypes.STRING,
@@ -52,9 +57,6 @@ module.exports = (sequelize, DataTypes) => {
     private_user: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-    },
-    is_certified: {
-      type: DataTypes.BOOLEAN,
     },
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
