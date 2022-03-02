@@ -55,6 +55,8 @@ This is the actual structue of the tables and their relationships. Each heading 
   * Date record was created - automatically handled by sequelize
 * updated_at
   * Date record was last updated - automatically handled by sequelize
+* is_certified
+  * boolean record to store if an ambassador is certified or not
 
 ### Event
 * id - primary key
