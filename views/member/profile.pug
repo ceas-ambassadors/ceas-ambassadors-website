@@ -37,14 +37,14 @@ block content
         div.secondary-info-detail
           h3 Orgs and Clubs
           p #{member.clubs}
-    //- show service hours only for themselves and super users
+    //- show points only for themselves and super users
     div.secondary-info
       if user && (user.super_user || user.id === member.id)
         div.secondary-info-detail
             h3 Total Service
-            p #{service} Completed hours
+            p #{service} Completed points
             p #{meetings} Meetings Attended
-            p #{serviceNotNeeded} Hours not needed
+            p #{serviceNotNeeded} Points not needed
         if member.is_certified
           div.secondary-info-detail 
             h3 Certified?

@@ -27,7 +27,7 @@ This is now the user/member - because we're moving to a login only system.
 * major
 * graduation year
 * MNumber
-* hours completed
+* points completed
 * meetings attended
 * Not needed - for when a member shows up but is not needed at an event
 * Picture
@@ -79,7 +79,7 @@ The express generator does some stuff to denote when a website is running in pro
 Need to use `dotenv` to manage environment variables/secrets
 ### [I] Reset website
 The current website has functionality to reset the website for a new semester.
-This clears out current hours, events, and meetings.
+This clears out current points, events, and meetings.
 ### [C] Apply page
 There should be a page that has a link to apply for ambassadors. I can just iframe
 a google doc here. 
@@ -100,21 +100,21 @@ to be checked.
 ### [C] Delete members
 Members need to be deletable, for leaving the org or graduating. Should only be an allowable action for super users. Should ask for confirmation before deleting.
 ### [C] Detail view of member
-Should show all details on member, including attended events and meetings, contact info, total hours, etc. Super users should be able to view this for any given member, and a member should be able to view their own.
+Should show all details on member, including attended events and meetings, contact info, total points, etc. Super users should be able to view this for any given member, and a member should be able to view their own.
 ### [C] Add custom event
 Members complete custom events, need to be able to add a single event.
 This should create a real event, and then mark it as private. Only super users should have this ability.
 ### [C] List view of members
-Currently, this has a "highlight by service hour requirement" for logged in users. This would be a good idea. Requires frontend javascript code. Only logged in super users should see how many hours a member has.
+Currently, this has a "highlight by service hour requirement" for logged in users. This would be a good idea. Requires frontend javascript code. Only logged in super users should see how many points a member has.
 
 ## Events
 ### [C] Add new events
 Should verify that the event is valid - that is, it should not let the end time
 be before the start time. Super user only
 ### [C] Delete events
-Hours should be linked - so deleting an event should cause a member's hours to decrease. Super user only
+Points should be linked - so deleting an event should cause a member's points to decrease. Super user only
 ### [C] Edit events
-Hours should be linked - editing an event should cause a member's hours to change. Super user only.
+Points should be linked - editing an event should cause a member's points to change. Super user only.
 ### [C] Detail view
 Should include signed up members, and confirmed attended members. Confirmed members should be super user only.
 ### [C] List View

@@ -19,12 +19,12 @@ mixin member-card(member)
         p.coop= 'Co-ops: ' + member.coops
       if user && user.super_user 
         p.is_certified #{member.is_certified ? "Certified" : "Not Certified"}
-      //- list hours for member if the user super user
+      //- list points for member if the user super user
       //- TODO: currently only does this if a user is logged in
       //if user
       //  //- not in a human friendly format, but not a big deal right now - will
       //  //- need fixed on the backend
-      //  div=member.service + ' Hours'
+      //  div=member.service + ' Points'
       //  div=member.meetings + ' Meetings'
       //  div=member.service_not_needed + ' '
 
