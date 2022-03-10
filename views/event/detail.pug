@@ -90,7 +90,7 @@ block content
               thead
                 tr
                   th Member
-                  th Hours
+                  th Points
                   th Major
                   th Confirm
                   th Not Needed
@@ -99,7 +99,7 @@ block content
                 each member in unconfirmedAttendees
                   tr
                     td=member.first_name+' '+member.last_name
-                    //- Divide service by factor to convert to hours
+                    //- Divide service by factor to convert to points
                     td=(member.service / 3600000)
                     td=(member.major)
                     td
