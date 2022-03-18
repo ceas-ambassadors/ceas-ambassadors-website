@@ -27,7 +27,7 @@
     "connect-session-sequelize": "^6.1.1",
     "cookie-parser": "~1.4.6",
     "csurf": "^1.11.0",
-    "debug": "~4.3.3",
+    "debug": "~4.3.4",
     "dotenv": "^16.0.0",
     "express": "~4.17.3",
     "express-session": "^1.17.2",
