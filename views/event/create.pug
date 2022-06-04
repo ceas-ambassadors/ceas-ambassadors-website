@@ -60,6 +60,10 @@ block content
             input.form-check-input(type='checkbox', name='isMeeting', checked=event.meeting, tabindex=7)
             label.form-check-label Meeting
         if isEdit === 'true'
-          input.submit(type='submit', name='create', value='Edit Event', tabindex=8)
+          div.form-group.form-check
+            input.form-check-input(type="checkbox", name='isDisabled', checked=event.is_disabled, tabindex=8)
+            label.form-check-label(class="switch") Disable sign ups
+        if isEdit === 'true'
+          input.submit(type='submit', name='create', value='Edit Event', tabindex=9)
         else
           input.submit(type='submit', name='create', value='Create Event', tabindex=8)

@@ -271,11 +271,15 @@ const postCreateEdit = [
     // handle isPublic and isMeeting flags
     let isPublic = false;
     let isMeeting = false;
+    let isDisabled = false;
     if (req.body.isPublic === 'on') {
       isPublic = true;
     }
     if (req.body.isMeeting === 'on') {
       isMeeting = true;
+    }
+    if (req.body.isDisabled === 'on') {
+      isDisabled = 1;
     }
 
     if (req.body.isEdit === 'true') {
@@ -297,6 +301,7 @@ const postCreateEdit = [
           public: isPublic,
           meeting: isMeeting,
           created_by: req.user.id,
+          is_disabled: isDisabled,
         }).then(() => {
           req.session.status = 201;
           req.session.alert.successMessages.push('Event updated!');
