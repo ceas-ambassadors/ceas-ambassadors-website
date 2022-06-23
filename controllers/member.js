@@ -1,7 +1,7 @@
 /**
  * This page is home to all code for controlling the member model
  */
-const { check, validationResult } = require('express-validator/check');
+const { check, validationResult } = require('express-validator');
 const passport = require('passport');
 const multer = require('multer');
 const fs = require('fs');
