@@ -27,11 +27,11 @@
     "connect-session-sequelize": "^6.1.1",
     "cookie-parser": "~1.4.6",
     "csurf": "^1.11.0",
-    "debug": "~4.3.3",
-    "dotenv": "^16.0.0",
-    "express": "~4.17.3",
-    "express-session": "^1.17.2",
-    "express-validator": "^6.14.0",
+    "debug": "~4.3.4",
+    "dotenv": "^16.0.1",
+    "express": "~4.18.1",
+    "express-session": "^1.17.3",
+    "express-validator": "^6.14.2",
     "helmet": "^5.0.2",
     "http-errors": "~2.0.0",
     "morgan": "~1.10.0",
@@ -47,8 +47,8 @@
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.22.1",
-    "mocha": "^9.2.2",
+    "mocha": "^10.0.0",
     "sequelize-cli": "^6.4.1",
-    "supertest": "^6.2.2"
+    "supertest": "^6.2.3"
   }
 }
