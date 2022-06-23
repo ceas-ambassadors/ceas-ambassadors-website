@@ -1,5 +1,5 @@
 mixin member-table(members, title)
-    h1.hours-table=title
+    h1.points-table=title
     table.table
         thead
             tr
@@ -7,8 +7,9 @@ mixin member-table(members, title)
                 th Email
                 th Major
                 th Meetings
-                th Hours
+                th Points
                 th Not Needed
+                th Certified
         each member in members
             tr
                 td #{member.first_name} #{member.last_name}
@@ -17,4 +18,5 @@ mixin member-table(members, title)
                 td #{member.meetings}
                 td #{member.service / 3600000}
                 td #{member.service_not_needed / 3600000}
+                td #{member.is_certified ? "Yes" : "No"}
 

@@ -37,6 +37,10 @@ block content
       div.super-container
         div.super-section
           h1 Super User Only Options
+          label(class="switch") Disable sign ups
+            input(type="checkbox")
+            span(class=["slider", "round"])
+
           div.super-member-sign-up
             //- Sign up another member block
             div.member-sign-up
@@ -90,7 +94,7 @@ block content
               thead
                 tr
                   th Member
-                  th Hours
+                  th Points
                   th Major
                   th Confirm
                   th Not Needed
@@ -99,7 +103,7 @@ block content
                 each member in unconfirmedAttendees
                   tr
                     td=member.first_name+' '+member.last_name
-                    //- Divide service by factor to convert to hours
+                    //- Divide service by factor to convert to points
                     td=(member.service / 3600000)
                     td=(member.major)
                     td

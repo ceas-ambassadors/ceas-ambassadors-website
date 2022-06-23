@@ -24,7 +24,25 @@ const memberRouter = require('./routes/member');
 const app = express();
 
 // add helmet protections from various attacks
-app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    useDefaults: true,
+    directives: {
+      'script-src': ['"self"', 'https://drive.google.com/', 'https://docs.google.com/', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js', 'https://code.jquery.com/jquery-3.3.1.slim.min.js'],
+      'script-src-elem': ['"self"', 'https://code.jquery.com/jquery-3.3.1.slim.min.js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'],
+      'frame-src': ['"self"', 'https://formfacade.com/', 'https://www.google.com/', 'https://drive.google.com/', 'https://docs.google.com/', 'https://calendar.google.com/', 'https://mapsengine.google.com/'],
+    },
+  }),
+);
+app.use(helmet.dnsPrefetchControl());
+app.use(helmet.expectCt());
+app.use(helmet.frameguard());
+app.use(helmet.hidePoweredBy());
+app.use(helmet.hsts());
+app.use(helmet.ieNoOpen());
+app.use(helmet.noSniff());
+app.use(helmet.permittedCrossDomainPolicies());
+app.use(helmet.referrerPolicy());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -55,13 +73,20 @@ const sess = {
   store: sequelizeSessionStore,
   resave: false,
   cookie: {},
+  saveUninitialized: true,
 };
 // In production, serve secure cookies (https only)
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1); // trust first proxy
   sess.cookie.secure = true; // serve secure cookies
 }
-app.use(session(sess));
+app.use(session({
+  secret: process.env.COOKIE_SECRET,
+  store: sequelizeSessionStore,
+  resave: false,
+  cookie: {},
+  saveUninitialized: true,
+}));
 // cross site request forgery protection
 // disable csurf for testing
 if (process.env.NODE_ENV === 'test') {
@@ -72,7 +97,6 @@ if (process.env.NODE_ENV === 'test') {
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 /**
  * Database configuration

@@ -1,7 +1,7 @@
 /**
  * This page is home to all code for controlling the member model
  */
-const { check, validationResult } = require('express-validator/check');
+const { check, validationResult } = require('express-validator');
 const passport = require('passport');
 const multer = require('multer');
 const fs = require('fs');
@@ -526,6 +526,7 @@ const postUpdateAttributes = (req, res, next) => {
     }
     let superUser = req.query.super_user;
     let privateUser = req.query.private_user;
+    let isCertified = req.query.is_certified;
     // variable to indicate that something was changed
     let change = false;
     if (superUser === 'true') {
@@ -550,9 +551,21 @@ const postUpdateAttributes = (req, res, next) => {
     if (change === false && privateUser !== member.private_user) {
       change = true;
     }
+    if (isCertified === 'true') {
+      isCertified = true;
+    } else if (isCertified === 'false') {
+      isCertified = false;
+    } else {
+      // wasn't true or false, set to current value
+      isCertified = member.is_certified;
+    }
+    if (change === false && isCertified !== member.is_certified) {
+      change = true;
+    }
     return member.update({
       super_user: superUser,
       private_user: privateUser,
+      is_certified: isCertified,
     }).then(() => {
       if (change === true) {
         req.session.status = 200;
