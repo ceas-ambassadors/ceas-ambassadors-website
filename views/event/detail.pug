@@ -37,10 +37,7 @@ block content
       div.super-container
         div.super-section
           h1 Super User Only Options
-          label(class="switch") Disable sign ups
-            input(type="checkbox")
-            span(class=["slider", "round"])
-
+          
           div.super-member-sign-up
             //- Sign up another member block
             div.member-sign-up
@@ -125,7 +122,7 @@ block content
 
         div.super-section
           if notNeededAttendees.length > 0
-            +member-list(notNeededAttendees, "Not needed", "h2")
+            +member-list(notNeededAttendees, "Not Needed", "h2")
         
         div.super-section
           //- edit and delete options
