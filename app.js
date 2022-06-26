@@ -73,13 +73,20 @@ const sess = {
   store: sequelizeSessionStore,
   resave: false,
   cookie: {},
+  saveUninitialized: true,
 };
 // In production, serve secure cookies (https only)
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1); // trust first proxy
   sess.cookie.secure = true; // serve secure cookies
 }
-app.use(session(sess));
+app.use(session({
+  secret: process.env.COOKIE_SECRET,
+  store: sequelizeSessionStore,
+  resave: false,
+  cookie: {},
+  saveUninitialized: true,
+}));
 // cross site request forgery protection
 // disable csurf for testing
 if (process.env.NODE_ENV === 'test') {
