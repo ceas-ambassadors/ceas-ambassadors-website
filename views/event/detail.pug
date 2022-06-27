@@ -24,9 +24,12 @@ block content
 
     //- show sign up if it's an event and they're logged in, or if its a meeting and they're a super user
     if user && (!event.meeting || user.super_user)
-      form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
-        input(type='hidden', name='_csrf', value=csrfToken)
-        input.user-button(type='submit', name='Sign Up', value='Sign Up For Event')
+      if !event.is_disabled
+        form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          input.user-button(type='submit', name='Sign Up', value='Sign Up For Event')
+      if event.is_disabled 
+        p Sign ups are closed for this event now
 
     if !user || (user && !user.super_user)
       //- Show normal users a combination of unconfirmed and confirmed members
