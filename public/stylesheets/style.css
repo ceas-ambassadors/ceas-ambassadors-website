@@ -19,12 +19,38 @@ a {
 *********************/
 .navbar-brand{
   font-size: 1.4em;
+  color: #000000;
+
 }
+
+.navbar-brand:hover{
+  color:#000000;
+  font-size:1.42em;
+} 
 
 nav{
   font-size: 1.2em;
   margin-bottom: 40px;
+  background:#f9f8f8;
 }
+
+.nav-link{
+  color:#a2a1a1;
+}
+
+.nav-link:hover{
+  color: #585757;
+  font-size:large;
+
+}
+
+span.navbar-toggler-icon{
+ width:20px;
+ height: 6px;
+ background: rgb(0, 0, 0);
+ border-radius: 5cm;
+}
+ 
 
 /*********************
 *   Alert Styles     *
@@ -576,4 +602,13 @@ input.user-button:active{
   border-radius: 4px;
   border-bottom: 5px solid #b31227;
   margin: 30px 0 40px 0;
+}
+
+#icon{
+  width: 25px;
+  cursor: pointer;
+  position:absolute;
+  top:60px;
+  right: 10px;
+  
 }

@@ -1,0 +1,661 @@
+/* The base of everything */
+body {
+    margin: 0px;
+    font: 14px "Lato", Helvetica, Arial, sans-serif;
+    background-color: #1d1b1b;
+    color:#efede9
+  }
+  
+  /* Link */
+  a {
+    color: #00B7FF;
+  }
+  /* This is to fix footer issue */
+  #upper-block{
+    min-height: calc(100vh - 90px);
+  }
+  
+  /*********************
+  *  Nav bar styles    *
+  *********************/
+  .navbar-brand{
+    font-size: 1.4em;
+    color:#f4f4f4
+  }
+
+  .navbar-brand:hover{
+    color:#ffffff;
+    font-size:1.42em;
+  } 
+
+  nav{
+    font-size: 1.2em;
+    margin-bottom: 40px;
+    background: #242323;
+  }
+
+  .nav-link{
+    color: #969494;
+  }
+
+  .nav-link:hover{
+    color: #efefef;
+    font-size:large;
+
+  }
+
+  span.navbar-toggler-icon{
+    width:20px;
+    height: 6px;
+    background:#efefef;
+    border-radius: 5cm;
+   }
+    
+  
+  /*********************
+  *   Alert Styles     *
+  *********************/
+  #alert{
+    padding: 1% 10%;
+    margin: 0 10% 20px 10%;
+    font-size: 20px;
+    padding: 20px;
+    line-height: 180%;
+    border-radius: 0;
+  }
+  
+  .alert-error{
+    background-color:#ffe3e3;
+    border: 2px solid#e15e5e;
+    color:#9b0000;
+  }
+  
+  .alert-info{
+    background-color: #fffcf4;
+    border: 2px solid#f9e1a3;
+    color:#8b6c27;
+  }
+  
+  .alert-success{
+    background-color:#e6ffef;
+    border: 2px solid#29bc5a;
+    color:#006a23;
+  }
+  
+  /*********************
+  * Content Container  *
+  *********************/
+  /* Everything content wise appears within this container */
+  #content {
+    padding: 0 10% 5% 10%;
+  }
+  
+  /*********************
+  *   Footer Styles    *
+  *********************/
+  /* Locks the footer to the bottom of the page */
+  #footer {
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 1rem;
+    background-color: #1b1919;
+    text-align: center;
+    height: 90px;
+  }
+  
+  /***************************
+  *   Sign-Up/Login Styles
+  **************************** */
+  .container{
+     display: flex;
+     justify-content: center;
+   }
+  
+  .box-border{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #161414;
+    padding: 20px 50px 20px 50px;
+    box-shadow: 0 0 20px 0 rgba(144, 130, 130, 0.2), 0 5px 5px 0 rgba(144, 130, 130, 0.24);
+    border-radius: 4px;
+    z-index: 1;
+  }
+  
+  .signin{
+    max-width: 360px;
+  }
+  
+  .title{
+    margin-top: 0;
+  }
+  
+  /* Styles the form holding the inputs */
+  .sign-log{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 360px;
+    width: 100%;
+  }
+  
+  /* Styling the input text fields */
+  .entry{
+    outline: 0;
+    background: #1a1818;
+    color: rgb(194, 194, 194);
+    border: 0;
+    margin: 0 0 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+  
+  .submit{
+    background-color: #ec1818;
+    border: none;
+    color: white;
+    padding: 10px 24px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    width: 100%;
+    border-radius: 4px;
+    outline: none;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .submit:hover, .btn-danger:hover{
+    background: #ac0000;
+  }
+  
+  /********************
+  * Checkbox Styling
+   ********************/
+  
+   input[type="checkbox"] {
+    height: 30px;
+    width: 30px;
+    background-color: #fab7c1;
+   }
+  
+  
+  /*************************
+  * Settings Page
+  *************************/
+  
+  .settingInfo input {
+    border: 1px solid #cccccc;
+    background: #121111;
+    color: #eaeaea;
+    padding: 10px;
+  }
+  
+  .infoRow {
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0px;
+  }
+  
+  .infoRow1 {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding: 10px 0px;
+  }
+  
+  .profilePic {
+    flex-direction: column;
+  }
+  
+  .profilePic input {
+    border: none;
+  }
+  
+  .infoPiece {
+    padding-right: 18px;
+    flex-direction: column;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .accend {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .settingHeader {
+    padding-top: 25px;
+  }
+  
+  .superUserButton {
+    padding: 5px 0px;
+  }
+  
+  /********************
+  * Create Event Styles
+   ********************/
+  
+  .create-event{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .create-title{
+    font-size: 35px;
+  
+  }
+  
+  .form-grid{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  
+   
+  }
+  
+  .left-grid{
+    margin-right: 10px;
+  
+  }
+  
+  div.form-group input{
+    background: #121111;
+    
+  }
+  
+  div.form-group input{
+    background: #121111;
+    
+  }
+  
+  div.form-group ::placeholder{
+    color:#978e8e
+  }
+  
+  
+  @media (max-width: 585px) {
+    .create-title{
+      font-size: 24px;
+    }
+  }
+  
+  /****************************
+  * Styling Event/Meeting List
+  ******************************/
+  
+  /* This will make columns invisible when the screen becomes a mobile view */
+  @media (max-width: 630px){
+    .disp-col{
+      display: none;
+    }
+  }
+  
+  .btn-danger{
+    background-color: #ec1818;
+  }
+  
+  .event-box{
+    margin-top: 10px;
+  }
+  
+  .event-passed {
+    background-color: #ffe7e6; 
+  }
+  
+  /*****************************
+  * Styling event/member detail
+  ******************************/
+  /* TODO - this is duplicated from the above submit styles - I'd like to fix this later */
+  .submit-small {
+    background-color: #ec1818;
+    border: none;
+    color: white;
+    padding: 10px 24px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    border-radius: 4px;
+    outline: none;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .submit-small:hover, .btn-danger:hover{
+    background: #ac0000;
+  }
+  
+  /*************************
+  * Event Detail Styling
+  *************************/
+  .event h1{
+    font-weight: 600;
+  }
+  
+  .event h2{
+    font-weight: 300;
+    color: #efede9
+  }
+  
+  .event .date-loc{
+    font-weight: 300;
+    color: #898888;
+  }
+  
+  .event .super-container{
+    margin-top: 40px;
+  }
+  
+  .event .super-container h1{
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+  
+  .event .super-container label{
+    padding-top: 10px;
+    
+  }
+  
+  .event .super-container .super-section{
+    margin-bottom: 30px;
+    
+  }
+  
+  .event .super-container .super-section .super-member-sign-up{
+    display: flex;
+   
+    
+  }
+  .event .super-container .member-sign-up{
+    margin: 10px;
+    padding: 15px 25px;
+    box-shadow: 0 10px 20px -5px rgba(174, 174, 174, 0.1), 0 1px 3px 0 rgba(174, 174, 174, 0.1);
+    border-radius: 4px;
+    max-width: 800px;
+  
+  }
+  
+  .event .super-container .member-sign-up h2{
+      border-bottom: 2px solid #eaeaea;
+      padding-bottom: 10px;
+      font-size: 1.4rem;
+      font-weight: 600;
+    
+  }
+  
+  .event .super-container .member-sign-up .member-info{
+    display: flex;
+  }
+  
+  .event .super-container .member-sign-up .member-info label{
+    margin-right: 10px;
+    width: 30%;
+    
+  }
+  
+  .event .super-container .member-sign-up .member-info input{
+    width: 40%;
+    background-color: #1a1818;
+    color:#eaeaea;
+  }
+  
+  
+  
+  .event .super-container .super-section .member-sign-up input.submit-small{
+    background: #ec1818
+  }
+  
+  .event .super-container .super-section .member-sign-up input.submit-small:hover{
+    
+    background: #ac0000;
+  }
+  
+  .event .super-container .member-sign-up .member-info select{
+    width: 200px;
+    height: 40px;
+    color:whitesmoke;
+    background:#1a1818;
+   
+  }
+  
+  .event .super-container .option-buttons-container {
+    margin-top: 10px;
+    display: flex;
+    
+  }
+  
+  .event .super-container .option-buttons-container .btn {
+    margin-right: 10px;
+  }
+  
+  /*************************
+  * Member Card Styling
+  *************************/
+  .member-table{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .member-card{
+    box-sizing: content-box;
+    display: flex;
+    background: #121111;
+    color:rgb(137, 137, 137);
+    padding: 15px 25px;
+    margin: 1%;
+    box-shadow: 0 20px 25px -5px rgba(114, 102, 102, 0.1), 0 1px 3px 0 rgba(156, 143, 143, 0.1), 0 1px 2px 0 rgba(156, 143, 143, 0.06);
+    border-radius: 4px;
+    border-bottom: 5px solid #ba2a3d;
+    z-index: 1;
+    flex: 1;
+    align-items: center;
+    transition: 0.3s;
+    max-width: 300px;
+    flex-basis: 300px;
+  }
+  
+  .member-card:hover{
+    background-color: #6c3d43b0;
+    border-bottom: 5px solid #22060a;
+    color: #dcd2d2;
+  }
+  
+  .member-card .member-photo{
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .member-card .image-cropper{
+      width: 100px;
+      height: 100px;
+      position: relative;
+      overflow: hidden;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+  }
+  
+  .member-card-info{
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 20;
+  }
+  
+  .member-card-info p{
+    margin: 0;
+    padding: 0;
+  }
+  
+  .member-card-info .member-name{
+    text-decoration: none;
+    color: #ba2a3d;
+    font-weight: 600;
+    font-size: 1.2em;
+    transition: color 0.3s;
+  }
+  
+  .member-card-info .member-name:hover{
+    text-decoration: underline;
+  }
+  
+  .member-card:hover .member-name{
+    color: #ffffff;
+  }
+  
+  .member-card-info .major{
+    margin-top: 6px;
+  }
+  
+  .member-card-info .email{
+    color: #ba2a3d;
+    transition: color 0.3s;
+  }
+  
+  .member-card:hover .email{
+    color: #ffffff;
+  }
+  
+  .member-card-info .class{
+    font-style: italic;
+  }
+  
+  .member-card-info .coop{
+    margin-top: 8px;
+  }
+  
+  @media (max-width: 630px){
+    .member-card-info .email{
+      font-size: 10px;
+    }
+  }
+  
+  /************************
+  * Member Points Table Styling
+  *************************/
+  .points-table{
+    margin-top: 25px;
+  }
+  
+  /*************************
+  * Member Profile Styling
+  *************************/
+  .profile-card .member-photo-lg{
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .profile-card .image-cropper-lg{
+      width: 180px;
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+    border-radius: 50%;
+  }
+  
+  .profile-card{
+    padding: 40px 40px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+    border-bottom: 5px solid #b31227;
+    margin: 30px 0 40px 0;
+  }
+  
+  .profile-card p{
+    margin-bottom: 8px;
+  }
+  
+  .profile-card h1{
+    font-weight: 600;
+    line-height: 0.9;
+    color: #b31227;
+    margin: 0;
+  }
+  
+  .profile-card h3{
+    font-weight: 300;
+    color: #7a7a7a;
+    margin-bottom: 4px;
+  }
+  
+  .profile-card .main-info{
+    display: flex;
+    margin-bottom: 20px;
+  }
+  
+  .profile-card .main-info .member-details{
+    margin: auto 20px;
+  }
+  
+  .profile-card .secondary-info{
+    display: flex;
+    max-width: 700px;
+  }
+  
+  .profile-card .secondary-info-detail:not(:last-of-type){
+    margin: 0 40px 16px 0;
+  }
+  
+  .profile-card .email{
+    color: #ba2a3d;
+    margin-bottom: 4px;
+  }
+  
+  .profile-super-user form{
+    margin-bottom: 10px;
+  }
+  
+  /*************************
+  * User Button Styling
+  *************************/
+  a.user-button,
+  input.user-button{
+      padding: 10px 40px;
+    color: #ba2a3d;
+    background: #1a1818;
+      border: 2px solid #ba2a3d;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: 0.2s;
+  }
+  
+  a.user-button:hover,
+  input.user-button:hover{
+    background: #0f0e0e;
+    border: 2px solid #0f0e0e;;
+    color:#bd384a;
+    cursor: pointer;
+  }
+  
+  a.user-button:active,
+  input.user-button:active{
+    background: #fab7c1;
+    cursor: pointer;
+  }
+  
+  .hosted-block{
+    padding: 40px 40px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+    border-bottom: 5px solid #b31227;
+    margin: 30px 0 40px 0;
+  }
+
+
+#icon{
+    width: 25px;
+    cursor: pointer;
+    position:absolute;
+    top:60px;
+    right: 10px;
+
+}
