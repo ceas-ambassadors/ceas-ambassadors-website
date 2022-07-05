@@ -3,7 +3,7 @@ This document is home to the actual design for our database, instructions for wo
 ## Getting Started
 If you have mysql installed, you need to start by getting databases created for the website to connect to. For development, you'll need two - a dev and test database. The dev database is used when you run the website with `npm start`, the test database is used when you run `npm test`. They're different because testing routinely wipes the database of rows, meaning data you were using for development would be removed when you don't want it to be.
 
-First, make sure that mysql is running and that you can connect with the root user you created during installation. `$ mysql -u root -p`. If it's running and you're connected, create two databases on the mysql prompt `mysql> create database amb_site_test;` and `mysql> create database amb_site_dev;`. Next, you'll want to create a user and give it full access on both of those databases - [see this guide for instructions](https://www.lanexa.net/2011/08/create-a-mysql-database-username-password-and-permissions-from-the-command-line/). Finally, set your .env variables for the connection details following the instructions in [dev-guide.md](dev-guide.md).
+You're welcome to use whatever version of MySQL that you want, but the tech commitee team encourages you to download the [MySQL Workbench]()
 
 ### Troubleshooting
 On Windows, to connect the first time to a MySQL server, open MySQL Shell and first type `\sql` to allow for SQL scripting. To connect to the databases, `\connect <root>:<insert password>@localhost:3306`. To reveal databases type: `show databases;`, which can give you the names of your dev and test databases for your .env file. There is no database for the `DATABASE_URL` if you're running this locally.
@@ -82,6 +82,8 @@ This is the actual structue of the tables and their relationships. Each heading 
   * Date record was created - automatically handled by sequelize
 * updated_at
   * date record was last updated - automatically handled by sequelize
+* is_disabled
+  * bool - Event or meeting is no longer accepting sign-ups
 
 
 ### Attendance - Join table of Member and Event
