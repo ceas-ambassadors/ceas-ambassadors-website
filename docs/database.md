@@ -5,7 +5,6 @@ If you have mysql installed, you need to start by getting databases created for 
 
 You're welcome to use whatever version of MySQL that you want, but the tech commitee team encourages you to download the [MySQL Workbench](https://dev.mysql.com/downloads/workbench/). Be it on MacOS or Windows, you're gonna need this to both see the data and make changes to your local database for development. When you open the workbech, you should see a localhost session already running.
 ![MySQL Workbench](/public/images/MySQLWorkbench.png)
-
 ### Troubleshooting
 If you downloaded the MySQL Workbech and you cannot connect to a localhost session, you likely did not download the MySQL Server along with your workbench. You'll need both - workbench is the UI/application you can interact with while the server is the connective piece that will load your data and schema. 
 
@@ -15,6 +14,7 @@ For Windows, you can download the server using the [MySQL installer](https://dev
 On the right-hand side of the window, you should see an "Add" button. Click on it, and then find the MySQL Server X.X.X by clicking onto the expand buttons. Once you've found the most recent MySQL Server release, click it and then click the green arrow in the middle of the two menus. You should see the version you want move to the right window. Click next, and continue to click "Next" or "Apply" until you're prompted to create a root password. Make sure this is something you remember. Continue with "Next" and "Apply" and "Execute" and finish.
 
 To connect to your local session, click the "add" button. A window will open. Fill in a connection name, change the Hostname to "localhost", and test the connection. If successful, finish by hitting the "Apply" button.
+
 ![MySQL Setup Connection](/public/images/MySQLSetupConnection.png)
 
 ## Naming Standards
@@ -80,7 +80,7 @@ doing so would break the session module.
 
 | Name               | Description                            | Type  | Summation |
 | ------------------ | -------------------------------------- | ----- | --- |
-| sid                | session id - primary key               | int   |     |
+| sid                | session id unique to each session - primary key               | int   |     |
 | expires            | date when session expires              | date  |     |
 | data               | serialized data in session stored in database | text |     |
 
