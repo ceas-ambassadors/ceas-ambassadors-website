@@ -1,65 +1,70 @@
 This document is intended to be home to developer documentation for this project. It will contain details encompassing things like version control, style guides, and getting started on working with the project.
 
 ## Getting Started
-Getting started on working with the website in a development environment
+Get started working on the CEAS Ambassadors site in your own dev environment
 requires a few steps, which can all be accomplished via reading this document
-or simple internet searches.
+or simple internet searches. These instructions make it easy for anyone, regardless of experience. 
+
+# Pre-Requisites
+1. Install [VS Code](https://code.visualstudio.com/download)
+2. Create a [Github account](https://github.com/) - don't use your UC email
+3. Set up your SSH key - [article](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) or [video](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=video&cd=&cad=rja&uact=8&ved=2ahUKEwjvgPbJjcT4AhUxkYkEHQ_QAjsQtwJ6BAgMEAI&url=https%3A%2F%2Fwww.theserverside.com%2Fblog%2FCoffee-Talk-Java-News-Stories-and-Opinions%2FGitHub-SSH-Key-Setup-Config-Ubuntu-Linux&usg=AOvVaw1YJDWF_szwIMzEcA2edPvo) instructions
+
+# Instructions
 1. Install the correct version of nodejs.
 2. Clone the repository.
 3. Install mysql.
 4. Create dev and test databases, and a user to access them.
-5. `cp .env.example .env` and configure the new .env file.
+5. Configure your .env file.
 6. Run `npm install` successfully.
 7. Run `npm test` successfully.
+
 ### Things to Install
-You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which is installed with Nodejs. If you're working with the databse, or need to run a database locally, you'll need to install [mysql](https://www.mysql.com/).
+You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which is installed with Nodejs. If you're working with the database, or need to run a database locally, you'll need to install [mysql](https://www.mysql.com/).
 
 #### NodeJS Version
 We use a specific version of NodeJS with our project to ensure we aren't affected by breaking version changes.
-You can see the version of NodeJS we use in two different places: `package.json` under `engines` and `.travis.yml`. You should develop on the code base using the specified version of NodeJS. A great way to manage Node versions is
-with [Node Version Manager (NVM)](https://www.google.com/search?client=ubuntu&channel=fs&q=nvm&ie=utf-8&oe=utf-8).
+You can see the version of NodeJS we use in two different places: `package.json` under `engines` and `.travis.yml`. You should develop on the code base using the specified version of NodeJS. A great way to manage Node versions is with [Node Version Manager (NVM)](https://www.google.com/search?client=ubuntu&channel=fs&q=nvm&ie=utf-8&oe=utf-8). Note, nvm is not very compatible with Windows so don't get butt hurt if it doesn't work for you.
 
 #### Install MySQL and create databases
-Install first with the following commands
-```
-$ sudo apt update
-$ sudo apt install mysql-server
-$ sudo mysql_secure_installation
-```
+Install and download [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) and MySQL Server - [MacOS](https://dev.mysql.com/downloads/installer/) or [Windows](https://dev.mysql.com/downloads/windows/installer/).
 
-Configure MySQL and create the test and dev databases.
-1. Run the command: `$ sudo mysql_secure_installation` to start the security installation prompt.
-2. The first prompt is a MySQL root user password, enter a secure password and press `Y`. After that you can hit enter to accept the defaults for all the subsequent questions. 
-3. To open MySQL prompt from the terminal use the command: `sudo mysql`.
-4. Create your test and dev databases according to your environment file. 
+Configure MySQL and create the test and dev databases. 
+1. Open up your local session
+2. Click the "Create new schema" button
+3. Name said schema "amb_site_dev" and click the "Apply" button
+4. Repeat Step 3 for "amb_site_test"
 
-Checkout this [Digital Ocean article](https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-18-04) for more information on configuring MySQL.
+These are empty databases. They'll fill in when you first run your dev environment with the schema the production database uses.
 
 ### Working with the code
-To get started, first clone the repository using [git](#Version-Control).
+To get started, first clone the repository using [git](#Version-Control). If you're using Windows, be sure you're running this in Git Bash.
 
-`$git clone https://github.com/kurtlewis/ceas-ambassadors-website.git`
+`$ git clone https://github.com/ceas-ambassadors/ceas-ambassadors-website`
 
-Then, install npm modules as specified in our `package.json`, using `npm install`. This will install the code that our website relies upon as well as some developer tools. To run the website locally, you'll need to configure environment variables. These are configuration options and secrets that SHOULD NOT be committed to version control. Copy `.env.example` to a new file called `.env`, and replace the placeholder values with relevant values. See [.env documentation for more instructions](#.env). If you need to start up a databse, this is the time to do so. If you don't, you'll need the url of a test database to connect to. Using mysql for the first time? See [database.md](database.md) for instructions on getting started.
+Then, install npm modules as specified in our `package.json`, using `npm i` or `npm install`. This will install the dependecies that our website relies upon as well as some developer tools. To run the website locally, you'll need to configure environment variables. These are configuration options and secrets that SHOULD NOT be committed to version control. If `npm install` isn't working, trying running `npm install --force`. Copy `.env.example` to a new file called `.env`, and replace the placeholder values (anything inside the <>) with relevant values. An example is seen below.
+![.env example](/public/images/env_example.png)
 
-To run the website, type `npm start`. Visit the website at localhost:3000. You're in business!
+If you need to start up your MySQL Server, this is the time to do so or you won't be able to start your dev environment. Using mysql for the first time? See [database.md](database.md) for instructions on getting started.
+
+To run the website, type `npm start`. View your development site by navigating to [localhost:3000](localhost:3000) in your chosen web browser. And now you're in business!
 
 ### Working with "Super User" features
-Privileged actions are limited to users who are "super users", or admins/exec/office workers. A super user has the ability to create/edit/delete events, sign users up for events, and many other actions. Super users can grant other users super user power, or take it away. The first super user must be elevated manually, via a mysql UPDATE command. To work with super user features, you must elevate a user in your database.
-1. Create an account that will be your super user account by using the sign up UI.
-2. Login to mysql
-3. Update the record for the created member to make them a super user.
-These commands should do it:
+Privileged actions are limited to users who are "super users", or admins/exec/office workers. A super user has the ability to create/edit/delete events, sign users up for events, and many other actions. Super users can grant other users super user power, or take it away. The first super user must be elevated manually, via a mysql UPDATE command. To work with super user features in your dev environment, you must elevate a user you've created in your database.
+1. Create an account by 'Signing up' a user.
+2. Open your MySQL local session.
+3. Open up a Query window - go to the Schemas tab on the left of the UI and open the Tables dropdown. Scroll over the Members table and click this button ![Query button](/public/images/MySQLQueryButton.png).
+4. Type these commands into the window.
 ```shell
-# connect to the database - for instance (though this varies greatly by platform)
-$ mysql -u root -p
-# connect to the specific database you'd like to modify
-mysql> use <insert-database-name>;
+# connect to the specific database you'd like to modify - likely amb_site_dev
+1 Use <insert-database-name>;
 # elevate specific member
-mysql> UPDATE Members SET super_user=1 WHERE email='<insert-email-of-account>';
-# Verify results
-mysql> SELECT * FROM Members WHERE email='<insert-email-of-account';
+2 UPDATE Members SET super_user=1 WHERE email='<insert-email-of-account>';
+# Verify results - scroll to super_user column and should have a 1 if true
+3 SELECT * FROM Members WHERE email='<insert-email-of-account';
 ```
+5. Run the query or queries
+The lightning bolt will run ALL commands, the lightning bolt with the cursor will run the command your cursor is on (single command).
 
 ## Frontend / Writing webpages
 We use a template rendering engine for creating webpages called [pug](https://pugjs.org/api/getting-started.html). If you need to write frontend webpages - the first thing you should do is skim through the language reference at that link for an initial understanding of what pug is and how to use it. In a nutshell, pug is a rendering engine that allows us to write shorthand html/css (or full html if you so choose), which is then transformed into html upon request. This lets us do some cool things like [insert arbitrary amounts of data into structured html](https://pugjs.org/language/iteration.html). 

@@ -3,108 +3,86 @@ This document is home to the actual design for our database, instructions for wo
 ## Getting Started
 If you have mysql installed, you need to start by getting databases created for the website to connect to. For development, you'll need two - a dev and test database. The dev database is used when you run the website with `npm start`, the test database is used when you run `npm test`. They're different because testing routinely wipes the database of rows, meaning data you were using for development would be removed when you don't want it to be.
 
-You're welcome to use whatever version of MySQL that you want, but the tech commitee team encourages you to download the [MySQL Workbench]()
+You're welcome to use whatever version of MySQL that you want, but the tech commitee team encourages you to download the [MySQL Workbench](https://dev.mysql.com/downloads/workbench/). Be it on MacOS or Windows, you're gonna need this to both see the data and make changes to your local database for development. When you open the workbech, you should see a localhost session already running. 
+![MySQL Workbench](/public/images/MySQLWorkbench.png)
 
 ### Troubleshooting
-On Windows, to connect the first time to a MySQL server, open MySQL Shell and first type `\sql` to allow for SQL scripting. To connect to the databases, `\connect <root>:<insert password>@localhost:3306`. To reveal databases type: `show databases;`, which can give you the names of your dev and test databases for your .env file. There is no database for the `DATABASE_URL` if you're running this locally.
+If you downloaded the MySQL Workbech and you cannot connect to a localhost session, you likely did not download the MySQL Server along with your workbench. You'll need both - workbench is the UI/application you can interact with while the server is the connective piece that will load your data and schema. 
 
+For Windows, you can download the server using the [MySQL installer](https://dev.mysql.com/downloads/windows/installer/). For MacOS, use [this link](https://dev.mysql.com/downloads/installer/). Select the smaller option (about 2.3 MB) and then open the UI. 
+![MySQL Installer](/public/images/MySQLInstaller.png)
+
+On the right-hand side of the window, you should see an "Add" button. Click on it, and then find the MySQL Server X.X.X by clicking onto the expand buttons. Once you've found the most recent MySQL Server release, click it and then click the green arrow in the middle of the two menus. You should see the version you want move to the right window. Click next, and continue to click "Next" or "Apply" until you're prompted to create a root password. Make sure this is something you remember. Continue with "Next" and "Apply" and "Execute" and finish.
+
+To connect to your local session, click the "add" button. A window will open. Fill in a connection name, change the Hostname to "localhost", and test the connection. If successful, finish by hitting the "Apply" button.
+![MySQL Setup Connection](/public/images/MySQLSetupConnection.png)
 
 ## Naming Standards
 Models names should be nouns - `Member`, `Event`, `Attendance`, etc. Sequelize automatically pluralizes them for table names, so `Member` becomes `Members`. Sequelize has no regard for grammatic conventions, it just appends an `s`. Column names (and attributes) should be named with underscores, so `myAttribute` becomes `my_attribute`.
 
 # Database Design
 This is the actual structue of the tables and their relationships. Each heading here is a model, and therefore table in our database - though as noted in [naming standards](#Naming Standards), they are pluralized.
-### Member
-* id
-  * unique auto incrementing id for member - primary key
-* email 
-  * the user's email. Should have unique key
-* first_name
-* last_name
-* major
-* grad_year
-* service **summation**
-  * This field is a summation of the time of events a user has attended.
-  * See below for notes on how we'll handle the summation columns
-* meetings **summation**
-  * This field is a summation of the number of meetings a user has attended.
-  * See below for notes on how we'll handle the summation columns
-* service_not_needed **summation**
-  * This field is a summation of the time of events a user has been sent home from because they were unneeded.
-  * See below for notes on how we'll handle the summation columns
-* path_to_picture
-  * hopefully we will implement bio pictures - this field is there to hold the path to their bio picture
-* clubs
-  * This is a text column containing a list of clubs the user has attended
-* minors
-  * This is a string field indicating if the user is in any minors
-* accend
-  * This is a boolean field indicating if the user is in ACCEND
-* hometown
-  * This is a string field for the user's hometown
-* coops
-  * This is a text field for listing a user's coops
-* password
-  * This is an encrypted string representing the user's password
-* super_user
-  * This boolean field indicates that a user has super user powers 
-  * Super user powers include but are not limited to - creating events, confirming attendance, etc
-* private_user
-  * This is a user that shouldn't show up in the member listing. Office workers, shared accounts, etc
-* created_at
-  * Date record was created - automatically handled by sequelize
-* updated_at
-  * Date record was last updated - automatically handled by sequelize
-* is_certified
-  * boolean record to store if an ambassador is certified or not
 
-### Event
-* id - primary key
-  * incrementally generated id key used to identify an event
-* title
-  * string representing the name of the event
-* start_time
-  * date representing the start time of the event
-* end_time
-  * date representing the end of the event
-* description
-  * text field describing the event
-* location
-  * string field describing the location of the event
-* public
-  * boolean field indicating if an event is public
-  * for instance, a one on one or lunch would not be public, because only one ambassador attended it
-* meeting
-  * boolean field representing if an event is a meeting
-* created_by
-  * int - id of user who created event. foreign key to Member
-* created_at
-  * Date record was created - automatically handled by sequelize
-* updated_at
-  * date record was last updated - automatically handled by sequelize
-* is_disabled
-  * bool - Event or meeting is no longer accepting sign-ups
+### Members
+| Name               | Description                            | Type  | Summation |
+| ------------------ | -------------------------------------- | ----- | --- |
+|  id                | unique auto incrementing identifier for each member - primary key | int |    |
+| email              | the user's UC email - should have unique key | string |    |
+| first name         |                                        | string |    |
+| last name          |                                        | string |    |
+| major              |                                        | string |    |
+| grad_year          |                                        | int    |    |
+| service            | summation of the points from events a user has attended | int | :white_check_mark: |
+| meetings           | summation of the number of meetings a user has attended | int | :white_check_mark: |
+| service_not_needed | summation of the time of events a user has been marked "Not Needed" at an event | int | :white_check_mark: |
+| path_to_picture    | holds the path to their bio picture    | text   |    |
+| clubs              | list of clubs the user is a part of    | string |    |
+| minors             | list of any minors the user may have   | string |    |
+| accend             | indicates if user is in ACCEND program | boolean |   |
+| hometown           |                                        | string |    |
+| coops              | list of coops the user has done        | string |    |
+| is_certified       | indicates if user is certified         | boolean |   |
+| password           | encryption of user's selected password | string |    |
+| super_user         | indicates if user has admin permissions - usually an office worker or exec member | boolean |    |
+| private_user       | if true, user profile is hidden to all but super_users. doesn't show in member listing | boolean |    |
+| created_at         | date user was signed up - automatically handled by sequelize | date |    |
+| updated_at         | date profile was last edited - automatically handled by sequelize | date |    |
 
+### Events
+| Name               | Description                            | Type  | Summation |
+| ------------------ | -------------------------------------- | ----- | --- |
+| id                 | incrementally generated id key used to identify an event - primary key | int |    |
+| title              | the name of the event                  | string |    |
+| start_time         |                                        | date   |    |
+| end_time           |                                        | date   |    |
+| description        |                                        | string |    |
+| location           |                                        | string |    |
+| public             | indicates if event is open to the public | boolean |    |
+| meeting            | indicates if event is a meeting        | boolean |   |
+| is_disabled        | indicates if sign-ups are turned off   | boolean |   |
+| created_by         | id of the user who made the event - foreign key to Member | int |    |
+| created_at         | date of when event was created - automatically handled by sequelize | date |    |
+| updated_at         | date event was last edited - automatically handled by sequelize | date |    |
 
-### Attendance - Join table of Member and Event
-* member_id - foreign key to member
-* event_id -  foreign key to event
-* status - unconfirmed, confirmed, not-needed, meeting
-  * Enum field representing the status of the attendance
-  * a no-show attendance can just delete the record
-* created_at
-  * Date record was created - automatically handled by sequelize
-* updated_at
-  * date record was last updated - automatically handled by sequelize
+### Attendance - join table of Member and Event
+| Name               | Description                            | Type  | Summation |
+| ------------------ | -------------------------------------- | ----- | --- |
+| member_id          | foreign key to member                  | int   |    |
+| event_id           | foreign key to event                   | int   |    |
+| status             | represents the status of the attendance - a no-show attendance can just delete the record | enum('unconfirmed','confirmed','not_needed') |    |
+| created_at         | date of when event was created - automatically handled by sequelize | date |    |
+| updated_at         | date of when record was last updated - automatically handled by sequelize | date |    |
 
 ### Session - Used by our session module
 Very rarely should this table need accessed - everything involving this table should be done via session manipulation, not database queries/writes.
 It's worth noting that this does not follow some of the naming standards because
 doing so would break the session module.
-* sid - session id - primary key
-* expires - date when session expire
-* data - serialized data in session stored in database
 
+| Name               | Description                            | Type  | Summation |
+| ------------------ | -------------------------------------- | ----- | --- |
+| sid                | session id - primary key               | int   |     |
+| expires            | date when session expires              | date  |     |
+| data               | serialized data in session stored in database | text |     |
 
 ## On summation columns
 Summation columns are managed using [sequelize hooks](http://docs.sequelizejs.com/manual/tutorial/hooks.html). This means one must take care not to affect these columns when manually running sql update/delete commands on events and attendance records. I intend to eventually add an endpoint for resyncing the database. Hooks for bulk operations should result in hooks for individual events being called, [per this issue on the sequelize repo](https://github.com/sequelize/sequelize/issues/6368). 
@@ -122,9 +100,7 @@ Sequelize takes the model definitions found in the `models` folder (with the exc
 The actual point in time where Sequelize executes its code is when the `models` folder is imported by  `require(../models)`. This executes the code in `models/index.js`. Upon the start of the app in `app.js`, the models are synced useing `sequelize.sync()`, which syncs all defined models to the database. SEQUELIZE WILL NOT NOTICE IF THE DATABASE DOESN'T MATCH THE DEFINED MODELS UNTIL IT TRIES TO ADD SOMETHING. This is why the migrations mentioned in this document are so important.
 
 # Migrations
-There are two approaches to this, one is using the sequelize-cli to
-automatically handle migrations. The other is doing them ourselves through
-`ALTER TABLE...` commands. I consider there to be pro's and cons to both.
+There are two approaches to this, one is using the sequelize-cli to automatically handle migrations. The other is doing them ourselves through `ALTER TABLE...` commands. I consider there to be pro's and cons to both. If you alter the tables, remember to update the docs to reflect said changes.
 
 # Approach One
 Originally, I had intended to utilize the `sequelize-cli` for database
