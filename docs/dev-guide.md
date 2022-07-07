@@ -19,7 +19,7 @@ or simple internet searches. These instructions make it easy for anyone, regardl
 6. Run `npm install` successfully.
 7. Run `npm test` successfully.
 
-### Things to Install
+### Tech to Install
 You'll need [git](git-scm.org), [Nodejs](https://nodejs.org/en/), and NPM, which is installed with Nodejs. If you're working with the database, or need to run a database locally, you'll need to install [mysql](https://www.mysql.com/).
 
 #### NodeJS Version

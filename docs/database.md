@@ -3,7 +3,7 @@ This document is home to the actual design for our database, instructions for wo
 ## Getting Started
 If you have mysql installed, you need to start by getting databases created for the website to connect to. For development, you'll need two - a dev and test database. The dev database is used when you run the website with `npm start`, the test database is used when you run `npm test`. They're different because testing routinely wipes the database of rows, meaning data you were using for development would be removed when you don't want it to be.
 
-You're welcome to use whatever version of MySQL that you want, but the tech commitee team encourages you to download the [MySQL Workbench](https://dev.mysql.com/downloads/workbench/). Be it on MacOS or Windows, you're gonna need this to both see the data and make changes to your local database for development. When you open the workbech, you should see a localhost session already running. 
+You're welcome to use whatever version of MySQL that you want, but the tech commitee team encourages you to download the [MySQL Workbench](https://dev.mysql.com/downloads/workbench/). Be it on MacOS or Windows, you're gonna need this to both see the data and make changes to your local database for development. When you open the workbech, you should see a localhost session already running.
 ![MySQL Workbench](/public/images/MySQLWorkbench.png)
 
 ### Troubleshooting
