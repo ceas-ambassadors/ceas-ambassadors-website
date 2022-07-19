@@ -7,8 +7,40 @@ block content
   div.detail-container.event
     //- Convert dates to nicer looking values
       date to string adds time zone information we want to remove - split on spaces and remove, then rejoin
-    - start_time = String(event.start_time).split(' ').slice(0, 5).join(' ')
-    - end_time = String(event.end_time).split(' ').slice(0, 5).join(' ')
+    - start_date = String(event.start_time).split(' ').slice(0, 4).join(' ')
+    - end_date = String(event.end_time).split(' ').slice(0, 4).join(' ')
+    - start_time = String(event.start_time).split(' ').slice(4, 5)
+    - end_time = String(event.end_time).split(' ').slice(4, 5)
+    - start_hours = parseInt(String(start_time).substring(0,2))
+    - start_tod = ''
+    - end_hours = parseInt(String(end_time).substring(0,2))
+    - end_tod = ''
+    if start_hours > 0 && (start_hours < 12)
+      - start_hours = start_hours
+      - start_tod = " AM"
+    else if start_hours > 12
+      - start_hours = start_hours - 12
+      - start_tod = " PM"
+    else if start_hours === 12
+      - start_tod = " PM"
+    else 
+      - start_hours = 12
+      - start_tod = " AM"
+
+    if end_hours > 0 && (end_hours < 12)
+      - end_hours = end_hours
+      - end_tod = " AM"
+    else if end_hours > 12
+      - end_hours = end_hours - 12
+      - end_tod = " PM"
+    else if end_hours === 12
+      - end_tod = " PM"
+    else 
+      - end_hours = 12
+      - end_tod = " AM"
+
+    - new_start_date = start_date + " " + start_hours + String(start_time).substring(2,5) + start_tod
+    - new_end_date = end_date + " " + end_hours + String(end_time).substring(2,5) + end_tod
     h1
       if event.meeting
         span Meeting -
@@ -18,7 +50,7 @@ block content
       = ' '
       span= event.title
     div.date-loc
-      p #{start_time} - #{end_time} at #{event.location}
+      p #{new_start_date} - #{new_end_date} at #{event.location}
     if event.description
       p.description #{event.description}
 
