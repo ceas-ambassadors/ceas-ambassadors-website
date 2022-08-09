@@ -20,7 +20,7 @@ a whole lot, you'll configure domains later.
 ### Dokku plugins we will need
 Dokku uses plugins to manage common operations - we can actually run everything we need to in dokku
 containers!
-#### Mysql
+#### MySQL
 We will need a database for the website! We use the official dokku plugin: [dokku-mysql](https://github.com/dokku/dokku-mysql).
 #### lets-encrypt
 We use lets-encrypt to manage ssl certificates and https support, for free! [dokku-letsencrypt](https://github.com/dokku/dokku-letsencrypt)
@@ -92,7 +92,7 @@ This section is for tasks that aren't building the initial server
 ## Setting up production access
 If someone new needs access to the site, you'll need to create a new user for them on the server,
 and grant them permission to do the things they need to do - if you trust them, or you have to trust
-them, make the a sudoer.
+them, make the a sudoer. Only root or another sudoer can do this.
 ```shell
 $ adduser <username>
 $ usermod -aG sudo <username>
@@ -115,7 +115,13 @@ their ssh key to the dokku system.
 ```ssh
 $ sudo usermod -aG docker <username>
 ```
-
+## Connecting to the server
+If you're a non-admin/new to the site, you'll need a tool to connect to the server. On a Windows computer, you'll want to download [Putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html). Feel free to use any other SSH client, but we reccomend this one. If you're on MacOS, follow these steps:
+1. Right click on the terminal application
+2. Open "New Remote Connection..."
+3. Input your user and the IP address of the server
+4. Connect
+You'll need to get the IP address from the tech chair or a sudoer.
 ## Updating the code running on the server
 In order to update the code running on the server, you need to have dokku push access. This is managed with ssh keys.
 If you're not using ssh keys with git, [now is a great time to start](https://help.github.com/articles/connecting-to-github-with-ssh/).
