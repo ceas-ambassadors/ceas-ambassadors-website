@@ -458,6 +458,7 @@ const getProfile = (req, res, next) => {
       serviceNotNeeded,
       unconfirmedEvents,
       confirmedEvents,
+      excusedEvents,
       notNeededEvents,
       unconfirmedMeetings,
       confirmedMeetings,
