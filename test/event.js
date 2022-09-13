@@ -888,7 +888,7 @@ describe('Event Tests', () => {
               },
             }).then((attendance) => {
               assert(attendance);
-              assert.deepEqual(attendance.status, models.Attendance.getStatusNotNeeded());
+              assert.deepEqual(attendance.status, models.Attendance.());
             });
           });
         });
