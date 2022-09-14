@@ -130,6 +130,7 @@ block content
                   th Confirm
                   th Not Needed
                   th Did Not Attend
+                  th Excused
               tbody
                 each member in unconfirmedAttendees
                   tr
@@ -148,6 +149,10 @@ block content
                       form(id='denyAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=denied', method='post')
                         input(type='hidden', name='_csrf', value=csrfToken)
                         input.submit-small(type='submit', name='Deny', value='Did Not Attend')
+                    td
+                      form(id='excusedAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=excused', method='post')
+                        input(type='hidden', name='_csrf', value=csrfToken)
+                        input.submit-small(type='submit', name='Excuse', value='Excused')
         
         div.super-section
           if confirmedAttendees.length > 0
@@ -156,6 +161,10 @@ block content
         div.super-section
           if notNeededAttendees.length > 0
             +member-list(notNeededAttendees, "Not Needed", "h2")
+
+        div.super-section
+          if excusedAttendees.length > 0
+            +member-list(excusedAttendees, "Excused", "h2")
         
         div.super-section
           //- edit and delete options

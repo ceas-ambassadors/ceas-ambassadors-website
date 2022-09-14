@@ -8,7 +8,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Attendance = sequelize.define('Attendance', {
     status: {
-      type: DataTypes.ENUM('unconfirmed', 'confirmed', 'not_needed'),
+      type: DataTypes.ENUM('unconfirmed', 'confirmed', 'not_needed', 'excused'),
       allowNull: false,
     },
     // This also has references to an event and a member - auto added as part of
@@ -33,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
           if (event.meeting && attendance.status === Attendance.getStatusNotNeeded()) {
             throw Error('Meetings cannot have not needed status.');
           }
+          if (event.meeting && attendance.status === Attendance.getStatusExcused()) {
+            throw Error('Meetings cannot have excused status.');
+          }
         });
       },
       beforeUpdate: (attendance /* , options */) => {
@@ -40,6 +43,9 @@ module.exports = (sequelize, DataTypes) => {
         return sequelize.models.Event.findByPk(attendance.event_id).then((event) => {
           if (event.meeting && attendance.status === Attendance.getStatusNotNeeded()) {
             throw Error('Meetings cannot have not needed status.');
+          }
+          if (event.meeting && attendance.status === Attendance.getStatusExcused()) {
+            throw Error('Meetings cannot have excused status.');
           }
         });
       },
@@ -114,6 +120,11 @@ module.exports = (sequelize, DataTypes) => {
                 || attendance.status === Attendance.getStatusNotNeeded()) {
               throw Error('Not needed is an invalid state for an attendance status for a meeting.');
             }
+            // meetings cannot be excused
+            if (oldStatus === Attendance.getStatusExcused()
+                || attendance.status === Attendance.getStatusExcused()) {
+              throw Error('Excused is an invalid state for an attendance status for a meeting.');
+            }
             return member.update({
               meetings: member.meetings + meetingsChange,
             });
@@ -129,7 +140,7 @@ module.exports = (sequelize, DataTypes) => {
           if (oldStatus === Attendance.getStatusNotNeeded()) {
             serviceNotNeededChange -= 1;
           }
-          // no change if status = unconfirme
+          // no change if status = unconfirmed
           if (attendance.status === Attendance.getStatusConfirmed()) {
             serviceChange += 1;
           }
@@ -204,6 +215,7 @@ module.exports = (sequelize, DataTypes) => {
   Attendance.getStatusUnconfirmed = () => { return 'unconfirmed'; };
   Attendance.getStatusConfirmed = () => { return 'confirmed'; };
   Attendance.getStatusNotNeeded = () => { return 'not_needed'; };
+  Attendance.getStatusExcused = () => { return 'excused'; };
 
   return Attendance;
 };

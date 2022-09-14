@@ -53,7 +53,7 @@ describe('Account Tests', () => {
       .send({
         email: 'test@mail.uc.edu',
         firstName: 'Test',
-        lastName: 'Testerson',
+        lastName: 'TestPerson',
         password: 'password',
         confirmPassword: 'password',
       })
@@ -72,13 +72,13 @@ describe('Account Tests', () => {
   });
 
   // POST signup with no email
-  it('POST signup wtih no email', () => {
+  it('POST signup with no email', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
         email: '',
         firstName: 'Test',
-        lastName: 'Testerson',
+        lastName: 'TestPerson',
         password: 'test_password',
         confirmPassword: 'test_password',
       })
@@ -95,13 +95,13 @@ describe('Account Tests', () => {
   });
 
   // POST signup with no password
-  it('POST signup wtih no password', () => {
+  it('POST signup with no password', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
         email: 'bad_email@mail.uc.edu',
         firstName: 'Test',
-        lastName: 'Testerson',
+        lastName: 'TestPerson',
         password: '',
         confirmPassword: 'test_password',
       })
@@ -116,13 +116,13 @@ describe('Account Tests', () => {
   });
 
   // POST signup with no confirmPassword
-  it('POST signup wtih no confirmPassword', () => {
+  it('POST signup with no confirmPassword', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
         email: 'bad_email@mail.uc.edu',
         firstName: 'Test',
-        lastName: 'Testerson',
+        lastName: 'TestPerson',
         password: 'test_password',
         confirmPassword: '',
       })
@@ -137,13 +137,13 @@ describe('Account Tests', () => {
   });
 
   // POST signup with password != confirm password
-  it('POST signup wtih mismatched passwords', () => {
+  it('POST signup with mismatched passwords', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
         email: 'bad_email@mail.uc.edu',
         firstName: 'Test',
-        lastName: 'Testerson',
+        lastName: 'TestPerson',
         password: 'test_password',
         confirmPassword: 'test_password_bad',
       })
@@ -158,12 +158,12 @@ describe('Account Tests', () => {
   });
 
   // POST signup with no first name
-  it('POST signup wtih no fist name', () => {
+  it('POST signup with no first name', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
         email: 'bad_email@mail.uc.edu',
-        lastName: 'Testerson',
+        lastName: 'TestPerson',
         password: 'test_password',
         confirmPassword: 'test_password',
       })
@@ -178,7 +178,7 @@ describe('Account Tests', () => {
   });
 
   // POST signup with no last name
-  it('POST signup wtih no last name', () => {
+  it('POST signup with no last name', () => {
     response = request.agent(app)
       .post('/signup')
       .send({
@@ -207,7 +207,7 @@ describe('Account Tests', () => {
       .send({
         email: 'bad_email@kurtjlewis.com',
         firstName: 'Test',
-        lastName: 'Testerson',
+        lastName: 'TestPerson',
         password: 'test_password',
         confirmPassword: 'test_password',
       })
@@ -231,7 +231,7 @@ describe('Account Tests', () => {
       .post('/change-password')
       .send({
         firstName: 'Test',
-        lastName: 'Testerson',
+        lastName: 'TestPerson',
         currentPassword: 'password',
         newPassword: 'newPassword',
         repeatNewPassword: 'newPassword',
@@ -298,7 +298,7 @@ describe('Account Tests', () => {
         .send({
           email: common.getNormalUserEmail(),
           firstName: 'Test',
-          lastName: 'Testerson',
+          lastName: 'TestPerson',
           password: 'password',
           confirmPassword: 'password',
         })
@@ -363,7 +363,7 @@ describe('Account Tests', () => {
         .send({
           email: common.getNormalUserEmail(),
           firstName: 'Test',
-          lastName: 'Testerson',
+          lastName: 'TestPerson',
           password: 'password',
           confirmPassword: 'password',
         })
@@ -372,7 +372,7 @@ describe('Account Tests', () => {
     });
 
     // POST change-password successfully
-    it('POST to change-password succesfully', () => {
+    it('POST to change-password successfully', () => {
       response = agent.post('/change-password')
         .send({
           currentPassword: 'password',

@@ -420,6 +420,7 @@ const getProfile = (req, res, next) => {
     const unconfirmedEvents = [];
     const confirmedEvents = [];
     const notNeededEvents = [];
+    const excusedEvents = [];
     const unconfirmedMeetings = [];
     const confirmedMeetings = [];
     for (let i = 0; i < events.length; i += 1) {
@@ -438,6 +439,8 @@ const getProfile = (req, res, next) => {
       } else if (events[i].status === models.Attendance.getStatusNotNeeded()) {
         // not a valid status for meetings
         notNeededEvents.push(events[i]);
+      } else if (events[i].status === models.Attendance.getStatusExcused()) {
+        excusedEvents.push(events[i]);
       }
     }
 
@@ -455,6 +458,7 @@ const getProfile = (req, res, next) => {
       serviceNotNeeded,
       unconfirmedEvents,
       confirmedEvents,
+      excusedEvents,
       notNeededEvents,
       unconfirmedMeetings,
       confirmedMeetings,
