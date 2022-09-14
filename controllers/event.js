@@ -79,6 +79,7 @@ const getDetails = (req, res, next) => {
       const confirmedAttendees = [];
       const notNeededAttendees = [];
       const unconfirmedAttendees = [];
+      const excusedAttendees = [];
       const membersNotSignedUp = allMembers;
       // Separate members into confirmed, not needed, and unconfirmed
       for (let i = 0; i < members.length; i += 1) {
@@ -86,6 +87,8 @@ const getDetails = (req, res, next) => {
           confirmedAttendees.push(members[i]);
         } else if (members[i].status === models.Attendance.getStatusNotNeeded()) {
           notNeededAttendees.push(members[i]);
+        } else if (members[i].status === models.Attendance.getStatusExcused()) {
+          excusedAttendees.push(members[i]);
         } else {
           unconfirmedAttendees.push(members[i]);
         }
@@ -98,6 +101,7 @@ const getDetails = (req, res, next) => {
         membersNotSignedUp,
         unconfirmedAttendees,
         notNeededAttendees,
+        excusedAttendees,
         confirmedAttendees,
         unconfirmedAndConfirmedAttendees,
       });
@@ -493,10 +497,11 @@ const postConfirmAttendance = (req, res, next) => {
   // constants sent by ui
   const confirmedConstant = 'confirmed';
   const notNeededConstant = 'notNeeded';
+  const excusedConstant = 'excused';
   const denyConstant = 'denied';
   // Check that the value of the status query is valid
   if (req.query.status !== confirmedConstant && req.query.status !== notNeededConstant
-    && req.query.status !== denyConstant) {
+    && req.query.status !== excusedConstant && req.query.status !== denyConstant) {
     req.session.status = 400;
     req.session.alert.errorMessages.push('Incorrect value for status. Please use UI buttons.');
     return req.session.save(() => {
@@ -522,6 +527,14 @@ const postConfirmAttendance = (req, res, next) => {
     if (req.query.status === confirmedConstant) {
       return attendance.update({
         status: models.Attendance.getStatusConfirmed(),
+      }).then(() => {
+        return res.redirect(`/event/${req.params.id}`);
+      });
+    }
+    // excuse option
+    if (req.query.status === excusedConstant) {
+      return attendance.update({
+        status: models.Attendance.getStatusExcused(),
       }).then(() => {
         return res.redirect(`/event/${req.params.id}`);
       });
