@@ -120,7 +120,7 @@ module.exports = (sequelize, DataTypes) => {
                 || attendance.status === Attendance.getStatusNotNeeded()) {
               throw Error('Not needed is an invalid state for an attendance status for a meeting.');
             }
-            // meetings cannot be excuted
+            // meetings cannot be excused
             if (oldStatus === Attendance.getStatusExcused()
                 || attendance.status === Attendance.getStatusExcused()) {
               throw Error('Excused is an invalid state for an attendance status for a meeting.');
