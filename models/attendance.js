@@ -68,15 +68,15 @@ module.exports = (sequelize, DataTypes) => {
             // If the code gets this far, the status is not needed, which is not allowed
             throw Error('Not Needed is not an allowable state for meeting attendance records.');
           }
-          const length = event.end_time - event.start_time;
+          // add a point to user confirmed or not needed count
           if (attendance.status === Attendance.getStatusConfirmed()) {
             return member.update({
-              service: member.service + length,
+              service: member.service + 1,
             });
           }
           if (attendance.status === Attendance.getStatusNotNeeded()) {
             return member.update({
-              service_not_needed: member.service_not_needed + length,
+              service_not_needed: member.service_not_needed + 1,
             });
           }
           throw Error('Something unexpected happened in the attendance afterCreate hook.');
@@ -119,22 +119,22 @@ module.exports = (sequelize, DataTypes) => {
             });
           }
           // Not a meeting
-          const length = event.end_time - event.start_time;
+          1
           let serviceChange = 0;
           let serviceNotNeededChange = 0;
           // no change if old status = unconfirmed
           if (oldStatus === Attendance.getStatusConfirmed()) {
-            serviceChange -= length;
+            serviceChange -= 1;
           }
           if (oldStatus === Attendance.getStatusNotNeeded()) {
-            serviceNotNeededChange -= length;
+            serviceNotNeededChange -= 1;
           }
           // no change if status = unconfirme
           if (attendance.status === Attendance.getStatusConfirmed()) {
-            serviceChange += length;
+            serviceChange += 1;
           }
           if (attendance.status === Attendance.getStatusNotNeeded()) {
-            serviceNotNeededChange += length;
+            serviceNotNeededChange += 1;
           }
           return member.update({
             service: member.service + serviceChange,
@@ -166,15 +166,14 @@ module.exports = (sequelize, DataTypes) => {
             // If the code gets this far, the status is not needed, which is not allowed
             throw Error('Not Needed is not an allowable state for meeting attendance records.');
           }
-          const length = event.end_time - event.start_time;
           if (attendance.status === Attendance.getStatusConfirmed()) {
             return member.update({
-              service: member.service - length,
+              service: member.service - 1,
             });
           }
           if (attendance.status === Attendance.getStatusNotNeeded()) {
             return member.update({
-              service_not_needed: member.service_not_needed - length,
+              service_not_needed: member.service_not_needed - 1,
             });
           }
           throw Error('Something unexpected happened in the attendance afterCreate hook.');

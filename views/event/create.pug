@@ -28,42 +28,45 @@ block content
       if isEdit === 'true'
         h1.create-title Edit Event
       else
-        h1.create-title Create Event
+        h1.create-title New Event
       form.create-event(id='createEvent', action='/event/create', method='post')
         //- Hidden data for editing
         input(type='hidden', name='_csrf', value=csrfToken)
         input(type='hidden', name='isEdit', value=isEdit)
         input(type='hidden', name='eventId', value=event.id)
         .form-grid
+          div.form-group
+            label Title
+            input.form-control.form-control-sm(type='text', name='title', value=event.title, placeholder='College Close-up', tabindex=1)
           .left-grid
+            div.form-group.form-group-left
+              label Location
+              input.form-control.form-control-sm(type='text', name='location', value=event.location, placeholder='427 Mantei Center', tabindex=2)
             div.form-group
-              label Event Title:
-              input.form-control.form-control-sm(type='text', name='title', value=event.title, placeholder='Tuesday Tour', tabindex=1)
-            div.form-group
-              label Start Time:
-              input.form-control.form-control-sm(type='text', name='startTime', value=event.start_time, placeholder='2018 January 01 10:00 AM', tabindex=3)
+              label Start Time
+              input.form-control.form-control-sm(type='text', name='startTime', value=event.start_time, placeholder='2022 January 01 10:00 AM', tabindex=3)
           .right-grid
+            div.form-group.form-group-left
+              label Point Value
+              input.form-control.form-control-sm(type='text', name='pointValue', value=event.point_val, placeholder='1', tabindex=4)
             div.form-group
-              label Location:
-              input.form-control.form-control-sm(type='text', name='location', value=event.location, placeholder='653 Baldwin Hall', tabindex=2)
-            div.form-group
-              label End Time:
-              input.form-control.form-control-sm(type='text', name='endTime', value=event.end_time, placeholder='2018 January 01 11:00 AM', tabindex=4)
+              label End Time
+              input.form-control.form-control-sm(type='text', name='endTime', value=event.end_time, placeholder='2022 January 01 11:00 AM', tabindex=5)
         div.form-group
           label Description:
-          input.form-control.form-control-sm(type='text', name='description', value=event.description, placeholder='This event...', tabindex=5)
+          input.form-control.form-control-sm(type='text', name='description', value=event.description, placeholder='This event...', tabindex=6)
         div.form-group.form-check
-          input.form-check-input(type='checkbox', name='isPublic', checked=event.public, tabindex=6)
-          label.form-check-label Public Event
+          input.form-check-input(type='checkbox', name='isPublic', checked=event.public, tabindex=7)
+          p.form-check-label Public Event
         if isEdit === 'false'
           div.form-group.form-check
-            input.form-check-input(type='checkbox', name='isMeeting', checked=event.meeting, tabindex=7)
-            label.form-check-label Meeting
+            input.form-check-input(type='checkbox', name='isMeeting', checked=event.meeting, tabindex=8)
+            p.form-check-label Meeting
         if isEdit === 'true'
           div.form-group.form-check
-            input.form-check-input(type="checkbox", name='isDisabled', checked=event.is_disabled, tabindex=8)
+            input.form-check-input(type="checkbox", name='isDisabled', checked=event.is_disabled, tabindex=9)
             label.form-check-label(class="switch") Disable sign ups
         if isEdit === 'true'
-          input.submit(type='submit', name='create', value='Edit Event', tabindex=9)
+          input.submit(type='submit', name='create', value='Edit Event', tabindex=10)
         else
-          input.submit(type='submit', name='create', value='Create Event', tabindex=8)
+          input.submit(type='submit', name='create', value='Create Event', tabindex=9)

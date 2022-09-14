@@ -302,6 +302,7 @@ const postCreateEdit = [
           meeting: isMeeting,
           created_by: req.user.id,
           is_disabled: isDisabled,
+          point_val: req.body.point_val,
         }).then(() => {
           req.session.status = 201;
           req.session.alert.successMessages.push('Event updated!');
@@ -321,6 +322,8 @@ const postCreateEdit = [
       public: isPublic,
       meeting: isMeeting,
       created_by: req.user.id,
+      is_disabled: isDisabled,
+      point_val: req.body.point_val,
     }).then((event) => {
       // the event was succesfully created!
       req.session.status = 201;

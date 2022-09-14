@@ -103,26 +103,27 @@ exports.createUserSession = createUserSession;
 /**
  * get standard length of event
  */
-const getEventLength = () => {
+const getEventEnd = () => {
   // Events are one hour long
   return 3600000;
 };
 
-exports.getEventLength = getEventLength;
+exports.getEventEnd = getEventEnd;
 
 /**
  * Create a non-meeting event
  */
 const createPublicEvent = () => {
   // create date and set it 1 hour in the future
-  const date = Date.now() + getEventLength();
+  const date = Date.now() + getEventEnd();
   return models.Event.create({
     title: 'Test Meeting',
     start_time: date,
-    end_time: date + getEventLength(),
+    end_time: date + getEventEnd(),
     location: 'Your computer',
     public: true,
     meeting: false,
+    point_val: 1,
   });
 };
 exports.createPublicEvent = createPublicEvent;
@@ -132,14 +133,15 @@ exports.createPublicEvent = createPublicEvent;
  */
 const createPrivateEvent = () => {
   // create date and set it 1 hour in the future
-  const date = Date.now() + getEventLength();
+  const date = Date.now() + getEventEnd();
   return models.Event.create({
     title: 'Test Meeting',
     start_time: date,
-    end_time: date + getEventLength(),
+    end_time: date + getEventEnd(),
     location: 'Your computer',
     public: false,
     meeting: false,
+    point_val: 1,
   });
 };
 exports.createPrivateEvent = createPrivateEvent;
@@ -149,14 +151,15 @@ exports.createPrivateEvent = createPrivateEvent;
  */
 const createMeeting = () => {
   // create date and set it 1 hour in the future
-  const date = Date.now() + getEventLength();
+  const date = Date.now() + getEventEnd();
   return models.Event.create({
     title: 'Test Meeting',
     start_time: date,
-    end_time: date + getEventLength(),
+    end_time: date + getEventEnd(),
     location: 'Your computer',
     public: true,
     meeting: true,
+    point_val: 1,
   });
 };
 exports.createMeeting = createMeeting;

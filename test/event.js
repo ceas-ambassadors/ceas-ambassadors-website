@@ -990,10 +990,11 @@ describe('Event Tests', () => {
       return models.Event.create({
         title: 'Test Meeting',
         start_time: date,
-        end_time: date + common.getEventLength(),
+        end_time: date + common.getEventEnd(),
         location: 'Your computer',
         public: true,
         meeting: false,
+        point_val: 1,
       }).then((event) => {
         const isPublic = 'on';
         const isMeeting = 'off';

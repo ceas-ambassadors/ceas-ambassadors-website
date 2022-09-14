@@ -36,6 +36,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0,
     },
+    point_val: {
+      type: DataTypes.INT,
+      allowNull: false,
+      defaultValue: 0,
+    },
     // also created_by - defined below in associations
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
@@ -77,8 +82,8 @@ module.exports = (sequelize, DataTypes) => {
           return Promise.resolve();
         }
 
-        const lengthChange = (event.end_time - event.start_time)
-          - (event._previousDataValues.end_time - event._previousDataValues.start_time);
+        const lengthChange = event.point_val
+          - (event._previousDataValues.point_val);
         if (lengthChange === 0) {
           // The time didn't change, so it is unnecessary to actually process all these members
           // return promise for consistent return value
