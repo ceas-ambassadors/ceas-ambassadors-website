@@ -413,8 +413,8 @@ const getProfile = (req, res, next) => {
       });
     }
 
-    const service = member.service / 3600000;
-    const serviceNotNeeded = member.service_not_needed / 3600000;
+    const {service} = member;
+    const serviceNotNeeded = member.service_not_needed;
 
     // separate events into buckets
     const unconfirmedEvents = [];

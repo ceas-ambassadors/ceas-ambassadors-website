@@ -130,7 +130,6 @@ module.exports = (sequelize, DataTypes) => {
             });
           }
           // Not a meeting
-          1
           let serviceChange = 0;
           let serviceNotNeededChange = 0;
           // no change if old status = unconfirmed

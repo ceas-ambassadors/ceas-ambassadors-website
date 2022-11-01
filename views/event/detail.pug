@@ -135,7 +135,7 @@ block content
                 each member in unconfirmedAttendees
                   tr
                     td=member.first_name+' '+member.last_name
-                    td=(member.service)
+                    td=(member.new_service)
                     td=(member.major)
                     td
                       form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=confirmed', method='post')
