@@ -48,7 +48,7 @@ app.use(helmet.referrerPolicy());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'images', 'ceasambassadorslogos-01.png')));
 // Don't log page requests in tests
 if (process.env.NODE_ENV !== 'test') {
   app.use(logger('dev'));
