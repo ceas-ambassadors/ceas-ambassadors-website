@@ -57,6 +57,10 @@ module.exports = (sequelize, DataTypes) => {
           // No action needed. Resolve with empty promise for consistent return value
           return Promise.resolve();
         }
+        if (attendance.status === Attendance.getStatusExcused()) {
+          // No action needed. Resolve with empty promise for consistent return value
+          return Promise.resolve();
+        }
         const eventPromise = sequelize.models.Event.findByPk(attendance.event_id);
 
         const memberPromise = sequelize.models.Member.findByPk(attendance.member_id);
@@ -160,6 +164,10 @@ module.exports = (sequelize, DataTypes) => {
           // No action needed. Resolve with empty promise for consistent return value
           return Promise.resolve();
         }
+        if (attendance.status === Attendance.getStatusExcused()) {
+          // No action needed. Resolve with empty promise for consistent return value
+          return Promise.resolve();
+        }
         const eventPromise = sequelize.models.Event.findByPk(attendance.event_id);
 
         const memberPromise = sequelize.models.Member.findByPk(attendance.member_id);
@@ -188,7 +196,7 @@ module.exports = (sequelize, DataTypes) => {
               service_not_needed: member.service_not_needed - length,
             });
           }
-          throw Error('Something unexpected happened in the attendance afterCreate hook.');
+          throw Error('Something unexpected happened in the attendance beforeDestroy hook.');
         });
       },
       beforeBulkCreate: (instances, options) => {
