@@ -354,6 +354,27 @@ describe('Attendance Tests', () => {
       });
     });
 
+    // delete excused attendance
+    it('Delete attendance with status excused', () => {
+      return Promise.all([common.createPublicEvent(), common.createNormalUser()]).then((output) => {
+        // Create an attendance record
+        return models.Attendance.create({
+          member_id: output[1].id,
+          event_id: output[0].id,
+          status: models.Attendance.getStatusExcused(),
+        }).then((attendance) => {
+          return attendance.destroy().then(() => {
+            // assert that the member service didn't change
+            return models.Member.findByPk(output[1].id).then((member) => {
+              assert.equal(member.service, 0);
+              assert.equal(member.meetings, 0);
+              assert.equal(member.service_not_needed, 0);
+            });
+          });
+        });
+      });
+    });
+
     // delete confirmed attendance
     it('Delete attendance with status confirmed', () => {
       return Promise.all([common.createPublicEvent(), common.createNormalUser()]).then((output) => {
