@@ -20,8 +20,9 @@ const models = require('./models');
 const indexRouter = require('./routes/index');
 const eventRouter = require('./routes/event');
 const memberRouter = require('./routes/member');
-
 const app = express();
+
+
 
 // add helmet protections from various attacks
 app.use(
@@ -34,6 +35,10 @@ app.use(
     },
   }),
 );
+
+
+
+
 app.use(helmet.dnsPrefetchControl());
 app.use(helmet.expectCt());
 app.use(helmet.frameguard());
