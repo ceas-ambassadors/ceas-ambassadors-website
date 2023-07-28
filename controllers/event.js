@@ -2,8 +2,7 @@
  * Controller for all event related endpoints
  */
 const { check, validationResult } = require('express-validator');
-const models = require('../models/');
-
+const models = require('../models');
 
 /**
  * Get details page for a specific event specified in req.params.id
