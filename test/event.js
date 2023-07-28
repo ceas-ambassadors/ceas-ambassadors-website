@@ -86,7 +86,6 @@ describe('Event Tests', () => {
     });
   });
 
-
   // POST confirm attendance without being signed in
   it('POST confirm attendance not signed in', () => {
     const memberPromise = common.createNormalUser();
@@ -188,7 +187,6 @@ describe('Event Tests', () => {
         });
       });
     });
-
 
     // POST signup for an event
     it('POST signup for event', () => {
