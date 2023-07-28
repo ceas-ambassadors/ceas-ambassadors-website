@@ -37,16 +37,16 @@
     "morgan": "~1.10.0",
     "multer": "^1.4.4",
     "mysql2": "^3.5.2",
-    "passport": "^0.5.2",
+    "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pug": "3.0.2",
-    "sequelize": "^5.22.5",
+    "sequelize": "^6.32.1",
     "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-import": "^2.27.5",
     "mocha": "^10.2.0",
     "sequelize-cli": "^6.6.1",
     "supertest": "^6.3.3"

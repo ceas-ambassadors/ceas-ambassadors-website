@@ -1,6 +1,6 @@
 'use strict';
 
-const bcrypt = require('bcrypt');
+const {bcrypt} = require('bcrypt');
 
 // the number of rounds the salt will be generated
 const saltRounds = 10;
