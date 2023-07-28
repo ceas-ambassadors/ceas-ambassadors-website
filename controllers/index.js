@@ -4,7 +4,7 @@
  */
 // const { check, validationResult } = require('express-validator/check');
 const sequelizeOp = require('sequelize').Op;
-const models = require('../models/');
+const models = require('../models');
 
 const getIndex = (req, res, next) => {
   /**
