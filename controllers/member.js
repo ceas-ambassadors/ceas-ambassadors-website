@@ -5,7 +5,7 @@ const { check, validationResult } = require('express-validator');
 const passport = require('passport');
 const multer = require('multer');
 const fs = require('fs');
-const models = require('../models/');
+const models = require('../models');
 
 const pictureUpload = multer({
   dest: 'public/images/profile/',
