@@ -23,7 +23,7 @@
     }
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^5.1.1",
     "connect-session-sequelize": "^6.1.1",
     "cookie-parser": "~1.4.6",
     "csurf": "^1.11.0",
@@ -36,7 +36,7 @@
     "http-errors": "~2.0.0",
     "morgan": "~1.10.0",
     "multer": "^1.4.4",
-    "mysql2": "^3.5.2",
+    "mysql2": "^3.6.3",
     "passport": "^0.5.2",
     "passport-local": "^1.0.0",
     "pug": "3.0.2",
@@ -45,10 +45,10 @@
   },
   "devDependencies": {
     "eslint": "^7.32.0",
-    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "mocha": "^10.2.0",
-    "sequelize-cli": "^6.6.1",
+    "sequelize-cli": "^6.6.2",
     "supertest": "^6.3.3"
   }
 }
