@@ -347,9 +347,9 @@ const postProfileUpdate = (req, res, next) => {
     }
 
     // Convert coop checkbox to bool
-    let on_coop = false;
+    let onCoop = false;
     if (req.body.onCoop === 'on') {
-      on_coop = true;
+      onCoop = true;
     }
 
     // Ensure that gradYear is a number
@@ -369,7 +369,7 @@ const postProfileUpdate = (req, res, next) => {
       accend, // shorthand for accend: accend,
       hometown: req.body.hometown,
       coops: req.body.coops,
-      on_coop,
+      on_coop: onCoop,
       path_to_picture: file,
     }).then(() => {
       req.session.status = 200;

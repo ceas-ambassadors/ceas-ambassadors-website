@@ -583,7 +583,7 @@ const postRemoveSignUp = (req, res, next) => {
     }
     return Promise.resolve(attendance);
   }).then((attendance) => {
-    if (attendance != null) {
+    if (attendance) {
       return models.Event.findByPk(attendance.event_id).then((event) => {
         const cDate = new Date().getTime();
         const eDate = event.start_time.getTime();
@@ -603,6 +603,8 @@ const postRemoveSignUp = (req, res, next) => {
           });
         });
       });
+    } else {
+      Promise.resolve();
     }
   }).catch(next);
 };
