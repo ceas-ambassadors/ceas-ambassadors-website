@@ -49,6 +49,8 @@ block content
       //- Adds space between first part and second part
       = ' '
       span= event.title
+    h6
+      span= (event.sign_up_limit - numSignUps) + " Spots Remain"
     div.date-loc
       p #{new_start_date} - #{new_end_date} at #{event.location}
     if event.description
@@ -56,12 +58,17 @@ block content
 
     //- show sign up if it's an event and they're logged in, or if its a meeting and they're a super user
     if user && (!event.meeting || user.super_user)
-      if !event.is_disabled
-        form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
-          input(type='hidden', name='_csrf', value=csrfToken)
-          input.user-button(type='submit', name='Sign Up', value='Sign Up For Event')
-      if event.is_disabled 
-        p Sign ups are closed for this event now
+    if (event.start_time.getTime() > Date.now())
+      if (numSignUps < event.sign_up_limit)
+        if !event.is_disabled
+          form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
+            input(type='hidden', name='_csrf', value=csrfToken)
+            input.user-button(type='submit', name='Sign Up', value='Sign Up For Event')
+          form(id='removeSignup', action='/event/' + event.id + '/removeSignup' , method='post')
+            input(type='hidden', name='_csrf', value=csrfToken)
+            input.user-button(type='submit', name='Remove Sign Up', value='Remove Sign Up')
+        if event.is_disabled 
+          p Sign ups are closed for this event now
 
     if !user || (user && !user.super_user)
       //- Show normal users a combination of unconfirmed and confirmed members
@@ -129,8 +136,6 @@ block content
                   th Major
                   th Confirm
                   th Not Needed
-                  th Did Not Attend
-                  th Excused
               tbody
                 each member in unconfirmedAttendees
                   tr
@@ -146,14 +151,6 @@ block content
                       form(id='notNeededAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=notNeeded', method='post')
                         input(type='hidden', name='_csrf', value=csrfToken)
                         input.submit-small(type='submit', name='NotNeeded', value='Not Needed')
-                    td
-                      form(id='denyAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=denied', method='post')
-                        input(type='hidden', name='_csrf', value=csrfToken)
-                        input.submit-small(type='submit', name='Deny', value='Did Not Attend')
-                    td
-                      form(id='excusedAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=excused', method='post')
-                        input(type='hidden', name='_csrf', value=csrfToken)
-                        input.submit-small(type='submit', name='Excuse', value='Excused')
         
         div.super-section
           if confirmedAttendees.length > 0
@@ -166,11 +163,16 @@ block content
         div.super-section
           if excusedAttendees.length > 0
             +member-list(excusedAttendees, "Excused", "h2")
+
+        div.super-section
+          if noShowAttendees.length > 0
+            +member-list(noShowAttendees, "No Show", "h2")
         
         div.super-section
           //- edit and delete options
           h2 Event Options
           div.option-buttons-container
+            a.btn.btn-danger(href='/event/' + event.id + '/attendanceStatus') Change Attendance Status
             a.btn.btn-danger(href='/event/' + event.id + '/edit') Edit Event
 
             form(id='deleteEvent', action='/event/' + event.id + '/delete', method='post' onSubmit="return confirm('This will permanently delete the event. Proceed?')")

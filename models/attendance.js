@@ -8,7 +8,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Attendance = sequelize.define('Attendance', {
     status: {
-      type: DataTypes.ENUM('unconfirmed', 'confirmed', 'not_needed', 'excused'),
+      type: DataTypes.ENUM('unconfirmed', 'no_show', 'confirmed', 'not_needed', 'excused'),
       allowNull: false,
     },
     // This also has references to an event and a member - auto added as part of
@@ -57,10 +57,7 @@ module.exports = (sequelize, DataTypes) => {
           // No action needed. Resolve with empty promise for consistent return value
           return Promise.resolve();
         }
-        if (attendance.status === Attendance.getStatusExcused()) {
-          // No action needed. Resolve with empty promise for consistent return value
-          return Promise.resolve();
-        }
+        
         const eventPromise = sequelize.models.Event.findByPk(attendance.event_id);
 
         const memberPromise = sequelize.models.Member.findByPk(attendance.member_id);
@@ -87,6 +84,16 @@ module.exports = (sequelize, DataTypes) => {
           if (attendance.status === Attendance.getStatusNotNeeded()) {
             return member.update({
               service_not_needed: member.service_not_needed + length,
+            });
+          }
+          if (attendance.status === Attendance.getStatusExcused()) {
+            return member.update({
+              service_excused: member.service_excused + length,
+            });
+          }
+          if (attendance.status === Attendance.getStatusNoShow()) {
+            return member.update({
+              service_no_show: member.service_no_show + length,
             });
           }
           throw Error('Something unexpected happened in the attendance afterCreate hook.');
@@ -137,12 +144,21 @@ module.exports = (sequelize, DataTypes) => {
           const length = event.end_time - event.start_time;
           let serviceChange = 0;
           let serviceNotNeededChange = 0;
+          let serviceExcusedChange = 0;
+          let serviceNoShowChange = 0;
+
           // no change if old status = unconfirmed
           if (oldStatus === Attendance.getStatusConfirmed()) {
             serviceChange -= length;
           }
           if (oldStatus === Attendance.getStatusNotNeeded()) {
             serviceNotNeededChange -= length;
+          }
+          if (oldStatus === Attendance.getStatusExcused()) {
+            serviceExcusedChange -= length;
+          }
+          if (oldStatus === Attendance.getStatusNoShow()) {
+            serviceNoShowChange -= length;
           }
           // no change if status = unconfirmed
           if (attendance.status === Attendance.getStatusConfirmed()) {
@@ -151,9 +167,17 @@ module.exports = (sequelize, DataTypes) => {
           if (attendance.status === Attendance.getStatusNotNeeded()) {
             serviceNotNeededChange += length;
           }
+          if (attendance.status === Attendance.getStatusExcused()) {
+            serviceExcusedChange += length;
+          }
+          if (attendance.status === Attendance.getStatusNoShow()) {
+            serviceNoShowChange += length;
+          }
           return member.update({
             service: member.service + serviceChange,
             service_not_needed: member.service_not_needed + serviceNotNeededChange,
+            service_excused: member.service_excused + serviceExcusedChange,
+            service_no_show: member.service_no_show + serviceNoShowChange,
           });
         });
       },
@@ -196,6 +220,16 @@ module.exports = (sequelize, DataTypes) => {
               service_not_needed: member.service_not_needed - length,
             });
           }
+          if (attendance.status === Attendance.getStatusExcused()) {
+            return member.update({
+              service_excused: member.service_excused - length,
+            });
+          }
+          if (attendance.status === Attendance.getStatusNoShow()) {
+            return member.update({
+              service_no_show: member.service_no_show - length,
+            });
+          }
           throw Error('Something unexpected happened in the attendance beforeDestroy hook.');
         });
       },
@@ -222,6 +256,7 @@ module.exports = (sequelize, DataTypes) => {
    * THESE MUST MATCH THE ABOVE DEFINED
    */
   Attendance.getStatusUnconfirmed = () => { return 'unconfirmed'; };
+  Attendance.getStatusNoShow = () => { return 'no_show'};
   Attendance.getStatusConfirmed = () => { return 'confirmed'; };
   Attendance.getStatusNotNeeded = () => { return 'not_needed'; };
   Attendance.getStatusExcused = () => { return 'excused'; };

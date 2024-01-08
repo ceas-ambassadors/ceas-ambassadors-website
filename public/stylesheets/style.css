@@ -152,6 +152,8 @@ nav{
   height: 30px;
   width: 30px;
   background-color: #fab7c1;
+  text-align: right;
+  align-items: center;
  }
 
 
@@ -198,6 +200,12 @@ nav{
 .accend {
   align-items: center;
   display: flex;
+  flex-direction: column;
+}
+
+.onCoop {
+  align-items: center;
+  display: block;
   flex-direction: column;
 }
 
