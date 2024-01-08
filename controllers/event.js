@@ -603,9 +603,8 @@ const postRemoveSignUp = (req, res, next) => {
           });
         });
       });
-    } else {
-      Promise.resolve();
     }
+    return Promise.resolve();
   }).catch(next);
 };
 exports.postRemoveSignUp = postRemoveSignUp;
