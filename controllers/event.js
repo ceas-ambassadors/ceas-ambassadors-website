@@ -3,7 +3,6 @@
  */
 const { check, validationResult } = require('express-validator');
 const models = require('../models');
-const attendance = require('../models/attendance');
 
 /**
  * Get details page for a specific event specified in req.params.id
@@ -356,7 +355,6 @@ exports.getSave = getSave;
  * GET for the change attendance status page
  */
 const getAttendanceStatus = (req, res, next) => {
-
   return models.Event.findByPk(req.params.id).then((event) => {
     if (!event) {
       req.session.status = 404;
@@ -398,7 +396,6 @@ const getAttendanceStatus = (req, res, next) => {
     });
 
     return Promise.all([eventAttendeesPromise, allMembersPromise]).then(([members, allMembers]) => {
-    
       // members is not an array of full members - it only has the above selected attrs + status
       const confirmedAttendees = [];
       const notNeededAttendees = [];
@@ -424,16 +421,16 @@ const getAttendanceStatus = (req, res, next) => {
       const unconfirmedAndConfirmedAttendees = unconfirmedAttendees.concat(confirmedAttendees);
 
       return res.status(res.locals.status).render('event/attendanceStatus', {
-          title: event.title,
-          event, // shorthand for event: event,
-          members,
-          membersNotSignedUp,
-          unconfirmedAttendees,
-          notNeededAttendees,
-          excusedAttendees,
-          noShowAttendees,
-          confirmedAttendees,
-          unconfirmedAndConfirmedAttendees,
+        title: event.title,
+        event, // shorthand for event: event,
+        members,
+        membersNotSignedUp,
+        unconfirmedAttendees,
+        notNeededAttendees,
+        excusedAttendees,
+        noShowAttendees,
+        confirmedAttendees,
+        unconfirmedAndConfirmedAttendees,
       });
     });
   }).catch(next);
@@ -575,19 +572,16 @@ const postRemoveSignUp = (req, res, next) => {
       return res.redirect(`/event/${req.params.id}`);
     });
   }
-  
-  return models.Attendance.findByPk(req.params.id).then((attendance) => {
 
+  return models.Attendance.findByPk(req.params.id).then((attendance) => {
     if (!attendance) {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Sign-up not found.');
       return req.session.save(() => {
         return res.redirect(`/event/${req.params.id}`);
       });
-    } else {
-      return Promise.resolve(attendance);
     }
-
+    return Promise.resolve(attendance);
   }).then((attendance) => {
     if (attendance != null) {
       return models.Event.findByPk(attendance.event_id).then((event) => {
@@ -608,7 +602,6 @@ const postRemoveSignUp = (req, res, next) => {
             return res.redirect(`/event/${req.params.id}`);
           });
         });
-
       });
     }
   }).catch(next);
@@ -763,7 +756,7 @@ const postConfirmAttendance = (req, res, next) => {
   const noShowConstant = 'noShow';
   // Check that the value of the status query is valid
   if (req.query.status !== confirmedConstant && req.query.status !== notNeededConstant
-    && req.query.status !== excusedConstant && req.query.status !== denyConstant) {
+    && req.query.status !== excusedConstant && req.query.status !== noShowConstant) {
     req.session.status = 400;
     req.session.alert.errorMessages.push('Incorrect value for status. Please use UI buttons.');
     return req.session.save(() => {

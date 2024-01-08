@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
           // No action needed. Resolve with empty promise for consistent return value
           return Promise.resolve();
         }
-        
+
         const eventPromise = sequelize.models.Event.findByPk(attendance.event_id);
 
         const memberPromise = sequelize.models.Member.findByPk(attendance.member_id);
@@ -256,7 +256,7 @@ module.exports = (sequelize, DataTypes) => {
    * THESE MUST MATCH THE ABOVE DEFINED
    */
   Attendance.getStatusUnconfirmed = () => { return 'unconfirmed'; };
-  Attendance.getStatusNoShow = () => { return 'no_show'};
+  Attendance.getStatusNoShow = () => { return 'no_show'; };
   Attendance.getStatusConfirmed = () => { return 'confirmed'; };
   Attendance.getStatusNotNeeded = () => { return 'not_needed'; };
   Attendance.getStatusExcused = () => { return 'excused'; };

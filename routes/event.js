@@ -19,7 +19,7 @@ router.get('/:id', eventController.getDetails);
 
 router.post('/:id/signup', eventController.postSignup);
 
-router.post('/:id/removeSignup', eventController.postRemoveSignUp)
+router.post('/:id/removeSignup', eventController.postRemoveSignUp);
 
 router.post('/:id/confirm', eventController.postConfirmAttendance);
 
@@ -29,7 +29,7 @@ router.post('/:id/delete', eventController.postDelete);
 
 router.get('/:id/edit', eventController.getEdit);
 
-router.get('/:id/attendanceStatus', eventController.getAttendanceStatus)
+router.get('/:id/attendanceStatus', eventController.getAttendanceStatus);
 
 router.get('/:id/save', eventController.getSave);
 

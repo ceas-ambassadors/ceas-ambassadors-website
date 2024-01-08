@@ -72,16 +72,15 @@ const postLogin = (req, res, next) => {
       const cDate = member.updated_at.getTime();
 
       if (cDate - uDate > 1.051e10) {
-      req.session.alert.infoMessages.push('Please update your profile before continuing.');
-      return req.session.save(() => {
-        return res.redirect('/settings');
-      });
-      } else {
+        req.session.alert.infoMessages.push('Please update your profile before continuing.');
+        return req.session.save(() => {
+          return res.redirect('/settings');
+        });
+      }
       req.session.alert.successMessages.push('Signed in!');
       return req.session.save(() => {
         return res.redirect('/');
       });
-      }
     });
   })(req, res, next);
 };
