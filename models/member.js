@@ -31,6 +31,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0,
     },
+    service_excused: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    service_no_show: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
     is_certified: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -45,6 +55,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     hometown: DataTypes.STRING,
     coops: DataTypes.TEXT,
+    // Added variable to determine if member is on co-op for term
+    on_coop: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: 0,
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -57,6 +73,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
+    updated_at: DataTypes.DATE,
   }, {
     // set so that all autocreated table names are underscored instead of camel cased
     underscored: true,

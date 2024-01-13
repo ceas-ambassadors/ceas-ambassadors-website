@@ -19,6 +19,7 @@ block content
     - event.description = ''
     - event.public = true
     - event.meeting = false
+    - event.sign_up_limit = 20
   if isEdit
     - isEdit = 'true'
   else
@@ -52,6 +53,9 @@ block content
         div.form-group
           label Description:
           input.form-control.form-control-sm(type='text', name='description', value=event.description, placeholder='This event...', tabindex=5)
+        div.form-group
+          label # of Allowed Sign-ups:
+          input.form-control.form-control-sm(type='text', name='signUpLimit', value=event.sign_up_limit, placeholder='20', tabindex=5)
         div.form-group.form-check
           input.form-check-input(type='checkbox', name='isPublic', checked=event.public, tabindex=6)
           label.form-check-label Public Event

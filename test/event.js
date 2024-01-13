@@ -894,7 +894,7 @@ describe('Event Tests', () => {
     });
 
     // POST confirm attendance with status=denied
-    it('POST confirm attendance with status=denied', () => {
+    it('POST confirm attendance with status=noShow', () => {
       return common.createPublicEvent().then((event) => {
         // create an attendance record for the signup to confirm
         return models.Attendance.create({
@@ -903,7 +903,7 @@ describe('Event Tests', () => {
           status: models.Attendance.getStatusUnconfirmed(),
         }).then(() => {
           const requestProm = agent
-            .post(`/event/${event.id}/confirm?member=${loginMember.id}&status=denied`)
+            .post(`/event/${event.id}/confirm?member=${loginMember.id}&status=noShow`)
             .redirects(1)
             .expect(200);
 
@@ -914,7 +914,8 @@ describe('Event Tests', () => {
                 event_id: event.id,
               },
             }).then((attendance) => {
-              assert(!attendance);
+              assert(attendance);
+              assert.deepEqual(attendance.status, models.Attendance.getStatusNoShow());
             });
           });
         });

@@ -33,6 +33,11 @@ block content
         div.secondary-info-detail
           h3 Co-ops
           p #{member.coops}
+          h3 Current Rotation
+          if member.on_coop
+            p On Co-op
+          else
+            p In Class
       if member.clubs
         div.secondary-info-detail
           h3 Orgs and Clubs
@@ -81,6 +86,16 @@ block content
         form(id='superUserElevate', action='/member/' + member.id + '/update-attributes?super_user=true', method='post')
           input(type='hidden', name='_csrf', value=csrfToken)
           input.submit-small(type='submit', name='elevate', value='Elevate to Super User')
+      if member.on_coop
+        //- Change to in Class
+        form(id='changeInClass', action='/member/' + member.id + '/update-attributes?on_coop=false', method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          input.submit-small(type='submit', name='elevate', value='Change to in class')
+      if !member.on_coop
+        //- Change to on Coop
+        form(id='changeOnCoop', action='/member/' + member.id + '/update-attributes?on_coop=true', method='post')
+          input(type='hidden', name='_csrf', value=csrfToken)
+          input.submit-small(type='submit', name='demote', value='Change to on co-op')
       if member.private_user
         //- set to public
         form(id='publicUser', action='/member/' + member.id + '/update-attributes?private_user=false', method='post')
