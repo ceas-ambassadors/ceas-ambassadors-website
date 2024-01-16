@@ -1,0 +1,71 @@
+//- UI for creating events
+//- this UI is also used for editing events
+//- @param event - the event to be edited
+//- @param isEdit - true or false indicating edit
+extends ../layout
+include ../member/mixins/list.pug
+
+
+block content
+  div.detail-container.event
+    div.super-container
+      div.super-section
+        h2 Confirm Attendance for Attendees
+        table.table
+          thead
+            tr
+              th Member
+              th Points
+              th Major
+              th Certified
+              th Confirm
+              th Not Needed
+              th Did Not Attend
+              th Excused
+          tbody
+            each member in members
+              tr
+                td=member.first_name+' '+member.last_name
+                //- Divide service by factor to convert to points
+                td=(member.service / 3600000)
+                td=(member.major)
+                td #{member.is_certified ? "Yes" : "No"}
+                td
+                  form(id='confirmAttendance', action='/event/' + event.id + '/change?member=' + member.id + '&status=confirmed', method='post')
+                    input(type='hidden', name='_csrf', value=csrfToken)
+                    input.submit-small(type='submit', name='Confirm', value='Confirm')
+                td
+                  form(id='notNeededAttendance', action='/event/' + event.id + '/change?member=' + member.id + '&status=notNeeded', method='post')
+                    input(type='hidden', name='_csrf', value=csrfToken)
+                    input.submit-small(type='submit', name='NotNeeded', value='Not Needed')
+                td
+                  form(id='noShowAttendance', action='/event/' + event.id + '/change?member=' + member.id + '&status=noShow', method='post')
+                    input(type='hidden', name='_csrf', value=csrfToken)
+                    input.submit-small(type='submit', name='noShow', value='Did Not Attend')
+                td
+                  form(id='excusedAttendance', action='/event/' + event.id + '/change?member=' + member.id + '&status=excused', method='post')
+                    input(type='hidden', name='_csrf', value=csrfToken)
+                    input.submit-small(type='submit', name='Excuse', value='Excused')
+
+      div.super-section
+        if confirmedAttendees.length > 0
+          +member-list(confirmedAttendees, "Confirmed", "h2")
+
+      div.super-section
+        if notNeededAttendees.length > 0
+          +member-list(notNeededAttendees, "Not Needed", "h2")
+
+      div.super-section
+        if excusedAttendees.length > 0
+          +member-list(excusedAttendees, "Excused", "h2")
+      
+      div.super-section
+          if noShowAttendees.length > 0
+            +member-list(noShowAttendees, "No Show", "h2")
+      
+      div.super-section
+        td
+          form(id='save', action='/event/' + event.id + '/save', method='get')
+            input(type='hidden', name='_csrf', value=csrfToken)
+            input.submit-small(type='submit', name='Save and Exit', value='Save and Exit')
+

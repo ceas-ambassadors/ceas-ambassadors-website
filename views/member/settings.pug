@@ -45,6 +45,9 @@ block content
           label Co-ops
           //- TODO - probably make this a text area
           input(type='text', name='coops', value=user.coops)
+        div(class='onCoop')
+          label On Co-op
+          input(type='checkbox', name='onCoop', checked=user.on_coop)
       //- input(type='submit', name='submitProfile', value='Submit Changes')
       input.user-button(type='submit', name='submitProfile', value='Submit Changes')
 
@@ -74,7 +77,7 @@ block content
         form(id='superUserDemote', action='/member/' + user.id + '/update-attributes?super_user=false', method='post')
           input(type='hidden', name='_csrf', value=csrfToken)
           div(class="superUserButton")
-            input.user-button(type='submit', name='demote', value='Demote yourself from super user')    
+            input.user-button(type='submit', name='demote', value='Demote yourself from super user')       
       if user.private_user
         //- set to public
         form(id='publicUser', action='/member/' + user.id + '/update-attributes?private_user=false', method='post')

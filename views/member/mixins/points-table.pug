@@ -6,17 +6,24 @@ mixin member-table(members, title)
                 th Name
                 th Email
                 th Major
+                th Status
+                th Certified
                 th Meetings
                 th Points
                 th Not Needed
-                th Certified
+                th Excused
+                th No Show
+                
         each member in members
             tr
                 td #{member.first_name} #{member.last_name}
                 td #{member.email}
                 td #{member.major}
+                td #{member.on_coop ? "Co-op" : "Class"}
+                td #{member.is_certified ? "Yes" : "No"}
                 td #{member.meetings}
                 td #{member.service / 3600000}
                 td #{member.service_not_needed / 3600000}
-                td #{member.is_certified ? "Yes" : "No"}
+                td #{member.service_excused/ 3600000}
+                td #{member.service_no_show / 3600000}
 

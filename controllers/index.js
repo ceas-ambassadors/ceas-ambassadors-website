@@ -233,6 +233,8 @@ const postReset = (req, res, next) => {
       service: 0,
       meetings: 0,
       service_not_needed: 0,
+      service_no_show: 0,
+      service_excused: 0,
     }, {
       where: {},
     }).then(() => {

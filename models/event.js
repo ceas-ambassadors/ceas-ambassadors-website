@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    sign_up_limit: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 20,
+    },
     public: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -106,6 +111,16 @@ module.exports = (sequelize, DataTypes) => {
               if (attendances[i].status === sequelize.models.Attendance.getStatusNotNeeded()) {
                 returns.push(output[i].update({
                   service_not_needed: output[i].service_not_needed + lengthChange,
+                }));
+              }
+              if (attendances[i].status === sequelize.models.Attendance.getStatusExcused()) {
+                returns.push(output[i].update({
+                  service_excused: output[i].service_excused + lengthChange,
+                }));
+              }
+              if (attendances[i].status === sequelize.models.Attendance.getStatusNoShow()) {
+                returns.push(output[i].update({
+                  service_no_show: output[i].service_no_show + lengthChange,
                 }));
               }
             }

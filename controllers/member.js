@@ -66,12 +66,18 @@ const postLogin = (req, res, next) => {
       }
       // success logging in!
       req.session.status = 200;
-      req.session.alert.successMessages.push('Signed in!');
       // Check to see if there are any messages for the user
-      // could be turned into it's own function if this logic gets too complex
-      if (member.major === null || member.grad_year === null || member.hometown === null) {
-        req.session.alert.infoMessages.push('You can add details to your profile by clicking your email in the top right of the page.');
+      // could be turned into it's own function if this logic gets too complex 1.314e+10
+      const uDate = new Date().getTime();
+      const cDate = member.updated_at.getTime();
+
+      if (cDate - uDate > 1.051e10) {
+        req.session.alert.infoMessages.push('Please update your profile before continuing.');
+        return req.session.save(() => {
+          return res.redirect('/settings');
+        });
       }
+      req.session.alert.successMessages.push('Signed in!');
       return req.session.save(() => {
         return res.redirect('/');
       });
@@ -182,6 +188,7 @@ const postSignup = [
           first_name: req.body.firstName,
           last_name: req.body.lastName,
           accend: false,
+          on_coop: false,
           super_user: false,
           private_user: false,
         }).then((newMember) => {
@@ -339,6 +346,12 @@ const postProfileUpdate = (req, res, next) => {
       accend = true;
     }
 
+    // Convert coop checkbox to bool
+    let onCoop = false;
+    if (req.body.onCoop === 'on') {
+      onCoop = true;
+    }
+
     // Ensure that gradYear is a number
     // correct syntax for let gradYear = req.body.gradYear;
     let { gradYear } = req.body;
@@ -356,6 +369,7 @@ const postProfileUpdate = (req, res, next) => {
       accend, // shorthand for accend: accend,
       hometown: req.body.hometown,
       coops: req.body.coops,
+      on_coop: onCoop,
       path_to_picture: file,
     }).then(() => {
       req.session.status = 200;
@@ -415,6 +429,8 @@ const getProfile = (req, res, next) => {
 
     const service = member.service / 3600000;
     const serviceNotNeeded = member.service_not_needed / 3600000;
+    const serviceExcused = member.service_excused / 3600000;
+    const serviceNoShow = member.service_no_show / 3600000;
 
     // separate events into buckets
     const unconfirmedEvents = [];
@@ -456,6 +472,8 @@ const getProfile = (req, res, next) => {
       service,
       meetings: member.meetings,
       serviceNotNeeded,
+      serviceExcused,
+      serviceNoShow,
       unconfirmedEvents,
       confirmedEvents,
       excusedEvents,
@@ -529,6 +547,7 @@ const postUpdateAttributes = (req, res, next) => {
       });
     }
     let superUser = req.query.super_user;
+    let onCoop = req.query.on_coop;
     let privateUser = req.query.private_user;
     let isCertified = req.query.is_certified;
     // variable to indicate that something was changed
@@ -544,6 +563,19 @@ const postUpdateAttributes = (req, res, next) => {
     if (superUser !== member.super_user) {
       change = true;
     }
+
+    if (onCoop === 'true') {
+      onCoop = true;
+    } else if (onCoop === 'false') {
+      onCoop = false;
+    } else {
+      // wasn't tyure or false, set to current value
+      onCoop = member.on_coop;
+    }
+    if (change === false && onCoop !== member.on_coop) {
+      change = true;
+    }
+
     if (privateUser === 'true') {
       privateUser = true;
     } else if (privateUser === 'false') {
@@ -568,6 +600,7 @@ const postUpdateAttributes = (req, res, next) => {
     }
     return member.update({
       super_user: superUser,
+      on_coop: onCoop,
       private_user: privateUser,
       is_certified: isCertified,
     }).then(() => {
