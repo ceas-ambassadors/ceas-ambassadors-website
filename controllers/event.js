@@ -567,7 +567,7 @@ const postRemoveSignUp = (req, res, next) => {
   // Make sure the user is signed in
   if (!req.user) {
     req.session.status = 401;
-    req.session.alert.errorMessages.push('You must be logged in to delete events.');
+    req.session.alert.errorMessages.push('You must be logged in to delete sign-up.');
     return req.session.save(() => {
       return res.redirect(`/event/${req.params.id}`);
     });
@@ -575,6 +575,13 @@ const postRemoveSignUp = (req, res, next) => {
 
   return models.Attendance.findByPk(req.params.id).then((attendance) => {
     if (!attendance) {
+      req.session.status = 404;
+      req.session.alert.errorMessages.push('Sign-up not found.');
+      return req.session.save(() => {
+        return res.redirect(`/event/${req.params.id}`);
+      });
+    }
+    if (req.user.id != attendance.member_id) {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Sign-up not found.');
       return req.session.save(() => {
