@@ -328,7 +328,7 @@ const postCreateEdit = [
       end_time: endTime,
       description: req.body.description,
       location: req.body.location,
-      sign_up_limit: req.body.sign_up_limit,
+      sign_up_limit: req.body.signUpLimit,
       public: isPublic,
       meeting: isMeeting,
       created_by: req.user.id,
