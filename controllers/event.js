@@ -328,7 +328,7 @@ const postCreateEdit = [
       end_time: endTime,
       description: req.body.description,
       location: req.body.location,
-      sign_up_limit: req.body.sign_up_limit,
+      sign_up_limit: req.body.signUpLimit,
       public: isPublic,
       meeting: isMeeting,
       created_by: req.user.id,
@@ -567,13 +567,22 @@ const postRemoveSignUp = (req, res, next) => {
   // Make sure the user is signed in
   if (!req.user) {
     req.session.status = 401;
-    req.session.alert.errorMessages.push('You must be logged in to delete events.');
+    req.session.alert.errorMessages.push('You must be logged in to delete your sign-up.');
     return req.session.save(() => {
       return res.redirect(`/event/${req.params.id}`);
     });
   }
 
-  return models.Attendance.findByPk(req.params.id).then((attendance) => {
+  const eventAttendancePromise = models.Attendance.findOne({
+    where: {
+      member_id: req.user.id,
+      event_id: req.params.id,
+    },
+  });
+
+  const eventPromise = models.Event.findByPk(req.params.id);
+
+  return Promise.all([eventAttendancePromise, eventPromise]).then(([attendance, event]) => {
     if (!attendance) {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Sign-up not found.');
@@ -581,30 +590,24 @@ const postRemoveSignUp = (req, res, next) => {
         return res.redirect(`/event/${req.params.id}`);
       });
     }
-    return Promise.resolve(attendance);
-  }).then((attendance) => {
-    if (attendance) {
-      return models.Event.findByPk(attendance.event_id).then((event) => {
-        const cDate = new Date().getTime();
-        const eDate = event.start_time.getTime();
 
-        if (eDate - cDate <= 2.592e8) {
-          req.session.status = 403;
-          req.session.alert.errorMessages.push('Sign-ups cannot be removed within 72 hours of an event.');
-          return req.session.save(() => {
-            return res.redirect(`/event/${req.params.id}`);
-          });
-        }
+    const cDate = new Date().getTime();
+    const eDate = event.start_time.getTime();
 
-        return attendance.destroy().then(() => {
-          req.session.alert.successMessages.push('Sign-up deleted succesfully.');
-          return req.session.save(() => {
-            return res.redirect(`/event/${req.params.id}`);
-          });
-        });
+    if (eDate - cDate <= 2.592e8) {
+      req.session.status = 403;
+      req.session.alert.errorMessages.push('Sign-ups cannot be removed within 72 hours of an event.');
+      return req.session.save(() => {
+        return res.redirect(`/event/${req.params.id}`);
       });
     }
-    return Promise.resolve();
+
+    return attendance.destroy().then(() => {
+      req.session.alert.successMessages.push('Sign-up deleted succesfully.');
+      return req.session.save(() => {
+        return res.redirect(`/event/${req.params.id}`);
+      });
+    });
   }).catch(next);
 };
 exports.postRemoveSignUp = postRemoveSignUp;
