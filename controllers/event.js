@@ -583,7 +583,6 @@ const postRemoveSignUp = (req, res, next) => {
   const eventPromise = models.Event.findByPk(req.params.id);
 
   return Promise.all([eventAttendancePromise, eventPromise]).then(([attendance, event]) => {
-
     if (!attendance) {
       req.session.status = 404;
       req.session.alert.errorMessages.push('Sign-up not found.');
@@ -609,7 +608,6 @@ const postRemoveSignUp = (req, res, next) => {
         return res.redirect(`/event/${req.params.id}`);
       });
     });
-
   }).catch(next);
 };
 exports.postRemoveSignUp = postRemoveSignUp;
