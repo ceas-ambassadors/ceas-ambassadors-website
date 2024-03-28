@@ -81,9 +81,16 @@ const getDetails = (req, res, next) => {
       const excusedAttendees = [];
       const noShowAttendees = [];
       const membersNotSignedUp = allMembers;
-      const numSignUps = members.length;
+      var numSignUps = members.length;
+
       // Separate members into confirmed, not needed, and unconfirmed
       for (let i = 0; i < members.length; i += 1) {
+        if (members[i].is_certified==0) {
+          // Increment numSignUps only if the member is certified 
+          numSignUps -= 1;
+          //console.log(numSignUps);
+        }
+        
         if (members[i].status === models.Attendance.getStatusConfirmed()) {
           confirmedAttendees.push(members[i]);
         } else if (members[i].status === models.Attendance.getStatusNotNeeded()) {
@@ -96,7 +103,7 @@ const getDetails = (req, res, next) => {
           unconfirmedAttendees.push(members[i]);
         }
       }
-      // build list of members for showing to non-logged in users
+      
       const unconfirmedAndConfirmedAttendees = unconfirmedAttendees.concat(confirmedAttendees);
       return res.status(res.locals.status).render('event/detail', {
         title: event.title,
