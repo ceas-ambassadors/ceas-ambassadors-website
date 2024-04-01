@@ -40,7 +40,7 @@
     "passport": "^0.5.2",
     "passport-local": "^1.0.0",
     "pug": "3.0.2",
-    "sequelize": "^5.22.5",
+    "sequelize": "^6.37.2",
     "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
