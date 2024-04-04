@@ -82,8 +82,6 @@ const getDetails = (req, res, next) => {
       const excusedAttendees = [];
       const noShowAttendees = [];
       const membersNotSignedUp = allMembers;
-      
-
       // Separate members into confirmed, not needed, and unconfirmed
       for (let i = 0; i < members.length; i += 1) {
         if (members[i].is_certified === 0) {
@@ -101,7 +99,6 @@ const getDetails = (req, res, next) => {
           unconfirmedAttendees.push(members[i]);
         }
       }
-      
       const unconfirmedAndConfirmedAttendees = unconfirmedAttendees.concat(confirmedAttendees);
       return res.status(res.locals.status).render('event/detail', {
         title: event.title,
@@ -424,7 +421,6 @@ const getAttendanceStatus = (req, res, next) => {
       }
       // build list of members for showing to non-logged in users
       const unconfirmedAndConfirmedAttendees = unconfirmedAttendees.concat(confirmedAttendees);
-
       return res.status(res.locals.status).render('event/attendanceStatus', {
         title: event.title,
         event, // shorthand for event: event,
