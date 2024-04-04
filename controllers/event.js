@@ -52,6 +52,7 @@ const getDetails = (req, res, next) => {
       // if it is a private event and the current member is not on the attendee list - they cannot
       // see event details
       // super users can see all events
+      var numSignUps = members.length;
       if (event.public !== true) {
         if (!req.user.super_user) {
           let found = false;
@@ -81,16 +82,13 @@ const getDetails = (req, res, next) => {
       const excusedAttendees = [];
       const noShowAttendees = [];
       const membersNotSignedUp = allMembers;
-      var numSignUps = members.length;
+      
 
       // Separate members into confirmed, not needed, and unconfirmed
       for (let i = 0; i < members.length; i += 1) {
-        if (members[i].is_certified==0) {
-          // Increment numSignUps only if the member is certified 
+        if (members[i].is_certified === 0) {
           numSignUps -= 1;
-          //console.log(numSignUps);
         }
-        
         if (members[i].status === models.Attendance.getStatusConfirmed()) {
           confirmedAttendees.push(members[i]);
         } else if (members[i].status === models.Attendance.getStatusNotNeeded()) {
