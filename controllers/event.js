@@ -52,7 +52,7 @@ const getDetails = (req, res, next) => {
       // if it is a private event and the current member is not on the attendee list - they cannot
       // see event details
       // super users can see all events
-      var numSignUps = members.length;
+      let numSignUps = members.length;
       if (event.public !== true) {
         if (!req.user.super_user) {
           let found = false;
