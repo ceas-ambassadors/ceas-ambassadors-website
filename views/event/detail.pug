@@ -64,11 +64,11 @@ block content
           form(id='signUp', action='/event/' + event.id + '/signup' , method='post')
             input(type='hidden', name='_csrf', value=csrfToken)
             input.user-button(type='submit', name='Sign Up', value='Sign Up For Event')
-          form(id='removeSignup', action='/event/' + event.id + '/removeSignup' , method='post')
-            input(type='hidden', name='_csrf', value=csrfToken)
-            input.user-button(type='submit', name='Remove Sign Up', value='Remove Sign Up')
         if event.is_disabled 
           p Sign ups are closed for this event now
+      form(id='removeSignup', action='/event/' + event.id + '/removeSignup' , method='post')
+                input(type='hidden', name='_csrf', value=csrfToken)
+                input.user-button(type='submit', name='Remove Sign Up', value='Remove Sign Up')
 
     if !user || (user && !user.super_user)
       //- Show normal users a combination of unconfirmed and confirmed members
@@ -133,6 +133,7 @@ block content
                 tr
                   th Member
                   th Points
+                  th Certified
                   th Major
                   th Confirm
                   th Not Needed
@@ -142,6 +143,11 @@ block content
                     td=member.first_name+' '+member.last_name
                     //- Divide service by factor to convert to points
                     td=(member.service / 3600000)
+                    td
+                      if member.is_certified
+                        | Yes
+                      else
+                        | No
                     td=(member.major)
                     td
                       form(id='confirmAttendance', action='/event/' + event.id + '/confirm?member=' + member.id + '&status=confirmed', method='post')
