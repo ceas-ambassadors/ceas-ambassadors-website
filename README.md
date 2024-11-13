@@ -24,7 +24,7 @@ From oldest to most recent
     <td align="center"><a href="https://github.com/lizisawizard"><img src="https://avatars.githubusercontent.com/u/48833213?v=4" width="100px;" alt=""/><br /><sub><b>Liz Tremblay</b></sub></a><br /><a href="https://github.com/ceas-ambassadors/ceas-ambassadors-website/commits?author=lizisawizard" title="Code">💻🎨📆🧑‍🏫</a></td>
     <td align="center"><a href="https://github.com/Jashgada"><img src="https://avatars.githubusercontent.com/u/30024526?v=4" width="100px;" alt=""/><br /><sub><b>Jash Gada</b></sub></a><br /><a href="https://github.com/ceas-ambassadors/ceas-ambassadors-website/commits?author=Jashgada" title="Code">💻🧑‍🏫🚧</a></td>
     <td align="center"><a href="https://github.com/JeetShah1143"><img src="https://avatars.githubusercontent.com/u/63007766?v=4" width="100px;" alt=""/><br /><sub><b>Jeet Shah</b></sub></a><br /><a href="https://github.com/ceas-ambassadors/ceas-ambassadors-website/commits?author=JeetShah1143" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/obosticco"><img src="https://avatars.githubusercontent.com/u/69492921?v=4" width="100px;" alt=""/><br /><sub><b>Jeet Shah</b></sub></a><br /><a href="https://github.com/ceas-ambassadors/ceas-ambassadors-website/commits?author=obosticco" title="Code">💻🧑‍🏫🚧</a></td>
+    <td align="center"><a href="https://github.com/obosticco"><img src="https://avatars.githubusercontent.com/u/69492921?v=4" width="100px;" alt=""/><br /><sub><b>Owen Bosticco</b></sub></a><br /><a href="https://github.com/ceas-ambassadors/ceas-ambassadors-website/commits?author=obosticco" title="Code">💻🧑‍🏫🚧</a></td>
 </table>
 
 ### Tech Committee
